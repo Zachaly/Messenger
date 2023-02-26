@@ -29,7 +29,7 @@ namespace Messenger.Tests.Unit.Database
             const string Table = "table";
             var res = _builder.Select<TestEntity>(Table).Build();
 
-            Assert.Equal($"SELECT Id, Name FROM {Table} ORDER BY Id", res.Query);
+            Assert.Equal($"SELECT Id , Name FROM {Table} ORDER BY Id", res.Query.Replace("\n", ""));
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Messenger.Tests.Unit.Database
 
             var res = _builder.Insert(testEntity).Build();
 
-            Assert.Equal("INSERT INTO TestEntity (Id, Name) VALUES(@Id, @Name)", res.Query);
+            Assert.Equal("INSERT INTO TestEntity(Id, Name) VALUES(@Id, @Name)", res.Query.Replace("\n", ""));
         }
 
         [Fact]
@@ -49,7 +49,17 @@ namespace Messenger.Tests.Unit.Database
             var request = new TestRequest { Id = 2137, Name = "test" };
             var res = _builder.Select<TestEntity>(Table).Where(request).Build();
 
-            Assert.Equal($"SELECT Id, Name FROM {Table} WHERE Id=@Id AND Name=@Name ORDER BY Id", res.Query);
+            Assert.Equal($"SELECT Id , Name FROM {Table} ORDER BY Id WHERE Id=@Id AND Name=@Name", res.Query.Replace("\n", ""));
+        }
+
+        [Fact]
+        public void Build_Select_Where_Skip_Nulls()
+        {
+            const string Table = "table";
+            var request = new TestRequest { Id = 2137, Name = null };
+            var res = _builder.Select<TestEntity>(Table).Where(request).Build();
+
+            Assert.Equal($"SELECT Id , Name FROM {Table} ORDER BY Id WHERE Id=@Id", res.Query.Replace("\n", ""));
         }
 
         [Fact]
@@ -60,7 +70,7 @@ namespace Messenger.Tests.Unit.Database
             const int PageIndex = 0;
             var res = _builder.Select<TestEntity>(Table).AddPagination(PageIndex, PageSize).Build();
 
-            Assert.Equal($"SELECT TOP {PageSize} Id, Name FROM {Table} ORDER BY Id OFFSET {PageIndex * PageSize} ROWS ", res.Query);
+            Assert.Equal($"SELECT Id , Name FROM {Table} ORDER BY Id OFFSET {PageIndex * PageSize} ROWS FETCH NEXT {PageSize} ROWS ONLY", res.Query.Replace("\n", ""));
         }
     }
 }

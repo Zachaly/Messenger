@@ -11,11 +11,6 @@ namespace Messenger.Tests.Unit.Command
 {
     public class UserCommandTests
     {
-        public UserCommandTests()
-        {
-
-        }
-
         [Theory]
         [InlineData(0, 5)]
         [InlineData(null, 5)]
@@ -171,8 +166,8 @@ namespace Messenger.Tests.Unit.Command
                 .ReturnsAsync("hashs");
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateCreatedSuccess(It.IsAny<int>()))
-                .Returns((int id) => new ResponseModel { NewEntityId = id, Success = true });
+            responseFactoryMock.Setup(x => x.CreateCreatedSuccess(It.IsAny<long>()))
+                .Returns((long id) => new ResponseModel { NewEntityId = id, Success = true });
 
             var userFactoryMock = new Mock<IUserFactory>();
             userFactoryMock.Setup(x => x.Create(It.IsAny<AddUserRequest>(), It.IsAny<string>()))
@@ -193,7 +188,7 @@ namespace Messenger.Tests.Unit.Command
                 .Handle(command, default);
 
             Assert.True(res.Success);
-            Assert.Contains(users, x => x.Login == command.Login);
+            Assert.Contains(users, x => x.Name == command.Name);
         }
 
         [Fact]

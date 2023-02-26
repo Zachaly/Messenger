@@ -84,13 +84,12 @@ namespace Messenger.Tests.Unit.Service
                         bytes = memoryStream.ToArray();
                     }
                 }
-
-                var hash = Convert.ToBase64String(bytes);
-
-                var res = await _service.VerifyPasswordAsync(Password, hash);
-
-                Assert.True(res);
             }
+            var hash = Convert.ToBase64String(bytes);
+
+            var res = await _service.VerifyPasswordAsync(Password, hash);
+
+            Assert.True(res);
         }
 
         [Fact]
@@ -119,13 +118,13 @@ namespace Messenger.Tests.Unit.Service
                         bytes = memoryStream.ToArray();
                     }
                 }
-
-                var hash = Convert.ToBase64String(bytes);
-
-                var res = await _service.VerifyPasswordAsync(Password, hash);
-
-                Assert.True(res);
             }
+
+            var hash = Convert.ToBase64String(bytes);
+
+            var res = await _service.VerifyPasswordAsync(Password, hash);
+
+            Assert.False(res);
         }
 
         [Fact]

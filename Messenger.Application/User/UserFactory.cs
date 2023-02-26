@@ -8,18 +8,26 @@ namespace Messenger.Application
     public class UserFactory : IUserFactory
     {
         public User Create(AddUserRequest request, string passwordHash)
-        {
-            throw new NotImplementedException();
-        }
+            => new User
+            {
+                Login = request.Login,
+                Name = request.Name,
+                PasswordHash = passwordHash
+            };
 
         public LoginResponse CreateLoginResponse(User user, string token)
-        {
-            throw new NotImplementedException();
-        }
+            => new LoginResponse
+            {
+                AuthToken = token,
+                UserId = user.Id,
+                UserName = user.Name,
+            };
 
         public UserModel CreateModel(User user)
-        {
-            throw new NotImplementedException();
-        }
+            => new UserModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+            };
     }
 }

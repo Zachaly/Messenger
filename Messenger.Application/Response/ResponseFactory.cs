@@ -7,33 +7,45 @@ namespace Messenger.Application
     public class ResponseFactory : IResponseFactory
     {
         public ResponseModel CreateCreatedSuccess(long id)
-        {
-            throw new NotImplementedException();
-        }
+            => new ResponseModel
+            {
+                NewEntityId = id,
+                Success = true,
+            };
 
         public ResponseModel CreateFailure(string errorMessage)
-        {
-            throw new NotImplementedException();
-        }
+            => new ResponseModel 
+            { 
+                Success = false,
+                Error = errorMessage
+            };
 
         public DataResponseModel<T> CreateFailure<T>(string errorMessage)
-        {
-            throw new NotImplementedException();
-        }
+            => new DataResponseModel<T> 
+            {
+                Success = false,
+                Error = errorMessage,
+                Data = default(T)
+            };
 
         public ResponseModel CreateSuccess()
-        {
-            throw new NotImplementedException();
-        }
+            => new ResponseModel
+            {
+                Success = true,
+            };
 
         public DataResponseModel<T> CreateSuccess<T>(T data)
-        {
-            throw new NotImplementedException();
-        }
+            => new DataResponseModel<T>
+            {
+                Data = data,
+                Success = true
+            };
 
         public ResponseModel CreateValidationError(ValidationResult result)
-        {
-            throw new NotImplementedException();
-        }
+            => new ResponseModel
+            {
+                Success = false,
+                Errors = result.ToDictionary()
+            };
     }
 }

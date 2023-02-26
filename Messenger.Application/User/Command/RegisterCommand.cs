@@ -24,9 +24,22 @@ namespace Messenger.Application.Command
             _authService = authService;
         }
 
-        public Task<ResponseModel> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if(await _userRepository.GetUserByLogin(request.Login) is not null)
+            {
+                return _responseFactory.CreateFailure("Login already taken!");
+            }
+
+            var passwordHash = await _authService.HashPasswordAsync(request.Password);
+
+            var user = _userFactory.Create(request, passwordHash);
+
+            var id = await _userRepository.InsertUser(user);
+
+            var t = _responseFactory.CreateCreatedSuccess(id);
+
+            return _responseFactory.CreateCreatedSuccess(id);
         }
     }
 }

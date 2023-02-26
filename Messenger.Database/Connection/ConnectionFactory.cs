@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace Messenger.Database.Connection
 {
@@ -13,8 +15,6 @@ namespace Messenger.Database.Connection
         }
 
         public IDbConnection GetConnection()
-        {
-            throw new NotImplementedException();
-        }
+            => new SqlConnection(_connectionString);
     }
 }

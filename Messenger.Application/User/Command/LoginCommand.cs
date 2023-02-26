@@ -27,9 +27,19 @@ namespace Messenger.Application.Command
             _userFactory = userFactory;
         }
 
-        public Task<DataResponseModel<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<DataResponseModel<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetUserByLogin(request.Login);
+
+            if(user == null ||
+               !await _authService.VerifyPasswordAsync(request.Password, user.PasswordHash))
+            {
+                return _responseFactory.CreateFailure<LoginResponse>("Username or password is invalid!");
+            }
+
+            var response = _userFactory.CreateLoginResponse(user, await _authService.GenerateTokenAsync(user));
+
+            return _responseFactory.CreateSuccess(response);
         }
     }
 }

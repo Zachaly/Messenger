@@ -22,7 +22,9 @@ namespace Messenger.Application.Command
 
         public Task<IEnumerable<UserModel>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var index = request.GetIndexAndSize();
+
+            return _repository.GetUsers(index.Index, index.Size);
         }
     }
 }

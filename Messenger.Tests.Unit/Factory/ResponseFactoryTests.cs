@@ -46,7 +46,7 @@ namespace Messenger.Tests.Unit.Factory
             const string Error = "Error";
             var response = _factory.CreateFailure<int>(Error);
 
-            Assert.True(response.Success);
+            Assert.False(response.Success);
             Assert.Equal(default, response.Data);
         }
 
@@ -72,7 +72,7 @@ namespace Messenger.Tests.Unit.Factory
 
             Assert.False(response.Success);
             Assert.Equivalent(validation.Errors.Select(x => x.PropertyName), response.Errors.Keys);
-            Assert.Equivalent(validation.Errors.Select(x => x.ErrorMessage), response.Errors.Select(x => x.Value));
+            Assert.Equivalent(validation.Errors.Select(x => x.ErrorMessage), response.Errors.SelectMany(x => x.Value));
         }
 
         [Fact]

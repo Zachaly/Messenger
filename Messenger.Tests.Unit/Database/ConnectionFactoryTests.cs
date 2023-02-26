@@ -14,7 +14,6 @@ namespace Messenger.Tests.Unit.Database
             var factory = new ConnectionFactory(config.Object);
 
             var connection = factory.GetConnection();
-
             Assert.NotNull(connection);
         }
     }
