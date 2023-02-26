@@ -4,8 +4,8 @@ namespace Messenger.Application.Abstraction
 {
     public interface IAuthService
     {
-        Task<string> HashPassword(string password);
-        Task<bool> VerifyPassword(string password, string passwordHash);
-        Task<string> GenerateToken(User user);
+        Task<string> HashPasswordAsync(string password);
+        Task<bool> VerifyPasswordAsync(string password, string passwordHash);
+        Task<string> GenerateTokenAsync(User user);
     }
 }

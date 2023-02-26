@@ -1,16 +1,16 @@
-﻿using Messenger.Application.Abstraction;
+﻿using FluentValidation.Results;
+using Messenger.Application.Abstraction;
 using Messenger.Models.Response;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messenger.Application
 {
     public class ResponseFactory : IResponseFactory
     {
+        public ResponseModel CreateCreatedSuccess(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public ResponseModel CreateFailure(string errorMessage)
         {
             throw new NotImplementedException();
@@ -31,7 +31,7 @@ namespace Messenger.Application
             throw new NotImplementedException();
         }
 
-        public ValidationResponse CreateValidationError(ValidationResult result)
+        public ResponseModel CreateValidationError(ValidationResult result)
         {
             throw new NotImplementedException();
         }

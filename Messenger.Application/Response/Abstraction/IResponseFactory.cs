@@ -1,5 +1,5 @@
-﻿using Messenger.Models.Response;
-using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation.Results;
+using Messenger.Models.Response;
 
 namespace Messenger.Application.Abstraction
 {
@@ -9,6 +9,7 @@ namespace Messenger.Application.Abstraction
         DataResponseModel<T> CreateSuccess<T>(T data);
         ResponseModel CreateFailure(string errorMessage);
         DataResponseModel<T> CreateFailure<T>(string errorMessage);
-        ValidationResponse CreateValidationError(ValidationResult result);
+        ResponseModel CreateValidationError(ValidationResult result);
+        ResponseModel CreateCreatedSuccess(long id);
     }
 }

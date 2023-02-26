@@ -1,7 +1,16 @@
-﻿namespace Messenger.Database.Sql
+﻿using Dapper;
+
+namespace Messenger.Database.Sql
 {
     public class SqlQueryBuilder : ISqlQueryBuilder
     {
+        private readonly SqlBuilder _builder;
+
+        public SqlQueryBuilder()
+        {
+            _builder = new SqlBuilder();
+        }
+
         public ISqlQueryBuilder AddPagination(int index, int size)
         {
             throw new NotImplementedException();
@@ -17,7 +26,7 @@
             throw new NotImplementedException();
         }
 
-        public ISqlQueryBuilder Select<T>() where T : class
+        public ISqlQueryBuilder Select<T>(string table) where T : class
         {
             throw new NotImplementedException();
         }
