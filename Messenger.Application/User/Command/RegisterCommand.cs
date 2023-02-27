@@ -37,8 +37,6 @@ namespace Messenger.Application.Command
 
             var id = await _userRepository.InsertUser(user);
 
-            var t = _responseFactory.CreateCreatedSuccess(id);
-
             return _responseFactory.CreateCreatedSuccess(id);
         }
     }
