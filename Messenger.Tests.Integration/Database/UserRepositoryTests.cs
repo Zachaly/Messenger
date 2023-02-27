@@ -24,17 +24,15 @@ namespace Messenger.Tests.Integration.Database
             _repository = new UserRepository(new SqlQueryBuilder(), connectionFactory.Object);
         }
 
-        private Task InsertUsersToDatabase(List<User> users)
+        private async Task InsertUsersToDatabase(List<User> users)
         {
             using(var connection = new SqlConnection(_connectionString))
             {
                 foreach(var user in users)
                 {
-                    connection.QueryAsync("INSERT INTO [User]([Id], [Login], [Name], [PasswordHash]) VALUES(@Id, @Login, @Name, @PasswordHash)", user);
+                    await connection.QueryAsync("INSERT INTO [User]([Login], [Name], [PasswordHash]) VALUES(@Login, @Name, @PasswordHash)", user);
                 }
             }
-            
-            return Task.CompletedTask;
         }
 
         [Fact]

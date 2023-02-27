@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using static Dapper.SqlMapper;
 
 namespace Messenger.Database.Sql
 {
@@ -18,7 +17,7 @@ namespace Messenger.Database.Sql
 
         public ISqlQueryBuilder AddPagination(int index, int size)
         {
-            _template = $"SELECT /**select**/ FROM {_table} ORDER BY Id{_where} OFFSET {index * size} ROWS FETCH NEXT {size} ROWS ONLY";
+            _template = $"SELECT /**select**/ FROM {_table}{_where} ORDER BY [Id] OFFSET {index * size} ROWS FETCH NEXT {size} ROWS ONLY";
 
             return this;
         }
@@ -39,29 +38,33 @@ namespace Messenger.Database.Sql
 
             var properties = typeInfo.GetProperties();
 
-            foreach(var prop in properties )
+            foreach(var prop in properties)
             {
+                if(prop.Name == "Id")
+                {
+                    continue;
+                }
                 _parameters.Add($"@{prop.Name}", prop.GetValue(entity));
             }
 
-            string columns = string.Join(", ", properties.Select(x => x.Name));
+            string columns = string.Join(", ", properties.Where(x => x.Name != "Id").Select(x => $"[{x.Name}]"));
 
             string values = string.Join(", ", _parameters.ParameterNames.Select(param => $"@{param}"));
 
-            _template = $"INSERT INTO {typeInfo.Name}({columns}) VALUES({values})";
+            _template = $"INSERT INTO [{typeInfo.Name}]({columns}) OUTPUT INSERTED.[Id] VALUES({values})";
 
             return this;
         }
 
         public ISqlQueryBuilder Select<T>(string table) where T : class
         {
-            _template = $"SELECT /**select**/ FROM {table} ORDER BY Id";
+            _template = $"SELECT /**select**/ FROM [{table}] ORDER BY [Id]";
 
-            _table = table;
+            _table = $"[{table}]";
 
             foreach(var prop in typeof(T).GetProperties())
             {
-                _builder.Select(prop.Name);
+                _builder.Select($"[{prop.Name}]");
             }
             return this;
         }
@@ -76,13 +79,15 @@ namespace Messenger.Database.Sql
             {
                 if(prop.GetValue(request) is not null)
                 {
-                    _builder.Where($"{prop.Name}=@{prop.Name}", _parameters);
+                    _builder.Where($"[{prop.Name}]=@{prop.Name}", _parameters);
                 }
             }
 
-            _where = " /**where**/";
+            _where = "/**where**/";
 
-            _template = $"{_template}{_where}";
+            _template = _template.Replace("ORDER BY [Id]", "");
+
+            _template = $"{_template}{_where} ORDER BY [Id]";
 
             return this;
         }
