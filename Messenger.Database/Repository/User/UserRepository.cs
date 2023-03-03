@@ -20,9 +20,8 @@ namespace Messenger.Database.Repository
         public async Task<User> GetUserByLogin(string login)
         {
             var query = _queryBuilder
-                    .Select<User>("User")
                     .Where(new { Login = login })
-                    .Build();
+                    .BuildSelect<User>("User");
 
             using (var connection = _connectionFactory.GetConnection())
             {
@@ -33,9 +32,8 @@ namespace Messenger.Database.Repository
         public async Task<IEnumerable<UserModel>> GetUsers(int pageIndex, int pageSize)
         {
             var query = _queryBuilder
-                    .Select<UserModel>("User")
                     .AddPagination(pageIndex, pageSize)
-                    .Build();
+                    .BuildSelect<UserModel>("User");
 
             using(var connection = _connectionFactory.GetConnection())
             {
@@ -46,8 +44,7 @@ namespace Messenger.Database.Repository
         public async Task<long> InsertUser(User user)
         {
            var query = _queryBuilder
-                    .Insert(user)
-                    .Build();
+                    .BuildInsert(user);
 
             using (var connection = _connectionFactory.GetConnection())
             {

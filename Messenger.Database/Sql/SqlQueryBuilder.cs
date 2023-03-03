@@ -1,13 +1,16 @@
 ﻿using Dapper;
+using Messenger.Domain.Enum;
+using Messenger.Domain.SqlAttributes;
+using System.Reflection;
+using System.Text;
 
 namespace Messenger.Database.Sql
 {
     public class SqlQueryBuilder : ISqlQueryBuilder
     {
         private readonly SqlBuilder _builder;
-        private string _template = "";
-        private string _table = "";
-        private string _where = "";
+        private string _pagination = "";
+        private readonly StringBuilder _joinBuilder = new StringBuilder();
         private DynamicParameters? _parameters;
 
         public SqlQueryBuilder()
@@ -15,57 +18,63 @@ namespace Messenger.Database.Sql
             _builder = new SqlBuilder();
         }
 
-        public ISqlQueryBuilder AddPagination(int index, int size)
+        public (string Query, object Params) BuildSelect<T>(string table)
         {
-            _template = $"SELECT /**select**/ FROM {_table}{_where} ORDER BY [Id] OFFSET {index * size} ROWS FETCH NEXT {size} ROWS ONLY";
+            foreach (var prop in typeof(T).GetProperties())
+            {
+                var joinAttr = prop.GetCustomAttribute<JoinAttribute>();
+                if(joinAttr is not null)
+                {
+                    _builder.Select($"[{joinAttr.Table}].[{joinAttr.Column}] as [{prop.Name}]");
+                    _joinBuilder.Append(joinAttr.Statement);
+                    _joinBuilder.Append(' ');
+                } 
+                else
+                {
+                    _builder.Select($"[{prop.Name}]");
+                }
+            }
 
-            return this;
-        }
+            var template = $"SELECT /**select**/ FROM [{table}] {_joinBuilder}/**where**/ ORDER BY [{table}].[Id]{_pagination}";
 
-        public (string Query, object? Params) Build()
-        {
-            var temp = _builder.AddTemplate(_template, _parameters);
+            var temp = _builder.AddTemplate(template, _parameters);
 
             return (temp.RawSql, temp.Parameters);
         }
 
-        public ISqlQueryBuilder Insert<T>(T entity) where T : class
+        public (string Query, object Params) BuildInsert<T>(T entity)
         {
-            _parameters = new DynamicParameters(entity);
-            _parameters.RemoveUnused = false;
+            var parameters = new DynamicParameters(entity);
+            parameters.RemoveUnused = false;
 
             var typeInfo = typeof(T);
 
             var properties = typeInfo.GetProperties();
 
-            foreach(var prop in properties)
+            foreach (var prop in properties)
             {
-                if(prop.Name == "Id")
+                if (prop.Name == "Id")
                 {
                     continue;
                 }
-                _parameters.Add($"@{prop.Name}", prop.GetValue(entity));
+                parameters.Add($"@{prop.Name}", prop.GetValue(entity));
             }
 
             string columns = string.Join(", ", properties.Where(x => x.Name != "Id").Select(x => $"[{x.Name}]"));
 
-            string values = string.Join(", ", _parameters.ParameterNames.Select(param => $"@{param}"));
+            string values = string.Join(", ", parameters.ParameterNames.Select(param => $"@{param}"));
 
-            _template = $"INSERT INTO [{typeInfo.Name}]({columns}) OUTPUT INSERTED.[Id] VALUES({values})";
+            var template = $"INSERT INTO [{typeInfo.Name}]({columns}) OUTPUT INSERTED.[Id] VALUES({values})";
 
-            return this;
+            var temp = _builder.AddTemplate(template, parameters);
+
+            return (temp.RawSql, temp.Parameters);
         }
 
-        public ISqlQueryBuilder Select<T>(string table) where T : class
+        public ISqlQueryBuilder AddPagination(int index, int size)
         {
-            _template = $"SELECT /**select**/ FROM [{table}] ORDER BY [Id]";
+            _pagination = $" OFFSET {index * size} ROWS FETCH NEXT {size} ROWS ONLY";
 
-            _table = $"[{table}]";
-
-            foreach(var prop in typeof(T).GetProperties())
-            {
-                _builder.Select($"[{prop.Name}]");
-            }
             return this;
         }
 
@@ -75,19 +84,27 @@ namespace Messenger.Database.Sql
 
             var typeInfo = typeof(T);
 
-            foreach(var prop in typeInfo.GetProperties())
+            foreach(var prop in typeInfo.GetProperties().Where(prop => prop.GetValue(request) != default))
             {
-                if(prop.GetValue(request) is not null)
+                var whereAttrib = prop.GetCustomAttribute<WhereAttribute>();
+                if(whereAttrib is not null)
+                {
+                    var column = string.IsNullOrEmpty(whereAttrib.Column) ? $"[{prop.Name}]" : whereAttrib.Column;
+                    var equal = $"[{prop.Name}]" == column ? "=" : "";
+                    if (whereAttrib.Type == WhereType.AND)
+                    {
+                        _builder.Where($"{column}{equal}@{prop.Name}", _parameters);
+                    } 
+                    else
+                    {
+                        _builder.OrWhere($"{column}{equal}@{prop.Name}", _parameters);
+                    }
+                }
+                else
                 {
                     _builder.Where($"[{prop.Name}]=@{prop.Name}", _parameters);
                 }
             }
-
-            _where = "/**where**/";
-
-            _template = _template.Replace("ORDER BY [Id]", "");
-
-            _template = $"{_template}{_where} ORDER BY [Id]";
 
             return this;
         }
