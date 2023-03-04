@@ -17,6 +17,11 @@ namespace Messenger.Database.Repository
             _connectionFactory = connectionFactory;
         }
 
+        public Task<UserModel> GetUserById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User> GetUserByLogin(string login)
         {
             var query = _queryBuilder
