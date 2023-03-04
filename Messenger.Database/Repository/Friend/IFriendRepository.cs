@@ -6,7 +6,7 @@ namespace Messenger.Database.Repository
 {
     public interface IFriendRepository
     {
-        Task<long> InsertFriendAsync(Friend friend);
+        Task InsertFriendAsync(Friend friend);
         Task<IEnumerable<FriendListItem>> GetAllFriendsAsync(GetFriendsRequest request);
     }
 }

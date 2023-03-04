@@ -1,4 +1,7 @@
-﻿using Messenger.Domain.Entity;
+﻿using Dapper;
+using Messenger.Database.Connection;
+using Messenger.Database.Sql;
+using Messenger.Domain.Entity;
 using Messenger.Models.Friend;
 using Messenger.Models.Friend.Request;
 
@@ -6,19 +9,33 @@ namespace Messenger.Database.Repository
 {
     public class FriendRequestRepository : IFriendRequestRepository
     {
-        public Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequest request)
+        private readonly ISqlQueryBuilder _queryBuilder;
+        private readonly IConnectionFactory _connectionFactory;
+
+        public FriendRequestRepository(ISqlQueryBuilder sqlQueryBuilder, IConnectionFactory connectionFactory)
         {
-            throw new NotImplementedException();
+            _queryBuilder = sqlQueryBuilder;
+            _connectionFactory = connectionFactory;
         }
 
-        public Task<long> InsertFriendRequest(FriendRequest request)
+        public async Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequestsRequest request)
         {
-            throw new NotImplementedException();
+            var query = _queryBuilder.Where(request).Join(request).OrderBy("[Id]").BuildSelect<FriendRequestModel>("FriendRequest");
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                return await connection.QueryAsync<FriendRequestModel>(query.Query, query.Params);
+            }
         }
 
-        public Task<long> UpdateFriendRequest(FriendRequest request)
+        public async Task<long> InsertFriendRequest(FriendRequest request)
         {
-            throw new NotImplementedException();
+            var query = _queryBuilder.BuildInsert(request);
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                return await connection.QuerySingleAsync<long>(query.Query, query.Params);
+            }
         }
     }
 }

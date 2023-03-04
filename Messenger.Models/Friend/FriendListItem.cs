@@ -2,10 +2,12 @@
 
 namespace Messenger.Models.Friend
 {
+    [Join(Statement = "LEFT OUTER JOIN [User] ON [User].[Id]=[Friend].[User2Id]")]
     public class FriendListItem
     {
-        public int Id { get; set; }
-        [Join(Table = "User", Column = "Name", Statement = "JOIN ON [User].[Id]=[Friend].[User2Id]")]
+        [SqlName(Name = "[User].[Id]")]
+        public long Id { get; set; }
+        [SqlName(Name = "[User].[Name]")]
         public string Name { get; set; }
     }
 }

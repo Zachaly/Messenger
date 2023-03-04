@@ -2,7 +2,7 @@
 using Messenger.Database.Repository;
 using Messenger.Models.User;
 
-namespace Messenger.Application.User.Command
+namespace Messenger.Application.Command
 {
     public class GetUserByIdQuery : IRequest<UserModel>
     {

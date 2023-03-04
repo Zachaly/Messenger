@@ -1,9 +1,7 @@
 ﻿using Dapper;
-using Messenger.Database.Connection;
 using Messenger.Database.Repository;
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
-using Moq;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,38 +11,17 @@ namespace Messenger.Tests.Integration.Database
     {
         private readonly UserRepository _repository;
 
-        public UserRepositoryTests()
+        public UserRepositoryTests() : base()
         {
-            var connectionFactory = new Mock<IConnectionFactory>();
-            connectionFactory.Setup(x => x.GetConnection())
-                .Returns(new SqlConnection(_connectionString));
-
             _teardownQueries.Add("TRUNCATE TABLE [User]");
 
-            _repository = new UserRepository(new SqlQueryBuilder(), connectionFactory.Object);
-        }
-
-        private async Task InsertUsersToDatabase(List<User> users)
-        {
-            using(var connection = new SqlConnection(_connectionString))
-            {
-                foreach(var user in users)
-                {
-                    await connection.QueryAsync("INSERT INTO [User]([Login], [Name], [PasswordHash]) VALUES(@Login, @Name, @PasswordHash)", user);
-                }
-            }
+            _repository = new UserRepository(new SqlQueryBuilder(), _connectionFactory);
         }
 
         [Fact]
         public async Task GetUsersAsync()
         {
-            var users = new List<User>
-            {
-                new User { Id = 1, Login = "Login1", PasswordHash = "Hasssh", Name = "name1" },
-                new User { Id = 2, Login = "Login2", PasswordHash = "Hasssh", Name = "name2" },
-                new User { Id = 3, Login = "Login3", PasswordHash = "Hasssh", Name = "name3" },
-                new User { Id = 4, Login = "Login4", PasswordHash = "Hasssh", Name = "name4" },
-            };
+            var users = FakeDataFactory.CreateUsers(4);
 
             await InsertUsersToDatabase(users);
 
@@ -101,6 +78,19 @@ namespace Messenger.Tests.Integration.Database
             Assert.Equal(user.Name, test.Name);
             Assert.Equal(user.Login, test.Login);
             Assert.Equal(user.PasswordHash, test.PasswordHash);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync()
+        {
+            await InsertUsersToDatabase(FakeDataFactory.CreateUsers(5));
+
+            var user = (await GetAllFromDatabase<User>("User")).First();
+
+            var res = await _repository.GetUserById(user.Id);
+
+            Assert.Equal(user.Id, res.Id);
+            Assert.Equal(user.Name, res.Name);
         }
     }
 }
