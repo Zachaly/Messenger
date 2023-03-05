@@ -16,6 +16,7 @@ namespace Messenger.Database.Repository
         {
             _queryBuilder = sqlQueryBuilder;
             _connectionFactory = connectionFactory;
+            SqlMapper.AddTypeMap(typeof(DateTime), System.Data.DbType.DateTime2);
         }
 
         public async Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequestsRequest request)
@@ -25,6 +26,16 @@ namespace Messenger.Database.Repository
             using(var connection = _connectionFactory.GetConnection())
             {
                 return await connection.QueryAsync<FriendRequestModel>(query.Query, query.Params);
+            }
+        }
+
+        public async Task<FriendRequest> GetRequestById(long id)
+        {
+            var query = _queryBuilder.Where(new { Id = id }).BuildSelect<FriendRequest>("FriendRequest");
+
+            using(var conn = _connectionFactory.GetConnection())
+            {
+                return await conn.QuerySingleOrDefaultAsync<FriendRequest>(query.Query, query.Params);
             }
         }
 

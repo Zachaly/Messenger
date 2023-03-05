@@ -218,5 +218,22 @@ namespace Messenger.Tests.Unit.Command
             Assert.False(res.Success);
             Assert.DoesNotContain(users, x => x.Login == command.Login);
         }
+
+        [Fact]
+        public async Task GetUserByIdCommand_Success()
+        {
+            var user = new UserModel { Id = 1, Name = "name" };
+
+            var userRepository = new Mock<IUserRepository>();
+            userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))
+                .ReturnsAsync(user);
+
+            var query = new GetUserByIdQuery { UserId = user.Id };
+
+            var res = await new GetUserByIdHandler(userRepository.Object).Handle(query, default);
+
+            Assert.Equal(user.Id, res.Id);
+            Assert.Equal(user.Name, res.Name);
+        }
     }
 }

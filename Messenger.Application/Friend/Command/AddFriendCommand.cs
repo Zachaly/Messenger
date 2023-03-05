@@ -14,11 +14,13 @@ namespace Messenger.Application.Command
     {
         private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IFriendFactory _friendFactory;
+        private readonly IResponseFactory _responseFactory;
 
         public AddFriendHandler(IFriendRequestRepository friendRequestRepository, IFriendFactory friendFactory, IResponseFactory responseFactory)
         {
             _friendRequestRepository = friendRequestRepository;
             _friendFactory = friendFactory;
+            _responseFactory = responseFactory;
         }
 
         public Task<ResponseModel> Handle(AddFriendCommand request, CancellationToken cancellationToken)

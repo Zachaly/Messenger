@@ -15,13 +15,15 @@ namespace Messenger.Application.Command
         private readonly IFriendFactory _friendFactory;
         private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IFriendRepository _friendRepository;
+        private readonly IUserRepository _userRepository;
 
         public RespondToFriendRequestHandler(IFriendFactory friendFactory, IFriendRequestRepository friendRequestRepository,
-            IFriendRepository friendRepository)
+            IFriendRepository friendRepository, IUserRepository userRepository)
         {
             _friendFactory = friendFactory;
             _friendRequestRepository = friendRequestRepository;
             _friendRepository = friendRepository;
+            _userRepository = userRepository;
         }
 
         public Task<FriendAcceptedResponse> Handle(RespondToFriendRequestCommand request, CancellationToken cancellationToken)

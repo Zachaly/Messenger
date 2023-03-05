@@ -95,5 +95,25 @@ namespace Messenger.Tests.Integration.Database
             Assert.Single(requests);
             Assert.Contains(requests, x => x.Id == res && x.SenderId == request.SenderId && x.ReceiverId == x.ReceiverId);
         }
+
+        [Fact]
+        public async Task GetRequestByIdAsync()
+        {
+            const int UserId = 5;
+            var friendIds = new List<long> { 1, 2, 3, 4 };
+
+            await InsertFriendRequestsToDatabase(FakeDataFactory.CreateFriendRequests(UserId, friendIds));
+
+            var requests = await GetAllFromDatabase<FriendRequest>("FriendRequest");
+
+            var request = requests.First();
+
+            var res = await _repository.GetRequestById(request.Id);
+
+            Assert.Equal(request.Id, res.Id);
+            Assert.Equal(request.Created, res.Created);
+            Assert.Equal(request.SenderId, res.SenderId);
+            Assert.Equal(request.ReceiverId, res.ReceiverId);
+        }
     }
 }
