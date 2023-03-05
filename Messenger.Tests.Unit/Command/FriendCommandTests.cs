@@ -54,8 +54,8 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((AddFriendRequest request) => new FriendRequest { ReceiverId = request.ReceiverId, SenderId = request.SenderId });
 
             var responseFactory = new Mock<IResponseFactory>();
-            responseFactory.Setup(x => x.CreateSuccess())
-                .Returns(new ResponseModel { Success = true });
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns(new ResponseModel { Success = false });
 
             var friendRepository = new Mock<IFriendRequestRepository>();
             friendRepository.Setup(x => x.InsertFriendRequest(It.IsAny<FriendRequest>()))
@@ -72,7 +72,7 @@ namespace Messenger.Tests.Unit.Command
             var res = await new AddFriendHandler(friendRepository.Object, friendFactory.Object, responseFactory.Object)
                     .Handle(request, default);
 
-            Assert.True(res.Success);
+            Assert.False(res.Success);
             Assert.Empty(requests);
         }
 
@@ -170,10 +170,14 @@ namespace Messenger.Tests.Unit.Command
         public async Task RespondToFriendRequestCommand_FriendRejected_Success()
         {
             var receiver = new UserModel { Name = "name" };
+            var request = new FriendRequest { Id = 1, SenderId = 2, ReceiverId = 3 };
 
             var friendRepository = new Mock<IFriendRepository>();
 
             var friendRequestRepository = new Mock<IFriendRequestRepository>();
+
+            friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
+                .ReturnsAsync(request);
 
             var friendFactory = new Mock<IFriendFactory>();
 
@@ -187,7 +191,7 @@ namespace Messenger.Tests.Unit.Command
             var command = new RespondToFriendRequestCommand
             {
                 RequestId = 1,
-                Accepted = true
+                Accepted = false
             };
 
             var res = await new RespondToFriendRequestHandler(friendFactory.Object, friendRequestRepository.Object,

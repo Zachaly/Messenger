@@ -26,9 +26,20 @@ namespace Messenger.Application.Command
             _userRepository = userRepository;
         }
 
-        public Task<FriendAcceptedResponse> Handle(RespondToFriendRequestCommand request, CancellationToken cancellationToken)
+        public async Task<FriendAcceptedResponse> Handle(RespondToFriendRequestCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var friendRequest = await _friendRequestRepository.GetRequestById(request.RequestId);
+            var receiver = await _userRepository.GetUserById(friendRequest.ReceiverId);
+
+            if (!request.Accepted)
+            {
+                return _friendFactory.CreateResponse(false, receiver.Name);
+            }
+
+            await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.SenderId, friendRequest.ReceiverId));
+            await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.ReceiverId, friendRequest.SenderId));
+
+            return _friendFactory.CreateResponse(true, receiver.Name);
         }
     }
 }

@@ -18,9 +18,9 @@ namespace Messenger.Application.Command
             _friendRequestRepository = friendRequestRepository;
         }
 
-        public Task<IEnumerable<FriendRequestModel>> Handle(GetFriendRequestsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<FriendRequestModel>> Handle(GetFriendRequestsQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _friendRequestRepository.GetFriendRequests(request);
         }
     }
 }

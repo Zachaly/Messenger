@@ -18,9 +18,9 @@ namespace Messenger.Application.Command
             _userRepository = userRepository;
         }
 
-        public Task<UserModel> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<UserModel> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _userRepository.GetUserById(request.UserId);
         }
     }
 }

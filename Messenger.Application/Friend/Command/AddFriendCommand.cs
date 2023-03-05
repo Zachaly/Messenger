@@ -23,9 +23,21 @@ namespace Messenger.Application.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(AddFriendCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddFriendCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var friendRequests = await _friendRequestRepository
+                .GetFriendRequests(new GetFriendsRequestsRequest { ReceiverId = request.ReceiverId, SenderId = request.SenderId });
+
+            if (friendRequests.Any()) 
+            {
+                return _responseFactory.CreateFailure("Request already sent");
+            }
+
+            var friendRequest = _friendFactory.CreateRequest(request);
+
+            await _friendRequestRepository.InsertFriendRequest(friendRequest);
+
+            return _responseFactory.CreateSuccess();
         }
     }
 }

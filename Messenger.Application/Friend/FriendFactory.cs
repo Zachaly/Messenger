@@ -8,18 +8,25 @@ namespace Messenger.Application
     public class FriendFactory : IFriendFactory
     {
         public Friend Create(long user1Id, long user2Id)
-        {
-            throw new NotImplementedException();
-        }
+            => new Friend
+            {
+                User1Id = user1Id,
+                User2Id = user2Id
+            };
 
         public FriendRequest CreateRequest(AddFriendRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new FriendRequest
+            {
+                Created = DateTime.Now,
+                ReceiverId = request.ReceiverId,
+                SenderId = request.SenderId,
+            };
 
         public FriendAcceptedResponse CreateResponse(bool accepted, string name)
-        {
-            throw new NotImplementedException();
-        }
+            => new FriendAcceptedResponse
+            { 
+                Accepted = accepted,
+                Name = name
+            };
     }
 }
