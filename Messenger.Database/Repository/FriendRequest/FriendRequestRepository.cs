@@ -48,5 +48,15 @@ namespace Messenger.Database.Repository
                 return await connection.QuerySingleAsync<long>(query.Query, query.Params);
             }
         }
+
+        public async Task<int> GetCount(GetFriendsRequestsRequest request)
+        {
+            var query = _queryBuilder.Where(request).BuildCount("FriendRequest");
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                return await connection.QuerySingleAsync<int>(query.Query, query.Params);
+            }
+        }
     }
 }

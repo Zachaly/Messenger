@@ -7,6 +7,7 @@ namespace Messenger.Models.Friend
         public long Id { get; set; }
         [SqlName(Name = "[User].[Name]")]
         public string Name { get; set; }
-        public long ReceiverId { get; set; }
+        [SqlName(Name = "[User].[Id]")]
+        public long UserId { get; set; }
     }
 }

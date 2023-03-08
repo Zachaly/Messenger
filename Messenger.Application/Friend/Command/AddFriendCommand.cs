@@ -25,19 +25,19 @@ namespace Messenger.Application.Command
 
         public async Task<ResponseModel> Handle(AddFriendCommand request, CancellationToken cancellationToken)
         {
-            var friendRequests = await _friendRequestRepository
-                .GetFriendRequests(new GetFriendsRequestsRequest { ReceiverId = request.ReceiverId, SenderId = request.SenderId });
+            var count = await _friendRequestRepository
+                .GetCount(new GetFriendsRequestsRequest { ReceiverId = request.ReceiverId, SenderId = request.SenderId });
 
-            if (friendRequests.Any()) 
+            if (count > 0) 
             {
                 return _responseFactory.CreateFailure("Request already sent");
             }
 
             var friendRequest = _friendFactory.CreateRequest(request);
 
-            await _friendRequestRepository.InsertFriendRequest(friendRequest);
+            var id = await _friendRequestRepository.InsertFriendRequest(friendRequest);
 
-            return _responseFactory.CreateSuccess();
+            return _responseFactory.CreateCreatedSuccess(id);
         }
     }
 }

@@ -61,5 +61,19 @@ namespace Messenger.Api.Controllers
 
             return Ok(res);
         }
+
+        /// <summary>
+        /// Returns user with specfied id
+        /// </summary>
+        /// <response code="200">User model</response>
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [Authorize]
+        public async Task<ActionResult<UserModel>> GetByIdAsync(long id)
+        {
+            var res = await _mediator.Send(new GetUserByIdQuery { UserId = id });
+
+            return Ok(res);
+        }
     }
 }

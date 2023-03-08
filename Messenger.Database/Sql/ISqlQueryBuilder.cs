@@ -8,5 +8,6 @@
         (string Query, object Params) BuildSelect<T>(string table);
         ISqlQueryBuilder Join<T>(T request) where T : class;
         ISqlQueryBuilder OrderBy(string columnName);
+        (string Query, object Params) BuildCount(string table);
     }
 }

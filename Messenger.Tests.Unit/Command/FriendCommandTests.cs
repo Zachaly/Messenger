@@ -22,8 +22,8 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((AddFriendRequest request) => new FriendRequest { ReceiverId = request.ReceiverId, SenderId = request.SenderId });
 
             var responseFactory = new Mock<IResponseFactory>();
-            responseFactory.Setup(x => x.CreateSuccess())
-                .Returns(new ResponseModel { Success = true });
+            responseFactory.Setup(x => x.CreateCreatedSuccess(It.IsAny<long>()))
+                .Returns(new ResponseModel { Success = true, NewEntityId = 1 });
 
             var friendRepository = new Mock<IFriendRequestRepository>();
             friendRepository.Setup(x => x.InsertFriendRequest(It.IsAny<FriendRequest>()))
@@ -32,8 +32,8 @@ namespace Messenger.Tests.Unit.Command
                     requests.Add(request);
                 });
 
-            friendRepository.Setup(x => x.GetFriendRequests(It.IsAny<GetFriendsRequestsRequest>()))
-                .ReturnsAsync(Enumerable.Empty<FriendRequestModel>());
+            friendRepository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequestsRequest>()))
+                .ReturnsAsync(0);
 
             var request = new AddFriendCommand { SenderId = 1, ReceiverId = 2 };
 
@@ -64,8 +64,8 @@ namespace Messenger.Tests.Unit.Command
                     requests.Add(request);
                 });
 
-            friendRepository.Setup(x => x.GetFriendRequests(It.IsAny<GetFriendsRequestsRequest>()))
-                .ReturnsAsync(new List<FriendRequestModel> { new FriendRequestModel { ReceiverId = 2 } });
+            friendRepository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequestsRequest>()))
+                .ReturnsAsync(1);
 
             var request = new AddFriendCommand { SenderId = 1, ReceiverId = 2 };
 

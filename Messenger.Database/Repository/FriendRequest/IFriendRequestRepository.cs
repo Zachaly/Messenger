@@ -9,5 +9,6 @@ namespace Messenger.Database.Repository
         Task<long> InsertFriendRequest(FriendRequest request);
         Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequestsRequest request);
         Task<FriendRequest> GetRequestById(long id);
+        Task<int> GetCount(GetFriendsRequestsRequest request);
     }
 }

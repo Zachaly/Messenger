@@ -21,11 +21,6 @@ namespace Messenger.Tests.Integration.Controller
 
         }
 
-        private void InsertUser(object queryParam)
-        {
-            ExecuteQuery("INSERT INTO [User]([Login], [Name], [PasswordHash]) VALUES(@Login, @Name, @PasswordHash)", queryParam);
-        }
-
         [Fact]
         public async Task PostAsync_Success()
         {
@@ -110,6 +105,18 @@ namespace Messenger.Tests.Integration.Controller
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotEmpty(content.AuthToken);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync()
+        {
+            await Authorize();
+
+            var response = await _httpClient.GetAsync($"{ApiUrl}/{_authorizedUserId}");
+            var content = await response.Content.ReadFromJsonAsync<UserModel>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(_authUsername, content.Name);
         }
     }
 }

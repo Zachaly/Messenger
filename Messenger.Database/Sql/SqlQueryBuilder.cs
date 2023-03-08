@@ -56,6 +56,15 @@ namespace Messenger.Database.Sql
 
             return (temp.RawSql, temp.Parameters);
         }
+        
+        public (string Query, object Params) BuildCount(string table)
+        {
+            var template = $"SELECT COUNT(*) FROM [{table}] {_joinBuilder}/**where**/";
+
+            var temp = _builder.AddTemplate(template, _parameters);
+
+            return (temp.RawSql, temp.Parameters);
+        }
 
         public (string Query, object Params) BuildInsert<T>(T entity, bool returnId = true)
         {
