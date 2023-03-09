@@ -9,6 +9,11 @@ import { RegisterPageComponent } from './pages/register-page/register-page.compo
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 import { FormsModule } from '@angular/forms';
+import { FriendListPageComponent } from './pages/friend-list-page/friend-list-page.component';
+import { UserComponent } from './components/user/user.component';
+import { FriendRequestComponent } from './components/friend-request/friend-request.component';
+import { TabComponent } from './components/tab/tab.component';
+import { FriendRequestListPageComponent } from './pages/friend-request-list-page/friend-request-list-page.component';
 
 const route = (path: string, component: any) => (
   {
@@ -20,7 +25,9 @@ const route = (path: string, component: any) => (
 const routes: Routes = [
   route('', MainPageComponent),
   route('login', LoginPageComponent),
-  route('register', RegisterPageComponent)
+  route('register', RegisterPageComponent),
+  route('friend-request', FriendRequestListPageComponent),
+  route('friend', FriendListPageComponent)
 ]
 
 @NgModule({
@@ -29,7 +36,12 @@ const routes: Routes = [
     NavbarComponent,
     RegisterPageComponent,
     LoginPageComponent,
-    MainPageComponent
+    MainPageComponent,
+    FriendListPageComponent,
+    UserComponent,
+    FriendRequestComponent,
+    TabComponent,
+    FriendRequestListPageComponent
   ],
   imports: [
     BrowserModule,
