@@ -12,7 +12,7 @@ const API_URL = 'https://localhost:5001/api/user'
 })
 export class AuthService {
 
-  currentUser: LoginResponse = { userName: '', id: 0, authToken: '' }
+  currentUser: LoginResponse = { userName: '', userId: 0, authToken: '' }
   private userSubject: Subject<LoginResponse> = new Subject()
 
   constructor(private http: HttpClient) {
@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   logout() {
-    this.currentUser = { userName: '', id: 0, authToken: '' }
+    this.currentUser = { userName: '', userId: 0, authToken: '' }
     this.userSubject.next(this.currentUser)
   }
 }

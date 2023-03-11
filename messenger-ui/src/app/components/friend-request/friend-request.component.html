@@ -1,0 +1,14 @@
+<div class="card m-1">
+    <div class="card-header">
+        <div class="media p-1">
+            <div class="media-left">
+                <p class="title is-4">{{request.name}}</p>
+            </div>
+            <div class="buttons media-right" *ngIf="receiver">
+                <button class="button is-success" (click)="onAccept(true)">Accept</button>
+                <button class="button is-danger" (click)="onAccept(false)">Deny</button>
+            </div>
+        </div>
+
+    </div>
+</div>

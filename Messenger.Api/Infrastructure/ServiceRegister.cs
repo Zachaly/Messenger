@@ -18,8 +18,10 @@ namespace Messenger.Api.Infrastructure
         public static void RegisterDatabase(this IServiceCollection collection)
         {
             collection.AddScoped<IConnectionFactory, ConnectionFactory>();
-            collection.AddScoped<ISqlQueryBuilder, SqlQueryBuilder>();
+            collection.AddTransient<ISqlQueryBuilder, SqlQueryBuilder>();
             collection.AddScoped<IUserRepository, UserRepository>();
+            collection.AddScoped<IFriendRepository, FriendRepository>();
+            collection.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -27,6 +29,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IAuthService, AuthService>();
             collection.AddScoped<IResponseFactory, ResponseFactory>();
             collection.AddScoped<IUserFactory, UserFactory>();
+            collection.AddScoped<IFriendFactory, FriendFactory>();
 
             collection.AddMediatR(opt =>
             {

@@ -15,11 +15,12 @@ namespace Messenger.Tests.Unit.Database
         public int? Id { get; set; }
         public string? Name { get; set; }
     }
-    
+
+    [Join(Statement = "JOIN ON [Table].[Id]=[OtherTable].[Id]")]
     class JoinTestModel
     {
         public int Id { get; set; }
-        [Join(Column = JoinColumn, Table = JoinTable, Statement = JoinStatement)]
+        [SqlName(Name = $"[{JoinTable}].[{JoinColumn}]")]
         public int Name { get; set; }
 
         public const string JoinColumn = "Name";
@@ -51,9 +52,9 @@ namespace Messenger.Tests.Unit.Database
         public void Build_Select()
         {
             const string Table = "table";
-            var res = _builder.BuildSelect<TestEntity>(Table);
+            var res = _builder.OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT [Id] , [Name] FROM [{Table}] ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -71,9 +72,9 @@ namespace Messenger.Tests.Unit.Database
         {
             const string Table = "table";
             var request = new TestRequest { Id = 2137, Name = "test" };
-            var res = _builder.Where(request).BuildSelect<TestEntity>(Table);
+            var res = _builder.OrderBy("[Id]").Where(request).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT [Id] , [Name] FROM [{Table}] WHERE [Id]=@Id AND [Name]=@Name ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id AND [Name]=@Name ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -81,9 +82,9 @@ namespace Messenger.Tests.Unit.Database
         {
             const string Table = "table";
             var request = new TestRequest { Id = 2137, Name = null };
-            var res = _builder.Where(request).BuildSelect<TestEntity>(Table);
+            var res = _builder.OrderBy("[Id]").Where(request).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT [Id] , [Name] FROM [{Table}] WHERE [Id]=@Id ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -92,9 +93,9 @@ namespace Messenger.Tests.Unit.Database
             const string Table = "table";
             const int PageSize = 10;
             const int PageIndex = 0;
-            var res = _builder.AddPagination(PageIndex, PageSize).BuildSelect<TestEntity>(Table);
+            var res = _builder.OrderBy("[Id]").AddPagination(PageIndex, PageSize).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT [Id] , [Name] FROM [{Table}] ORDER BY [{Table}].[Id] OFFSET {PageIndex * PageSize} ROWS FETCH NEXT {PageSize} ROWS ONLY", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id] OFFSET {PageIndex * PageSize} ROWS FETCH NEXT {PageSize} ROWS ONLY", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -102,9 +103,9 @@ namespace Messenger.Tests.Unit.Database
         {
             const string Table = "table";
 
-            var res = _builder.BuildSelect<JoinTestModel>(Table);
+            var res = _builder.OrderBy("[Id]").BuildSelect<JoinTestModel>(Table);
 
-            Assert.Equal($"SELECT [Id] , [{JoinTestModel.JoinTable}].[{JoinTestModel.JoinColumn}] as [Name] FROM [{Table}] {JoinTestModel.JoinStatement} ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{JoinTestModel.JoinTable}].[{JoinTestModel.JoinColumn}] as [Name] FROM [{Table}] {JoinTestModel.JoinStatement} ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -118,11 +119,11 @@ namespace Messenger.Tests.Unit.Database
                 Something = "som"
             };
 
-            var res = _builder.Where(request).BuildSelect<TestEntity>(Table);
+            var res = _builder.Where(request).OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
             var r = 1;
 
-            Assert.Equal($"SELECT [Id] , [Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
     }
 }

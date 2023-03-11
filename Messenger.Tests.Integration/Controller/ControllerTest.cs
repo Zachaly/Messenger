@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Messenger.Models.Response;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -15,12 +16,14 @@ namespace Messenger.Tests.Integration.Controller
     {
         protected readonly HttpClient _httpClient;
         protected readonly WebApplicationFactory<Program> _webFactory;
-        private readonly string _authUsername = "authorized";
+        protected readonly string _authUsername = "authorized";
         protected long _authorizedUserId = 0;
         private readonly string _connectionString = "Server=localhost;Database=MessengerTest;Trusted_Connection=True;";
         private readonly string[] _tearDownQueries = 
             { 
-                "TRUNCATE TABLE [User]"
+                "TRUNCATE TABLE [User]",
+                "TRUNCATE TABLE [Friend]",
+                "TRUNCATE TABLE [FriendRequest]"
             };
 
         public ControllerTest()
@@ -55,7 +58,8 @@ namespace Messenger.Tests.Integration.Controller
         {
             var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
 
-            await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
+            var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
+            _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
 
             var loginRequest = new LoginRequest { Login = _authUsername, Password = registerRequest.Password };
 
@@ -71,6 +75,11 @@ namespace Messenger.Tests.Integration.Controller
             {
                 connection.Query(query, param);
             }
+        }
+
+        protected void InsertUser(object queryParam)
+        {
+            ExecuteQuery("INSERT INTO [User]([Login], [Name], [PasswordHash]) VALUES(@Login, @Name, @PasswordHash)", queryParam);
         }
 
         protected IEnumerable<T> GetFromDatabase<T>(string query, object? param = null)

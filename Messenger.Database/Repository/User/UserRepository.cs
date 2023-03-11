@@ -17,6 +17,16 @@ namespace Messenger.Database.Repository
             _connectionFactory = connectionFactory;
         }
 
+        public async Task<UserModel> GetUserById(long id)
+        {
+            var query = _queryBuilder.Where(new { Id = id }).BuildSelect<UserModel>("User");
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                return await connection.QuerySingleAsync<UserModel>(query.Query, query.Params);
+            }
+        }
+
         public async Task<User> GetUserByLogin(string login)
         {
             var query = _queryBuilder
@@ -33,6 +43,7 @@ namespace Messenger.Database.Repository
         {
             var query = _queryBuilder
                     .AddPagination(pageIndex, pageSize)
+                    .OrderBy("[Id]")
                     .BuildSelect<UserModel>("User");
 
             using(var connection = _connectionFactory.GetConnection())

@@ -1,0 +1,9 @@
+<app-tab [names]="tabs" (select)="onTabChange($event)"/>
+
+<div *ngIf="tabIndex == 0">
+    <app-friend-request *ngFor="let request of requests" [request]="request" [receiver]="true" (accept)="respond(request.id, $event)"/>
+</div>
+
+<div *ngIf="tabIndex == 1">
+    <app-friend-request *ngFor="let request of requests" [request]="request"/>
+</div>

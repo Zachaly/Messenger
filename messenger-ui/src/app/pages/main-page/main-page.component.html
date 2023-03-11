@@ -1,3 +1,5 @@
-<div *ngFor="let user of users">
-    {{ user.id }} - {{ user.name }}
+<div class="column is-5">
+    <div *ngFor="let user of users">
+        <app-user [user]="user" [isFriend]="isFriend(user.id)" (addFriend)="addFriend(user.id)"/>
+    </div>
 </div>

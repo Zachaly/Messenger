@@ -1,0 +1,6 @@
+<div class="tabs">
+    <ul>
+      <li *ngFor="let name of names; index as index" [ngClass]="{'is-active': selectedIndex == index}" (click)="onSelect(index)"><a>{{name}}</a></li>
+    </ul>
+  </div>
+  
