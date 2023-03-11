@@ -33,11 +33,14 @@ namespace Messenger.Application.Command
 
             if (!request.Accepted)
             {
+                await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
                 return _friendFactory.CreateResponse(false, receiver.Name);
             }
 
             await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.SenderId, friendRequest.ReceiverId));
             await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.ReceiverId, friendRequest.SenderId));
+
+            await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
 
             return _friendFactory.CreateResponse(true, receiver.Name);
         }

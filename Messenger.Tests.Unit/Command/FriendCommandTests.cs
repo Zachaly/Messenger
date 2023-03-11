@@ -138,6 +138,8 @@ namespace Messenger.Tests.Unit.Command
 
             friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
                 .ReturnsAsync(request);
+
+            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
                 
             var friendFactory = new Mock<IFriendFactory>();
 
@@ -178,6 +180,7 @@ namespace Messenger.Tests.Unit.Command
 
             friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
                 .ReturnsAsync(request);
+            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
 
             var friendFactory = new Mock<IFriendFactory>();
 

@@ -9,5 +9,6 @@
         ISqlQueryBuilder Join<T>(T request) where T : class;
         ISqlQueryBuilder OrderBy(string columnName);
         (string Query, object Params) BuildCount(string table);
+        (string Query, object Params) BuildDelete(string table);
     }
 }

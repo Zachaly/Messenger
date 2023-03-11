@@ -24,6 +24,10 @@ namespace Messenger.Database.Repository
             _connectionFactory = connectionFactory;
         }
 
+        public Task DeleteFriendAsync(DeleteFriendRequest request)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<IEnumerable<FriendListItem>> GetAllFriendsAsync(GetFriendsRequest request)
         {

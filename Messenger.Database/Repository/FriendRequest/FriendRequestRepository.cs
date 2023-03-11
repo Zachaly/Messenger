@@ -58,5 +58,10 @@ namespace Messenger.Database.Repository
                 return await connection.QuerySingleAsync<int>(query.Query, query.Params);
             }
         }
+
+        public Task DeleteFriendRequestById(long id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
