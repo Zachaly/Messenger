@@ -24,7 +24,7 @@ namespace Messenger.Database.Repository
             _connectionFactory = connectionFactory;
         }
 
-        public Task DeleteFriendAsync(DeleteFriendRequest request)
+        public Task DeleteFriendAsync(long user1Id, long user2Id)
         {
             throw new NotImplementedException();
         }

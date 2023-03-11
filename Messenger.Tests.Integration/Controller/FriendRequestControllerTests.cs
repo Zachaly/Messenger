@@ -174,6 +174,7 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(2, friends.Count());
             Assert.Contains(friends, x => x.User1Id == request.SenderId && x.User2Id == request.ReceiverId);
             Assert.Contains(friends, x => x.User1Id == request.ReceiverId && x.User2Id == request.SenderId);
+            Assert.Empty(GetFromDatabase<FriendRequest>("SELECT * FROM [FriendRequest]"));
         }
 
         [Fact]
@@ -197,6 +198,7 @@ namespace Messenger.Tests.Integration.Controller
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Empty(friends);
+            Assert.Empty(GetFromDatabase<FriendRequest>("SELECT * FROM [FriendRequest]"));
         }
     }
 }
