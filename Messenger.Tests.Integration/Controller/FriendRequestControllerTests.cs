@@ -200,5 +200,28 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Empty(friends);
             Assert.Empty(GetFromDatabase<FriendRequest>("SELECT * FROM [FriendRequest]"));
         }
+
+        [Fact]
+        public async Task DeleteAsync_Success()
+        {
+            await Authorize();
+
+            var requests = FakeDataFactory.CreateFriendRequests(_authorizedUserId, new long[] { 5, 6, 7, 8, });
+
+            foreach (var request in requests)
+            {
+                InsertFriendRequest(request);
+            }
+
+            var friendRequest = GetFromDatabase<FriendRequest>("SELECT * FROM [FriendRequest]").First();
+
+            var response = await _httpClient.DeleteAsync($"{ApiUrl}/{friendRequest.Id}");
+
+            var currentRequests = GetFromDatabase<FriendRequest>("SELECT * FROM [FriendRequest]");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.DoesNotContain(currentRequests, x => x.Id == friendRequest.Id);
+            Assert.Equal(requests.Count() - 1, currentRequests.Count());
+        }
     }
 }

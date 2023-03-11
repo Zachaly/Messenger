@@ -21,6 +21,11 @@ namespace Messenger.Tests.Integration
             return friendIds.Select(id => new Friend { User1Id = userId, User2Id = id });
         }
 
+        public static IEnumerable<Friend> CreateFriends(IEnumerable<long> friendIds, long userId)
+        {
+            return friendIds.Select(id => new Friend { User1Id = id, User2Id = userId });
+        }
+
         public static IEnumerable<FriendRequest> CreateFriendRequests(long receiverId, IEnumerable<long> senderIds)
             => senderIds.Select(id => new FriendRequest { Created = DateTime.Now, SenderId = id, ReceiverId = receiverId });
 

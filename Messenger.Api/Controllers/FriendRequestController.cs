@@ -72,5 +72,20 @@ namespace Messenger.Api.Controllers
 
             return Ok(res);
         }
+
+        /// <summary>
+        /// Deletes friend request with given id
+        /// </summary>
+        /// <response code="204">Request deleted successfully</response>
+        /// <response code="400">Failed to delete request</response>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ResponseModel>> DeleteAsync(int id)
+        {
+            var res = await _mediator.Send(new DeleteFriendRequestCommand { Id = id });
+
+            return res.ReturnNoContentOrBadRequest();
+        }
     }
 }

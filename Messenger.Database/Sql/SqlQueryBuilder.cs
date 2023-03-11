@@ -163,7 +163,7 @@ namespace Messenger.Database.Sql
 
         public (string Query, object Params) BuildDelete(string table)
         {
-            var template = $"DELETE FROM [{table}]/**where**/";
+            var template = $"DELETE FROM [{table}] /**where**/";
 
             var temp = _builder.AddTemplate(template, _parameters);
 
