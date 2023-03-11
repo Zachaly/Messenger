@@ -53,5 +53,18 @@ namespace Messenger.Tests.Integration.Database
             Assert.Single(friendList);
             Assert.Contains(friendList, x => x.User1Id == friend.User1Id && x.User2Id == friend.User2Id);
         }
+
+        [Fact]
+        public async Task DeleteAsync()
+        {
+            await InsertFriendsToDatabase(FakeDataFactory.CreateFriends(1, new long[] { 1, 2, 3, 4 }));
+
+            var friendToDelete = (await GetAllFromDatabase<Friend>("Friend")).First();
+
+            await _repository.DeleteFriendAsync(friendToDelete.User1Id, friendToDelete.User2Id);
+
+            Assert.DoesNotContain(await GetAllFromDatabase<Friend>("Friend"),
+                x => x.User1Id == friendToDelete.User1Id && x.User2Id == friendToDelete.User2Id);
+        }
     }
 }

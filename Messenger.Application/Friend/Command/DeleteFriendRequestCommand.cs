@@ -21,9 +21,18 @@ namespace Messenger.Application.Command
             _friendRequestRepository = friendRequestRepository;
         }
 
-        public Task<ResponseModel> Handle(DeleteFriendRequestCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteFriendRequestCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _friendRequestRepository.DeleteFriendRequestById(request.Id);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

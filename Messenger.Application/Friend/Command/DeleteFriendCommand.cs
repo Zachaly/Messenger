@@ -21,9 +21,18 @@ namespace Messenger.Application.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(DeleteFriendCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteFriendCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _friendReposiotory.DeleteFriendAsync(request.User1Id, request.User2Id);
+                await _friendReposiotory.DeleteFriendAsync(request.User2Id, request.User1Id);
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

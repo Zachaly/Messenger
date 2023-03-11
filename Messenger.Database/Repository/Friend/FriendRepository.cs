@@ -24,9 +24,14 @@ namespace Messenger.Database.Repository
             _connectionFactory = connectionFactory;
         }
 
-        public Task DeleteFriendAsync(long user1Id, long user2Id)
+        public async Task DeleteFriendAsync(long user1Id, long user2Id)
         {
-            throw new NotImplementedException();
+            var query = _queryBuilder.Where(new { User1Id = user1Id, User2Id = user2Id }).BuildDelete("Friend");
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                await connection.QueryAsync(query.Query, query.Params);
+            }
         }
 
         public async Task<IEnumerable<FriendListItem>> GetAllFriendsAsync(GetFriendsRequest request)

@@ -115,5 +115,19 @@ namespace Messenger.Tests.Integration.Database
             Assert.Equal(request.SenderId, res.SenderId);
             Assert.Equal(request.ReceiverId, res.ReceiverId);
         }
+
+        [Fact]
+        public async Task DeleteAsync()
+        {
+            await InsertFriendRequestsToDatabase(FakeDataFactory.CreateFriendRequests(1, new long[] { 1, 2, 3, }));
+
+            var requests = await GetAllFromDatabase<FriendRequest>("FriendRequest");
+
+            var idToDelete = requests.First().Id;
+
+            await _repository.DeleteFriendRequestById(idToDelete);
+
+            Assert.DoesNotContain(await GetAllFromDatabase<FriendRequest>("FriendRequest"), x => x.Id == idToDelete);
+        }
     }
 }
