@@ -42,11 +42,12 @@ namespace Messenger.Tests.Unit.Factory
         {
             const bool Accepted = false;
             const string Name = "Name";
-
-            var response = _factory.CreateResponse(Accepted, Name);
+            const long SenderId = 1;
+            var response = _factory.CreateResponse(Accepted, Name, SenderId);
 
             Assert.Equal(Accepted, response.Accepted);
             Assert.Equal(Name, response.Name);
+            Assert.Equal(SenderId, response.SenderId);
         }
     }
 }

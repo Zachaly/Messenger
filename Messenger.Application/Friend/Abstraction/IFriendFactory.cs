@@ -8,6 +8,6 @@ namespace Messenger.Application.Abstraction
     {
         FriendRequest CreateRequest(AddFriendRequest request);
         Friend Create(long user1Id, long user2Id);
-        FriendAcceptedResponse CreateResponse(bool accepted, string name);
+        FriendAcceptedResponse CreateResponse(bool accepted, string name, long senderId);
     }
 }

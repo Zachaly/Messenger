@@ -34,7 +34,7 @@ namespace Messenger.Application.Command
             if (!request.Accepted)
             {
                 await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
-                return _friendFactory.CreateResponse(false, receiver.Name);
+                return _friendFactory.CreateResponse(false, receiver.Name, friendRequest.ReceiverId);
             }
 
             await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.SenderId, friendRequest.ReceiverId));
@@ -42,7 +42,7 @@ namespace Messenger.Application.Command
 
             await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
 
-            return _friendFactory.CreateResponse(true, receiver.Name);
+            return _friendFactory.CreateResponse(true, receiver.Name, friendRequest.SenderId);
         }
     }
 }

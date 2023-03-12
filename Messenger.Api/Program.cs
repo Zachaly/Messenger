@@ -1,5 +1,8 @@
+using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +20,10 @@ builder.Services.ConfigureSwagger();
 
 builder.ConfigureAuthorization();
 
+builder.Services.AddSignalR();
+//builder.Services.RemoveAll<IUserIdProvider>();
+//builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,18 +33,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors(opt =>
 {
     opt.AllowAnyMethod()
         .AllowAnyHeader()
-        .WithOrigins("http://localhost:3000");
+        .WithOrigins("http://localhost:3000")
+        .AllowCredentials();
 });
 
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<FriendHub>("/ws/friend");
 
 app.Run();
 

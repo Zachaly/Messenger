@@ -143,8 +143,8 @@ namespace Messenger.Tests.Unit.Command
                 
             var friendFactory = new Mock<IFriendFactory>();
 
-            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>()))
-                .Returns((bool accepted, string name) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
+            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((bool accepted, string name, long id) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
 
             friendFactory.Setup(x => x.Create(It.IsAny<long>(), It.IsAny<long>()))
                 .Returns((long id1, long id2) => new Friend { User1Id = id1, User2Id = id2 });
@@ -184,8 +184,8 @@ namespace Messenger.Tests.Unit.Command
 
             var friendFactory = new Mock<IFriendFactory>();
 
-            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>()))
-                .Returns((bool accepted, string name) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
+            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((bool accepted, string name, long id) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
 
             var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))

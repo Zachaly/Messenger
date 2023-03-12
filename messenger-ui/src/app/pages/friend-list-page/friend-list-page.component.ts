@@ -12,9 +12,18 @@ export class FriendListPageComponent implements OnInit {
   friends: UserListItem[] = []
 
   constructor(private friendService: FriendService, private authService: AuthService) { }
+
   ngOnInit(): void {
+    this.loadFriends()
+  }
+
+  loadFriends() {
     this.friendService.getFriends(this.authService.currentUser.userId).subscribe(res => this.friends = res)
   }
 
-
+  deleteFriend(friend: UserListItem) {
+    this.friendService.delete(this.authService.currentUser.userId, friend.id).subscribe(res => {
+      this.loadFriends()
+    })
+  }
 }

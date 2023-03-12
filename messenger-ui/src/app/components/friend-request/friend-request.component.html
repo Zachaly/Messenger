@@ -4,10 +4,16 @@
             <div class="media-left">
                 <p class="title is-4">{{request.name}}</p>
             </div>
-            <div class="buttons media-right" *ngIf="receiver">
+            
+            <div class="buttons media-right" *ngIf="receiver;else sender">
                 <button class="button is-success" (click)="onAccept(true)">Accept</button>
                 <button class="button is-danger" (click)="onAccept(false)">Deny</button>
             </div>
+            <ng-template #sender>
+                <div class="buttons media-right">
+                    <button class="button is-danger" (click)="onCancel()">Cancel</button>
+                </div>
+            </ng-template>
         </div>
 
     </div>

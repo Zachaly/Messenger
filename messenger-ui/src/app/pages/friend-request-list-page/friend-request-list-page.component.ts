@@ -25,10 +25,13 @@ export class FriendRequestListPageComponent implements OnInit {
 
   onTabChange(index: number){
     this.tabIndex = index
+    this.loadRequests()
+  }
 
-    if(index == 0){
+  loadRequests() {
+    if(this.tabIndex == 0){
       this.friendRequestService.getFriendRequests({ receiverId: this.authService.currentUser.userId }).subscribe(res => this.requests = res)
-    } else if(index == 1) {
+    } else if(this.tabIndex == 1) {
       this.friendRequestService.getFriendRequests({ senderId: this.authService.currentUser.userId }).subscribe(res => this.requests = res)
     }
   }
@@ -38,6 +41,10 @@ export class FriendRequestListPageComponent implements OnInit {
       requestId,
       accepted
     }
-    this.friendRequestService.respondToFriendRequest(request).subscribe()
+    this.friendRequestService.respondToFriendRequest(request).subscribe(res => this.requests = this.requests.filter(x => x.id !== requestId))
+  }
+
+  cancel(id: number) {
+    this.friendRequestService.delete(id).subscribe(res => this.requests = this.requests.filter(x => x.id !== id))
   }
 }

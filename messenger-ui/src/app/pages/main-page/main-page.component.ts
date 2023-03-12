@@ -5,6 +5,7 @@ import AddFriendRequest from 'src/app/requests/AddFriendRequest';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
 import { FriendService } from 'src/app/services/friend.service';
+import { SignalrService } from 'src/app/services/signalr.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -41,7 +42,7 @@ export class MainPageComponent implements OnInit {
 
     this.friendRequestService.postFriendRequest(request).subscribe({
       next: () => alert('Friend request send'),
-      error: (err) => alert(err.error)
+      error: (err) => alert(err.error.error)
     })
   }
 }
