@@ -22,4 +22,8 @@ export class FriendService extends ServiceBase {
 
     return this.http.get<UserListItem[]>(API_URL, { params, headers: this.httpHeaders() })
   }
+
+  delete(userId: number, friendId: number) : Observable<any> {
+    return this.http.delete(`${API_URL}/${userId}/${friendId}`, { headers: this.httpHeaders() })
+  }
 }

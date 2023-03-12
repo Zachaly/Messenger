@@ -3,7 +3,6 @@ using Messenger.Domain.Enum;
 using Messenger.Domain.SqlAttributes;
 using System.Reflection;
 using System.Text;
-using System.Xml;
 
 namespace Messenger.Database.Sql
 {
@@ -160,6 +159,15 @@ namespace Messenger.Database.Sql
             }
 
             return this;
+        }
+
+        public (string Query, object Params) BuildDelete(string table)
+        {
+            var template = $"DELETE FROM [{table}] /**where**/";
+
+            var temp = _builder.AddTemplate(template, _parameters);
+
+            return (temp.RawSql, temp.Parameters);
         }
     }
 }

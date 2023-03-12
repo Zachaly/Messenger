@@ -5,5 +5,5 @@
 </div>
 
 <div *ngIf="tabIndex == 1">
-    <app-friend-request *ngFor="let request of requests" [request]="request"/>
+    <app-friend-request *ngFor="let request of requests" [request]="request" [receiver]="false" (cancel)="cancel(request.id)"/>
 </div>

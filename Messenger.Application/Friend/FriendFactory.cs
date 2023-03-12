@@ -22,11 +22,12 @@ namespace Messenger.Application
                 SenderId = request.SenderId,
             };
 
-        public FriendAcceptedResponse CreateResponse(bool accepted, string name)
+        public FriendAcceptedResponse CreateResponse(bool accepted, string name, long senderId)
             => new FriendAcceptedResponse
             { 
                 Accepted = accepted,
-                Name = name
+                Name = name,
+                SenderId = senderId
             };
     }
 }

@@ -121,9 +121,16 @@ namespace Messenger.Tests.Unit.Database
 
             var res = _builder.Where(request).OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
-            var r = 1;
-
             Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+        }
+
+        [Fact]
+        public void Build_Delete_With_Where()
+        {
+            const string Table = "table";
+            var res = _builder.Where(new TestRequest { Id = 1, Name = "name" }).BuildDelete(Table);
+
+            Assert.Equal($"DELETE FROM [{Table}] WHERE [Id]=@Id AND [Name]=@Name", FormatQuery(res.Query));
         }
     }
 }

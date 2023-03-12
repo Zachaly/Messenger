@@ -138,11 +138,13 @@ namespace Messenger.Tests.Unit.Command
 
             friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
                 .ReturnsAsync(request);
+
+            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
                 
             var friendFactory = new Mock<IFriendFactory>();
 
-            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>()))
-                .Returns((bool accepted, string name) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
+            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((bool accepted, string name, long id) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
 
             friendFactory.Setup(x => x.Create(It.IsAny<long>(), It.IsAny<long>()))
                 .Returns((long id1, long id2) => new Friend { User1Id = id1, User2Id = id2 });
@@ -178,11 +180,12 @@ namespace Messenger.Tests.Unit.Command
 
             friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
                 .ReturnsAsync(request);
+            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
 
             var friendFactory = new Mock<IFriendFactory>();
 
-            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>()))
-                .Returns((bool accepted, string name) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
+            friendFactory.Setup(x => x.CreateResponse(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((bool accepted, string name, long id) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
 
             var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))
@@ -200,6 +203,124 @@ namespace Messenger.Tests.Unit.Command
 
             Assert.False(res.Accepted);
             Assert.Equal(receiver.Name, res.Name);
+        }
+
+        [Fact]
+        public async Task DeleteFriendCommand_Success()
+        {
+            var friends = new List<Friend>
+            {
+                new Friend { User1Id = 1, User2Id = 2 },
+                new Friend { User1Id = 2, User2Id = 1 },
+                new Friend { User1Id = 3, User2Id = 1 },
+            };
+            var repository = new Mock<IFriendRepository>();
+            repository.Setup(x => x.DeleteFriendAsync(It.IsAny<long>(), It.IsAny<long>()))
+                .Callback((long id1, long id2) => friends.Remove(friends.First(x => x.User1Id == id1 && x.User2Id == id2)));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var command = new DeleteFriendCommand { User1Id = 1, User2Id = 2 };
+            var res = await new DeleteFriendHandler(responseFactory.Object, repository.Object).Handle(command, default);
+
+            Assert.Single(friends);
+            Assert.True(res.Success);
+        }
+
+        [Fact]
+        public async Task DeleteFriendCommand_ExceptionThrown_Fail()
+        {
+            var friends = new List<Friend>
+            {
+                new Friend { User1Id = 1, User2Id = 2 },
+                new Friend { User1Id = 2, User2Id = 1 },
+                new Friend { User1Id = 3, User2Id = 1 },
+            };
+
+            const string Error = "err";
+
+            var repository = new Mock<IFriendRepository>();
+            repository.Setup(x => x.DeleteFriendAsync(It.IsAny<long>(), It.IsAny<long>()))
+                .Callback(() => throw new Exception(Error));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string err) => new ResponseModel { Success = false, Error = err });
+
+            var command = new DeleteFriendCommand { User1Id = 1, User2Id = 2 };
+            var res = await new DeleteFriendHandler(responseFactory.Object, repository.Object).Handle(command, default);
+
+            Assert.Equal(3, friends.Count);
+            Assert.False(res.Success);
+            Assert.Equal(Error, res.Error);
+        }
+
+        [Fact]
+        public async Task DeleteFriendRequestCommand_Success()
+        {
+            var requests = new List<FriendRequest>
+            {
+                new FriendRequest { Id = 1 },
+                new FriendRequest { Id = 2 },
+                new FriendRequest { Id = 3 },
+            };
+            var repository = new Mock<IFriendRequestRepository>();
+            repository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()))
+                .Callback((long id) => requests.Remove(requests.First(x => x.Id == id)));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var command = new DeleteFriendRequestCommand { Id = 2 };
+            var res = await new DeleteFriendRequestHandler(responseFactory.Object, repository.Object).Handle(command, default);
+
+            Assert.DoesNotContain(requests, x => x.Id == command.Id);
+            Assert.True(res.Success);
+        }
+
+        [Fact]
+        public async Task DeleteFriendRequestCommand_ExceptionThrown_Fail()
+        {
+            var requests = new List<FriendRequest>
+            {
+                new FriendRequest { Id = 1 },
+                new FriendRequest { Id = 2 },
+                new FriendRequest { Id = 3 },
+            };
+
+            const string Error = "err";
+
+            var repository = new Mock<IFriendRequestRepository>();
+            repository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()))
+                .Callback(() => throw new Exception(Error));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string err) => new ResponseModel { Success = false, Error = err });
+
+            var command = new DeleteFriendRequestCommand { Id = 1 };
+            var res = await new DeleteFriendRequestHandler(responseFactory.Object, repository.Object).Handle(command, default);
+
+            Assert.Equal(3, requests.Count);
+            Assert.False(res.Success);
+            Assert.Equal(Error, res.Error);
+        }
+
+        [Fact]
+        public async Task GetFriendRequestCountCommand_Success()
+        {
+            const int Count = 10;
+            var repository = new Mock<IFriendRequestRepository>();
+            repository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequestsRequest>()))
+                .ReturnsAsync(Count);
+
+            var query = new GetFriendRequestCountQuery();
+            var res = await new GetFriendRequestCountHandler(repository.Object).Handle(query, default);
+
+            Assert.Equal(Count, res);
         }
     }
 }

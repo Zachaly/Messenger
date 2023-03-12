@@ -14,6 +14,9 @@ import { UserComponent } from './components/user/user.component';
 import { FriendRequestComponent } from './components/friend-request/friend-request.component';
 import { TabComponent } from './components/tab/tab.component';
 import { FriendRequestListPageComponent } from './pages/friend-request-list-page/friend-request-list-page.component';
+import { FriendComponent } from './components/friend/friend.component';
+import { NotificationListComponent } from './components/notification-list/notification-list.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 const route = (path: string, component: any) => (
   {
@@ -41,7 +44,10 @@ const routes: Routes = [
     UserComponent,
     FriendRequestComponent,
     TabComponent,
-    FriendRequestListPageComponent
+    FriendRequestListPageComponent,
+    FriendComponent,
+    NotificationListComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,

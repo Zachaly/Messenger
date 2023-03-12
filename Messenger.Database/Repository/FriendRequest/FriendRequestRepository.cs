@@ -58,5 +58,17 @@ namespace Messenger.Database.Repository
                 return await connection.QuerySingleAsync<int>(query.Query, query.Params);
             }
         }
+
+        public async Task DeleteFriendRequestById(long id)
+        {
+            var query = _queryBuilder
+                .Where(new { Id = id })
+                .BuildDelete("FriendRequest");
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                await connection.QueryAsync(query.Query, query.Params);
+            }
+        }
     }
 }

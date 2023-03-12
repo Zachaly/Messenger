@@ -8,5 +8,6 @@ namespace Messenger.Database.Repository
     {
         Task InsertFriendAsync(Friend friend);
         Task<IEnumerable<FriendListItem>> GetAllFriendsAsync(GetFriendsRequest request);
+        Task DeleteFriendAsync(long user1Id, long user2Id);
     }
 }
