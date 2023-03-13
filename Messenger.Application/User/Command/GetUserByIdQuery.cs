@@ -20,7 +20,7 @@ namespace Messenger.Application.Command
 
         public async Task<UserModel> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUserById(request.UserId);
+            return await _userRepository.GetByIdAsync(request.UserId);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Messenger.Domain.Enum;
 using Messenger.Domain.SqlAttributes;
+using Messenger.Models;
 using System.Reflection;
 using System.Text;
 
@@ -11,7 +12,7 @@ namespace Messenger.Database.Sql
         private readonly SqlBuilder _builder;
         private string _pagination = "";
         private readonly StringBuilder _joinBuilder = new StringBuilder();
-        private DynamicParameters? _parameters;
+        private DynamicParameters? _parameters = new DynamicParameters();
         private string _orderBy = "";
 
         public SqlQueryBuilder()
@@ -49,7 +50,7 @@ namespace Messenger.Database.Sql
                 _builder.OrderBy($"[{table}].{_orderBy}");
             }
 
-            var template = $"SELECT DISTINCT /**select**/ FROM [{table}] {_joinBuilder}/**where**/ /**orderby**/{_pagination}";
+            var template = $"SELECT /**select**/ FROM [{table}] {_joinBuilder}/**where**/ /**orderby**/{_pagination}";
 
             var temp = _builder.AddTemplate(template, _parameters);
 
@@ -96,8 +97,11 @@ namespace Messenger.Database.Sql
             return (temp.RawSql, temp.Parameters);
         }
 
-        public ISqlQueryBuilder AddPagination(int index, int size)
+        public ISqlQueryBuilder AddPagination(PagedRequest request)
         {
+            int index = request.PageIndex ?? 0;
+            int size = request.PageSize ?? 10;
+
             _pagination = $" OFFSET {index * size} ROWS FETCH NEXT {size} ROWS ONLY";
 
             return this;
@@ -109,7 +113,8 @@ namespace Messenger.Database.Sql
 
             var typeInfo = typeof(T);
 
-            foreach(var prop in typeInfo.GetProperties().Where(prop => prop.GetValue(request) != default))
+            foreach(var prop in typeInfo.GetProperties().Where(prop => prop.GetValue(request) != default
+                && prop.Name != "PageIndex" && prop.Name != "PageSize"))
             {
                 var whereAttrib = prop.GetCustomAttribute<WhereAttribute>();
                 if(whereAttrib is not null)

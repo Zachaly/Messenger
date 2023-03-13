@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Messenger.Database.Connection;
+using Messenger.Database.Repository.Abstraction;
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.Friend;
@@ -7,67 +8,22 @@ using Messenger.Models.Friend.Request;
 
 namespace Messenger.Database.Repository
 {
-    public class FriendRequestRepository : IFriendRequestRepository
+    public class FriendRequestRepository : RepositoryBase<FriendRequest, FriendRequestModel, GetFriendsRequestsRequest>, IFriendRequestRepository
     {
-        private readonly ISqlQueryBuilder _queryBuilder;
-        private readonly IConnectionFactory _connectionFactory;
-
         public FriendRequestRepository(ISqlQueryBuilder sqlQueryBuilder, IConnectionFactory connectionFactory)
+            :base(connectionFactory, sqlQueryBuilder)
         {
-            _queryBuilder = sqlQueryBuilder;
-            _connectionFactory = connectionFactory;
             SqlMapper.AddTypeMap(typeof(DateTime), System.Data.DbType.DateTime2);
+            Table = "FriendRequest";
         }
 
-        public async Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequestsRequest request)
+        public async Task<FriendRequest> GetByIdAsync(long id)
         {
-            var query = _queryBuilder.Where(request).Join(request).OrderBy("[Id]").BuildSelect<FriendRequestModel>("FriendRequest");
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QueryAsync<FriendRequestModel>(query.Query, query.Params);
-            }
-        }
-
-        public async Task<FriendRequest> GetRequestById(long id)
-        {
-            var query = _queryBuilder.Where(new { Id = id }).BuildSelect<FriendRequest>("FriendRequest");
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<FriendRequest>(Table);
 
             using(var conn = _connectionFactory.GetConnection())
             {
                 return await conn.QuerySingleOrDefaultAsync<FriendRequest>(query.Query, query.Params);
-            }
-        }
-
-        public async Task<long> InsertFriendRequest(FriendRequest request)
-        {
-            var query = _queryBuilder.BuildInsert(request);
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QuerySingleAsync<long>(query.Query, query.Params);
-            }
-        }
-
-        public async Task<int> GetCount(GetFriendsRequestsRequest request)
-        {
-            var query = _queryBuilder.Where(request).BuildCount("FriendRequest");
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QuerySingleAsync<int>(query.Query, query.Params);
-            }
-        }
-
-        public async Task DeleteFriendRequestById(long id)
-        {
-            var query = _queryBuilder
-                .Where(new { Id = id })
-                .BuildDelete("FriendRequest");
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                await connection.QueryAsync(query.Query, query.Params);
             }
         }
     }

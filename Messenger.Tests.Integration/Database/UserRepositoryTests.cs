@@ -2,6 +2,7 @@
 using Messenger.Database.Repository;
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
+using Messenger.Models.User.Request;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -25,7 +26,9 @@ namespace Messenger.Tests.Integration.Database
 
             await InsertUsersToDatabase(users);
 
-            var res = await _repository.GetUsers(1, 2);
+            var request = new GetUserRequest { PageSize = 2, PageIndex = 1 };
+
+            var res = await _repository.GetAsync(request);
 
             Assert.Equivalent(users.Skip(2).Take(2).Select(x => x.Id), res.Select(x => x.Id));
         }
@@ -47,7 +50,7 @@ namespace Messenger.Tests.Integration.Database
 
             await InsertUsersToDatabase(users);
 
-            var res = await _repository.GetUserByLogin(Login);
+            var res = await _repository.GetByLoginAsync(Login);
 
             Assert.Equal(user.Id, res.Id);
             Assert.Equal(user.Name, res.Name);
@@ -65,7 +68,7 @@ namespace Messenger.Tests.Integration.Database
                 PasswordHash = "Hash",
             };
 
-            var id = await _repository.InsertUser(user);
+            var id = await _repository.InsertAsync(user);
 
             User test;
 
@@ -87,7 +90,7 @@ namespace Messenger.Tests.Integration.Database
 
             var user = (await GetAllFromDatabase<User>("User")).First();
 
-            var res = await _repository.GetUserById(user.Id);
+            var res = await _repository.GetByIdAsync(user.Id);
 
             Assert.Equal(user.Id, res.Id);
             Assert.Equal(user.Name, res.Name);

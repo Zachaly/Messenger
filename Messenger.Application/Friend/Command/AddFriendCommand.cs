@@ -35,7 +35,7 @@ namespace Messenger.Application.Command
 
             var friendRequest = _friendFactory.CreateRequest(request);
 
-            var id = await _friendRequestRepository.InsertFriendRequest(friendRequest);
+            var id = await _friendRequestRepository.InsertAsync(friendRequest);
 
             return _responseFactory.CreateCreatedSuccess(id);
         }

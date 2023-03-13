@@ -1,6 +1,7 @@
 ﻿using Messenger.Database.Sql;
 using Messenger.Domain.Enum;
 using Messenger.Domain.SqlAttributes;
+using Messenger.Models;
 
 namespace Messenger.Tests.Unit.Database
 {
@@ -54,7 +55,7 @@ namespace Messenger.Tests.Unit.Database
             const string Table = "table";
             var res = _builder.OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -74,7 +75,7 @@ namespace Messenger.Tests.Unit.Database
             var request = new TestRequest { Id = 2137, Name = "test" };
             var res = _builder.OrderBy("[Id]").Where(request).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id AND [Name]=@Name ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id AND [Name]=@Name ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -84,18 +85,17 @@ namespace Messenger.Tests.Unit.Database
             var request = new TestRequest { Id = 2137, Name = null };
             var res = _builder.OrderBy("[Id]").Where(request).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE [Id]=@Id ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
         public void Build_Select_With_Pagination()
         {
             const string Table = "table";
-            const int PageSize = 10;
-            const int PageIndex = 0;
-            var res = _builder.OrderBy("[Id]").AddPagination(PageIndex, PageSize).BuildSelect<TestEntity>(Table);
+            var request = new PagedRequest { PageSize = 10, PageIndex = 0 };
+            var res = _builder.OrderBy("[Id]").AddPagination(request).BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id] OFFSET {PageIndex * PageSize} ROWS FETCH NEXT {PageSize} ROWS ONLY", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] ORDER BY [{Table}].[Id] OFFSET {request.PageIndex * request.PageSize} ROWS FETCH NEXT {request.PageSize} ROWS ONLY", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace Messenger.Tests.Unit.Database
 
             var res = _builder.OrderBy("[Id]").BuildSelect<JoinTestModel>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{JoinTestModel.JoinTable}].[{JoinTestModel.JoinColumn}] as [Name] FROM [{Table}] {JoinTestModel.JoinStatement} ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{JoinTestModel.JoinTable}].[{JoinTestModel.JoinColumn}] as [Name] FROM [{Table}] {JoinTestModel.JoinStatement} ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Messenger.Tests.Unit.Database
 
             var res = _builder.Where(request).OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT DISTINCT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]

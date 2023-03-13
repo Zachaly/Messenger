@@ -20,7 +20,7 @@ namespace Messenger.Application.Command
 
         public async Task<IEnumerable<FriendRequestModel>> Handle(GetFriendRequestsQuery request, CancellationToken cancellationToken)
         {
-            return await _friendRequestRepository.GetFriendRequests(request);
+            return await _friendRequestRepository.GetAsync(request);
         }
     }
 }

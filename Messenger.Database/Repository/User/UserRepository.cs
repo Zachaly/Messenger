@@ -1,66 +1,35 @@
 ﻿using Dapper;
 using Messenger.Database.Connection;
+using Messenger.Database.Repository.Abstraction;
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.User;
+using Messenger.Models.User.Request;
 
 namespace Messenger.Database.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : RepositoryBase<User, UserModel, GetUserRequest>, IUserRepository
     {
-        private readonly ISqlQueryBuilder _queryBuilder;
-        private readonly IConnectionFactory _connectionFactory;
-
         public UserRepository(ISqlQueryBuilder queryBuilder, IConnectionFactory connectionFactory)
+            : base(connectionFactory, queryBuilder)
         {
-            _queryBuilder = queryBuilder;
-            _connectionFactory = connectionFactory;
+            Table = "User";
         }
 
-        public async Task<UserModel> GetUserById(long id)
+        public Task<UserModel> GetByIdAsync(long id)
         {
-            var query = _queryBuilder.Where(new { Id = id }).BuildSelect<UserModel>("User");
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<UserModel>(Table);
 
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QuerySingleAsync<UserModel>(query.Query, query.Params);
-            }
+            return QuerySingleAsync<UserModel>(query.Query, query.Params);
         }
 
-        public async Task<User> GetUserByLogin(string login)
+        public Task<User> GetByLoginAsync(string login)
         {
-            var query = _queryBuilder
+            var query = _sqlQueryBuilder
                     .Where(new { Login = login })
-                    .BuildSelect<User>("User");
+                    .BuildSelect<User>(Table);
 
-            using (var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QueryFirstOrDefaultAsync<User>(query.Query, query.Params);
-            }
-        }
-
-        public async Task<IEnumerable<UserModel>> GetUsers(int pageIndex, int pageSize)
-        {
-            var query = _queryBuilder
-                    .AddPagination(pageIndex, pageSize)
-                    .OrderBy("[Id]")
-                    .BuildSelect<UserModel>("User");
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QueryAsync<UserModel>(query.Query, query.Params);
-            }
-        }
-
-        public async Task<long> InsertUser(User user)
-        {
-           var query = _queryBuilder
-                    .BuildInsert(user);
-
-            using (var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QuerySingleOrDefaultAsync<long>(query.Query, query.Params);
-            }
+            return QuerySingleAsync<User>(query.Query, query.Params);
         }
     }
 }

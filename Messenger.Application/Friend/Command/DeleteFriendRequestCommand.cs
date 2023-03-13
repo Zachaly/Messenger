@@ -25,7 +25,7 @@ namespace Messenger.Application.Command
         {
             try
             {
-                await _friendRequestRepository.DeleteFriendRequestById(request.Id);
+                await _friendRequestRepository.DeleteByIdAsync(request.Id);
 
                 return _responseFactory.CreateSuccess();
             }

@@ -1,4 +1,4 @@
-<div class="column is-5">
+<div class="column">
     <div *ngFor="let user of users">
         <app-user [user]="user" [isFriend]="isFriend(user.id)" (addFriend)="addFriend(user.id)"/>
     </div>

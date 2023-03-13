@@ -28,19 +28,19 @@ namespace Messenger.Application.Command
 
         public async Task<FriendAcceptedResponse> Handle(RespondToFriendRequestCommand request, CancellationToken cancellationToken)
         {
-            var friendRequest = await _friendRequestRepository.GetRequestById(request.RequestId);
-            var receiver = await _userRepository.GetUserById(friendRequest.ReceiverId);
+            var friendRequest = await _friendRequestRepository.GetByIdAsync(request.RequestId);
+            var receiver = await _userRepository.GetByIdAsync(friendRequest.ReceiverId);
 
             if (!request.Accepted)
             {
-                await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
+                await _friendRequestRepository.DeleteByIdAsync(request.RequestId);
                 return _friendFactory.CreateResponse(false, receiver.Name, friendRequest.ReceiverId);
             }
 
-            await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.SenderId, friendRequest.ReceiverId));
-            await _friendRepository.InsertFriendAsync(_friendFactory.Create(friendRequest.ReceiverId, friendRequest.SenderId));
+            await _friendRepository.InsertAsync(_friendFactory.Create(friendRequest.SenderId, friendRequest.ReceiverId));
+            await _friendRepository.InsertAsync(_friendFactory.Create(friendRequest.ReceiverId, friendRequest.SenderId));
 
-            await _friendRequestRepository.DeleteFriendRequestById(request.RequestId);
+            await _friendRequestRepository.DeleteByIdAsync(request.RequestId);
 
             return _friendFactory.CreateResponse(true, receiver.Name, friendRequest.SenderId);
         }

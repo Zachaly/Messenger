@@ -51,7 +51,7 @@ namespace Messenger.Tests.Integration.Database
 
             var request = new GetFriendsRequestsRequest { ReceiverId = user.Id };
 
-            var res = await _repository.GetFriendRequests(request);
+            var res = await _repository.GetAsync(request);
 
             Assert.Equal(friendIds.Count(), res.Count());
             Assert.Equivalent(friendNames, res.Select(x => x.Name));
@@ -77,7 +77,7 @@ namespace Messenger.Tests.Integration.Database
 
             var request = new GetFriendsRequestsRequest { SenderId = user.Id };
 
-            var res = await _repository.GetFriendRequests(request);
+            var res = await _repository.GetAsync(request);
 
             Assert.Equal(friendIds.Count(), res.Count());
             Assert.Equivalent(friendNames, res.Select(x => x.Name));
@@ -88,7 +88,7 @@ namespace Messenger.Tests.Integration.Database
         {
             var request = new FriendRequest { Created = DateTime.Now, ReceiverId = 1, SenderId = 2 };
 
-            var res = await _repository.InsertFriendRequest(request);
+            var res = await _repository.InsertAsync(request);
 
             var requests = await GetAllFromDatabase<FriendRequest>("FriendRequest");
 
@@ -108,7 +108,7 @@ namespace Messenger.Tests.Integration.Database
 
             var request = requests.First();
 
-            var res = await _repository.GetRequestById(request.Id);
+            var res = await _repository.GetByIdAsync(request.Id);
 
             Assert.Equal(request.Id, res.Id);
             Assert.Equal(request.Created, res.Created);
@@ -125,7 +125,7 @@ namespace Messenger.Tests.Integration.Database
 
             var idToDelete = requests.First().Id;
 
-            await _repository.DeleteFriendRequestById(idToDelete);
+            await _repository.DeleteByIdAsync(idToDelete);
 
             Assert.DoesNotContain(await GetAllFromDatabase<FriendRequest>("FriendRequest"), x => x.Id == idToDelete);
         }
