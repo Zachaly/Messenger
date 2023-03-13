@@ -36,7 +36,7 @@ namespace Messenger.Tests.Integration.Database
                 UserId = userId
             };
 
-            var res = await _repository.GetAllFriendsAsync(request);
+            var res = await _repository.GetAsync(request);
 
             Assert.Equivalent(res.Select(x => x.Id), friendIds, true);
         }
@@ -46,7 +46,7 @@ namespace Messenger.Tests.Integration.Database
         {
             var friend = new Friend { User1Id = 1, User2Id = 2 };
 
-            await _repository.InsertFriendAsync(friend);
+            await _repository.InsertAsync(friend);
 
             var friendList = await GetAllFromDatabase<Friend>("Friend");
 
@@ -61,7 +61,7 @@ namespace Messenger.Tests.Integration.Database
 
             var friendToDelete = (await GetAllFromDatabase<Friend>("Friend")).First();
 
-            await _repository.DeleteFriendAsync(friendToDelete.User1Id, friendToDelete.User2Id);
+            await _repository.DeleteAsync(friendToDelete.User1Id, friendToDelete.User2Id);
 
             Assert.DoesNotContain(await GetAllFromDatabase<Friend>("Friend"),
                 x => x.User1Id == friendToDelete.User1Id && x.User2Id == friendToDelete.User2Id);

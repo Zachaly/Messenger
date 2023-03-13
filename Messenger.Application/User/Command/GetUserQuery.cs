@@ -3,6 +3,7 @@ using Messenger.Application.Abstraction;
 using Messenger.Database.Repository;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
+using System.Net.Http.Headers;
 
 namespace Messenger.Application.Command
 {
@@ -22,9 +23,7 @@ namespace Messenger.Application.Command
 
         public Task<IEnumerable<UserModel>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            var index = request.GetIndexAndSize();
-
-            return _repository.GetUsers(index.Index, index.Size);
+            return _repository.GetAsync(request);
         }
     }
 }

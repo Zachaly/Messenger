@@ -1,59 +1,27 @@
 ﻿using Dapper;
 using Messenger.Database.Connection;
+using Messenger.Database.Repository.Abstraction;
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.Friend;
 using Messenger.Models.Friend.Request;
-using Messenger.Models.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messenger.Database.Repository
 {
-    public class FriendRepository : IFriendRepository
+    public class FriendRepository : KeylessRepositoryBase<Friend, FriendListItem, GetFriendsRequest>, IFriendRepository
     {
-        private readonly ISqlQueryBuilder _queryBuilder;
-        private readonly IConnectionFactory _connectionFactory;
-
         public FriendRepository(ISqlQueryBuilder queryBuilder, IConnectionFactory connectionFactory)
+            :base(connectionFactory, queryBuilder)
         {
-            _queryBuilder = queryBuilder;
-            _connectionFactory = connectionFactory;
+            Table = "Friend";
+            DefaultOrderBy = "[User1Id]";
         }
 
-        public async Task DeleteFriendAsync(long user1Id, long user2Id)
+        public Task DeleteAsync(long user1Id, long user2Id)
         {
-            var query = _queryBuilder.Where(new { User1Id = user1Id, User2Id = user2Id }).BuildDelete("Friend");
+            var query = _sqlQueryBuilder.Where(new { User1Id = user1Id, User2Id = user2Id }).BuildDelete("Friend");
 
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                await connection.QueryAsync(query.Query, query.Params);
-            }
-        }
-
-        public async Task<IEnumerable<FriendListItem>> GetAllFriendsAsync(GetFriendsRequest request)
-        {
-            var query = _queryBuilder
-                .Where(request)
-                .BuildSelect<FriendListItem>("Friend");
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                return await connection.QueryAsync<FriendListItem>(query.Query, query.Params);
-            }
-        }
-
-        public async Task InsertFriendAsync(Friend friend)
-        {
-            var query = _queryBuilder.BuildInsert(friend, false);
-
-            using(var connection = _connectionFactory.GetConnection())
-            {
-                await connection.QueryAsync(query.Query, query.Params);
-            }
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

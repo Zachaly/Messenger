@@ -25,8 +25,8 @@ namespace Messenger.Application.Command
         {
             try
             {
-                await _friendReposiotory.DeleteFriendAsync(request.User1Id, request.User2Id);
-                await _friendReposiotory.DeleteFriendAsync(request.User2Id, request.User1Id);
+                await _friendReposiotory.DeleteAsync(request.User1Id, request.User2Id);
+                await _friendReposiotory.DeleteAsync(request.User2Id, request.User1Id);
                 return _responseFactory.CreateSuccess();
             }
             catch (Exception ex)

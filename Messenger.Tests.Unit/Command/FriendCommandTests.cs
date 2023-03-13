@@ -26,7 +26,7 @@ namespace Messenger.Tests.Unit.Command
                 .Returns(new ResponseModel { Success = true, NewEntityId = 1 });
 
             var friendRepository = new Mock<IFriendRequestRepository>();
-            friendRepository.Setup(x => x.InsertFriendRequest(It.IsAny<FriendRequest>()))
+            friendRepository.Setup(x => x.InsertAsync(It.IsAny<FriendRequest>()))
                 .Callback((FriendRequest request) =>
                 {
                     requests.Add(request);
@@ -58,7 +58,7 @@ namespace Messenger.Tests.Unit.Command
                 .Returns(new ResponseModel { Success = false });
 
             var friendRepository = new Mock<IFriendRequestRepository>();
-            friendRepository.Setup(x => x.InsertFriendRequest(It.IsAny<FriendRequest>()))
+            friendRepository.Setup(x => x.InsertAsync(It.IsAny<FriendRequest>()))
                 .Callback((FriendRequest request) =>
                 {
                     requests.Add(request);
@@ -89,7 +89,7 @@ namespace Messenger.Tests.Unit.Command
 
             var friendRepository = new Mock<IFriendRequestRepository>();
 
-            friendRepository.Setup(x => x.GetFriendRequests(It.IsAny<GetFriendsRequestsRequest>()))
+            friendRepository.Setup(x => x.GetAsync(It.IsAny<GetFriendsRequestsRequest>()))
                 .ReturnsAsync(requests);
 
             var query = new GetFriendRequestsQuery { SenderId = 1, ReceiverId = 2 };
@@ -110,7 +110,7 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var friendRepository = new Mock<IFriendRepository>();
-            friendRepository.Setup(x => x.GetAllFriendsAsync(It.IsAny<GetFriendsRequest>()))
+            friendRepository.Setup(x => x.GetAsync(It.IsAny<GetFriendsRequest>()))
                 .ReturnsAsync(friends);
 
             var query = new GetFriendsQuery { UserId = 1 };
@@ -131,15 +131,15 @@ namespace Messenger.Tests.Unit.Command
 
             var friendRepository = new Mock<IFriendRepository>();
 
-            friendRepository.Setup(x => x.InsertFriendAsync(It.IsAny<Friend>()))
+            friendRepository.Setup(x => x.InsertAsync(It.IsAny<Friend>()))
                 .Callback((Friend friend) => friends.Add(friend));
 
             var friendRequestRepository = new Mock<IFriendRequestRepository>();
 
-            friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
+            friendRequestRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(request);
 
-            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
+            friendRequestRepository.Setup(x => x.DeleteByIdAsync(It.IsAny<long>()));
                 
             var friendFactory = new Mock<IFriendFactory>();
 
@@ -150,7 +150,7 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((long id1, long id2) => new Friend { User1Id = id1, User2Id = id2 });
 
             var userRepository = new Mock<IUserRepository>();
-            userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))
+            userRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(receiver);
 
             var command = new RespondToFriendRequestCommand
@@ -178,9 +178,9 @@ namespace Messenger.Tests.Unit.Command
 
             var friendRequestRepository = new Mock<IFriendRequestRepository>();
 
-            friendRequestRepository.Setup(x => x.GetRequestById(It.IsAny<long>()))
+            friendRequestRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(request);
-            friendRequestRepository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()));
+            friendRequestRepository.Setup(x => x.DeleteByIdAsync(It.IsAny<long>()));
 
             var friendFactory = new Mock<IFriendFactory>();
 
@@ -188,7 +188,7 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((bool accepted, string name, long id) => new FriendAcceptedResponse { Accepted = accepted, Name = name });
 
             var userRepository = new Mock<IUserRepository>();
-            userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))
+            userRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(receiver);
 
             var command = new RespondToFriendRequestCommand
@@ -215,7 +215,7 @@ namespace Messenger.Tests.Unit.Command
                 new Friend { User1Id = 3, User2Id = 1 },
             };
             var repository = new Mock<IFriendRepository>();
-            repository.Setup(x => x.DeleteFriendAsync(It.IsAny<long>(), It.IsAny<long>()))
+            repository.Setup(x => x.DeleteAsync(It.IsAny<long>(), It.IsAny<long>()))
                 .Callback((long id1, long id2) => friends.Remove(friends.First(x => x.User1Id == id1 && x.User2Id == id2)));
 
             var responseFactory = new Mock<IResponseFactory>();
@@ -242,7 +242,7 @@ namespace Messenger.Tests.Unit.Command
             const string Error = "err";
 
             var repository = new Mock<IFriendRepository>();
-            repository.Setup(x => x.DeleteFriendAsync(It.IsAny<long>(), It.IsAny<long>()))
+            repository.Setup(x => x.DeleteAsync(It.IsAny<long>(), It.IsAny<long>()))
                 .Callback(() => throw new Exception(Error));
 
             var responseFactory = new Mock<IResponseFactory>();
@@ -267,7 +267,7 @@ namespace Messenger.Tests.Unit.Command
                 new FriendRequest { Id = 3 },
             };
             var repository = new Mock<IFriendRequestRepository>();
-            repository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()))
+            repository.Setup(x => x.DeleteByIdAsync(It.IsAny<long>()))
                 .Callback((long id) => requests.Remove(requests.First(x => x.Id == id)));
 
             var responseFactory = new Mock<IResponseFactory>();
@@ -294,7 +294,7 @@ namespace Messenger.Tests.Unit.Command
             const string Error = "err";
 
             var repository = new Mock<IFriendRequestRepository>();
-            repository.Setup(x => x.DeleteFriendRequestById(It.IsAny<long>()))
+            repository.Setup(x => x.DeleteByIdAsync(It.IsAny<long>()))
                 .Callback(() => throw new Exception(Error));
 
             var responseFactory = new Mock<IResponseFactory>();

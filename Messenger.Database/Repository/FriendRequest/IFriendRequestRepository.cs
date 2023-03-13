@@ -1,15 +1,12 @@
-﻿using Messenger.Domain.Entity;
+﻿using Messenger.Database.Repository.Abstraction;
+using Messenger.Domain.Entity;
 using Messenger.Models.Friend;
 using Messenger.Models.Friend.Request;
 
 namespace Messenger.Database.Repository
 {
-    public interface IFriendRequestRepository
+    public interface IFriendRequestRepository : IRepository<FriendRequest, FriendRequestModel, GetFriendsRequestsRequest>
     {
-        Task<long> InsertFriendRequest(FriendRequest request);
-        Task<IEnumerable<FriendRequestModel>> GetFriendRequests(GetFriendsRequestsRequest request);
-        Task<FriendRequest> GetRequestById(long id);
-        Task<int> GetCount(GetFriendsRequestsRequest request);
-        Task DeleteFriendRequestById(long id);
+        Task<FriendRequest> GetByIdAsync(long id);
     }
 }

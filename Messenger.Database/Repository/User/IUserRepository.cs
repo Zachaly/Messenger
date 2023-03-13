@@ -1,13 +1,13 @@
-﻿using Messenger.Domain.Entity;
+﻿using Messenger.Database.Repository.Abstraction;
+using Messenger.Domain.Entity;
 using Messenger.Models.User;
+using Messenger.Models.User.Request;
 
 namespace Messenger.Database.Repository
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User, UserModel, GetUserRequest>
     {
-        Task<User> GetUserByLogin(string login);  
-        Task<IEnumerable<UserModel>> GetUsers(int pageIndex, int pageSize);
-        Task<long> InsertUser(User user);
-        Task<UserModel> GetUserById(long id);
+        Task<User> GetByLoginAsync(string login);
+        Task<UserModel> GetByIdAsync(long id);
     }
 }

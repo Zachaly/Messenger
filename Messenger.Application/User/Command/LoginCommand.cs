@@ -29,7 +29,7 @@ namespace Messenger.Application.Command
 
         public async Task<DataResponseModel<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserByLogin(request.Login);
+            var user = await _userRepository.GetByLoginAsync(request.Login);
 
             if(user == null ||
                !await _authService.VerifyPasswordAsync(request.Password, user.PasswordHash))

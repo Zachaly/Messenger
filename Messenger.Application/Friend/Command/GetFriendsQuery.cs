@@ -21,7 +21,7 @@ namespace Messenger.Application.Command
 
         public async Task<IEnumerable<FriendListItem>> Handle(GetFriendsQuery request, CancellationToken cancellationToken)
         {
-            return await _friendRepository.GetAllFriendsAsync(request);
+            return await _friendRepository.GetAsync(request);
         }
     }
 }

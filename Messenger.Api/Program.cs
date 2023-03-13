@@ -21,8 +21,6 @@ builder.Services.ConfigureSwagger();
 builder.ConfigureAuthorization();
 
 builder.Services.AddSignalR();
-//builder.Services.RemoveAll<IUserIdProvider>();
-//builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
 var app = builder.Build();
 

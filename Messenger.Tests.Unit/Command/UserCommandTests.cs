@@ -34,8 +34,8 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var repositoryMock = new Mock<IUserRepository>();
-            repositoryMock.Setup(x => x.GetUsers(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync((int index, int size) => users.Skip(index * size).Take(size));
+            repositoryMock.Setup(x => x.GetAsync(It.IsAny<GetUserRequest>()))
+                .ReturnsAsync((GetUserRequest request) => users.Skip((request.PageIndex ?? 0) * (request.PageSize ?? 10)).Take(request.PageSize ?? 10));
 
             var query = new GetUsersQuery { PageIndex = pageIndex, PageSize = pageSize };
 
@@ -69,7 +69,7 @@ namespace Messenger.Tests.Unit.Command
             var userRepositoryMock = new Mock<IUserRepository>();
 
             var user = new User { Id = 1, PasswordHash = "hash" };
-            userRepositoryMock.Setup(x => x.GetUserByLogin(It.IsAny<string>()))
+            userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(user);
 
             var command = new LoginCommand
@@ -106,7 +106,7 @@ namespace Messenger.Tests.Unit.Command
             var userRepositoryMock = new Mock<IUserRepository>();
 
             var user = new User { Id = 1, PasswordHash = "hash" };
-            userRepositoryMock.Setup(x => x.GetUserByLogin(It.IsAny<string>()))
+            userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(user);
 
             var command = new LoginCommand
@@ -138,7 +138,7 @@ namespace Messenger.Tests.Unit.Command
             var userRepositoryMock = new Mock<IUserRepository>();
 
             var user = new User { Id = 1, PasswordHash = "hash" };
-            userRepositoryMock.Setup(x => x.GetUserByLogin(It.IsAny<string>()))
+            userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(() => null);
 
             var command = new LoginCommand
@@ -174,11 +174,11 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((AddUserRequest request, string hash) => new User { Name = request.Name, PasswordHash = hash });
 
             var userRepositoryMock = new Mock<IUserRepository>();
-            userRepositoryMock.Setup(x => x.InsertUser(It.IsAny<User>()))
+            userRepositoryMock.Setup(x => x.InsertAsync(It.IsAny<User>()))
                 .Callback((User user) => users.Add(user))
                 .ReturnsAsync(1);
 
-            userRepositoryMock.Setup(x => x.GetUserByLogin(It.IsAny<string>()))
+            userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(() => null);
 
             var command = new RegisterCommand { Login = "log", Name = "name", Password = "pass" };
@@ -206,7 +206,7 @@ namespace Messenger.Tests.Unit.Command
 
             var userRepositoryMock = new Mock<IUserRepository>();
 
-            userRepositoryMock.Setup(x => x.GetUserByLogin(It.IsAny<string>()))
+            userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(() => new User());
 
             var command = new RegisterCommand { Login = "log", Name = "name", Password = "pass" };
@@ -225,7 +225,7 @@ namespace Messenger.Tests.Unit.Command
             var user = new UserModel { Id = 1, Name = "name" };
 
             var userRepository = new Mock<IUserRepository>();
-            userRepository.Setup(x => x.GetUserById(It.IsAny<long>()))
+            userRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(user);
 
             var query = new GetUserByIdQuery { UserId = user.Id };

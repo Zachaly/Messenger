@@ -26,7 +26,7 @@ namespace Messenger.Application.Command
 
         public async Task<ResponseModel> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            if(await _userRepository.GetUserByLogin(request.Login) is not null)
+            if(await _userRepository.GetByLoginAsync(request.Login) is not null)
             {
                 return _responseFactory.CreateFailure("Login already taken!");
             }
@@ -35,7 +35,7 @@ namespace Messenger.Application.Command
 
             var user = _userFactory.Create(request, passwordHash);
 
-            var id = await _userRepository.InsertUser(user);
+            var id = await _userRepository.InsertAsync(user);
 
             return _responseFactory.CreateCreatedSuccess(id);
         }
