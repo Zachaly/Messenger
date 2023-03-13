@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import FriendRequestResponse from 'src/app/models/FriendRequestResponse';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
@@ -22,9 +22,9 @@ export class NotificationListComponent {
 
       this.signalRService.openFriendConnection()
       this.signalRService.setFriendConnectionListener('GetRequest', (id: number) => {
-        friendRequestService.getFriendRequests({ receiverId: this.authService.currentUser.userId })
+        friendRequestService.getFriendRequests({ id, receiverId: this.authService.currentUser.userId })
         .subscribe(x => {
-          const text = `${x.find(req => req.id == id)!.name} send you a friend request`
+          const text = `${x[0].name} send you a friend request`
           this.notifications.push(text)
         })
       })
