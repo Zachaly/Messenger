@@ -12,5 +12,6 @@ namespace Messenger.Database.Sql
         ISqlQueryBuilder OrderBy(string columnName);
         (string Query, object Params) BuildCount(string table);
         (string Query, object Params) BuildDelete(string table);
+        (string Query, object Params) BuildSet<T>(T entity);
     }
 }
