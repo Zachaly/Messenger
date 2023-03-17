@@ -19,9 +19,18 @@ namespace Messenger.Application.Command
             _directMessageRepository = directMessageRepository;
         }
 
-        public Task<ResponseModel> Handle(UpdateDirectMessageCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(UpdateDirectMessageCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _directMessageRepository.UpdateAsync(request);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

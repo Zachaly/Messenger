@@ -7,8 +7,13 @@ namespace Messenger.Application
     public class DirectMessageFactory : IDirectMessageFactory
     {
         public DirectMessage Create(AddDirectMessageRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new DirectMessage
+            {
+                Content = request.Content,
+                Created = DateTime.Now,
+                Read = false,
+                ReceiverId = request.ReceiverId,
+                SenderId = request.SenderId,
+            };
     }
 }

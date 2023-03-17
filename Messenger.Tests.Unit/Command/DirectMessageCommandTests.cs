@@ -77,6 +77,8 @@ namespace Messenger.Tests.Unit.Command
                 });
 
             var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
 
             var command = new UpdateDirectMessageCommand { Id = message.Id, Read = true };
 
@@ -84,6 +86,30 @@ namespace Messenger.Tests.Unit.Command
 
             Assert.True(message.Read);
             Assert.True(res.Success);
+        }
+
+        [Fact]
+        public async Task UpdateDirectMessageCommand_ExceptionThrown_Fail()
+        {
+            const string Error = "Error";
+
+            var repository = new Mock<IDirectMessageRepository>();
+            repository.Setup(x => x.UpdateAsync(It.IsAny<UpdateDirectMessageRequest>()))
+                .Callback((UpdateDirectMessageRequest request) =>
+                {
+                    throw new Exception(Error);
+                });
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Error = msg, Success = false });
+
+            var command = new UpdateDirectMessageCommand { Id = 1, Read = true };
+
+            var res = await new UpdateDirectMessageHandler(responseFactory.Object, repository.Object).Handle(command, default);
+
+            Assert.False(res.Success);
+            Assert.Equal(Error, res.Error);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Messenger.Application.Command
 
         public Task<IEnumerable<DirectMessageModel>> Handle(GetDirectMessagesQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _directMessageRepository.GetAsync(request);
         }
     }
 }

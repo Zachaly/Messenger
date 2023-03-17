@@ -25,7 +25,13 @@ namespace Messenger.Application.Command
 
         public async Task<DataResponseModel<DirectMessageModel>> Handle(AddDirectMessageCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var message = _directMessageFactory.Create(request);
+
+            var id = await _directMessageRepository.InsertAsync(message);
+
+            var model = await _directMessageRepository.GetByIdAsync(id);
+
+            return _responseFactory.CreateSuccess(model);
         }
     }
 }
