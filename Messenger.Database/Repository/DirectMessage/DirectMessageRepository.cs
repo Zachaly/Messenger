@@ -17,7 +17,7 @@ namespace Messenger.Database.Repository
             Table = "DirectMessage";
         }
 
-        public Task<DirectMessageModel> GetByAsyncAsync(long id)
+        public Task<DirectMessageModel> GetByIdAsync(long id)
         {
             throw new NotImplementedException();
         }
