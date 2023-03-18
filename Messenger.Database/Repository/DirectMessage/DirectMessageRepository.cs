@@ -19,12 +19,16 @@ namespace Messenger.Database.Repository
 
         public Task<DirectMessageModel> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new GetDirectMessagesRequest { Id = id }).BuildSelect<DirectMessageModel>(Table);
+
+            return QuerySingleAsync<DirectMessageModel>(query.Query, query.Params);
         }
 
         public Task UpdateAsync(UpdateDirectMessageRequest request)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.BuildSet(request, Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

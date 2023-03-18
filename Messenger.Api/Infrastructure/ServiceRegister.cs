@@ -21,6 +21,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IUserRepository, UserRepository>();
             collection.AddScoped<IFriendRepository, FriendRepository>();
             collection.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+            collection.AddScoped<IDirectMessageRepository, DirectMessageRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -29,6 +30,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IResponseFactory, ResponseFactory>();
             collection.AddScoped<IUserFactory, UserFactory>();
             collection.AddScoped<IFriendFactory, FriendFactory>();
+            collection.AddScoped<IDirectMessageFactory, DirectMessageFactory>();
 
             collection.AddMediatR(opt =>
             {
