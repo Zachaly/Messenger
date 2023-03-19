@@ -34,12 +34,6 @@ namespace Messenger.Api.Controllers
         {
             var res = await _mediator.Send(command);
 
-            if(res.Data != null)
-            {
-                await _messageHub.Clients.Users(new string[] { command.SenderId.ToString(), command.ReceiverId.ToString()})
-                    .GetMessage(res.Data);
-            }
-
             return res.ReturnNoContentOrBadRequest();
         }
 

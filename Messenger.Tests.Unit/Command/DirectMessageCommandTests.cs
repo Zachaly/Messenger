@@ -30,16 +30,17 @@ namespace Messenger.Tests.Unit.Command
                 .Returns(new DirectMessage());
 
             var responseFactory = new Mock<IResponseFactory>();
-            responseFactory.Setup(x => x.CreateSuccess(It.IsAny<DirectMessageModel>()))
-                .Returns((DirectMessageModel data) => new DataResponseModel<DirectMessageModel> { Data = data, Success = true });
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var notificationService = new Mock<INotificationService>();
 
             var command = new AddDirectMessageCommand { };
 
-            var response = await new AddDirectMessageHandler(responseFactory.Object, messageFactory.Object, repository.Object)
+            var response = await new AddDirectMessageHandler(responseFactory.Object, messageFactory.Object, repository.Object, notificationService.Object)
                 .Handle(command, default);
 
             Assert.True(response.Success);
-            Assert.NotNull(response.Data);
             Assert.Single(messages);
         }
 
@@ -76,13 +77,19 @@ namespace Messenger.Tests.Unit.Command
                     message.Read = request.Read ?? message.Read;
                 });
 
+            repository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new DirectMessageModel { SenderId = message.SenderId, Id = message.Id });
+
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateSuccess())
                 .Returns(new ResponseModel { Success = true });
 
+            var notificationService = new Mock<INotificationService>();
+
             var command = new UpdateDirectMessageCommand { Id = message.Id, Read = true };
 
-            var res = await new UpdateDirectMessageHandler(responseFactory.Object, repository.Object).Handle(command, default);
+            var res = await new UpdateDirectMessageHandler(responseFactory.Object, repository.Object, notificationService.Object)
+                .Handle(command, default);
 
             Assert.True(message.Read);
             Assert.True(res.Success);
@@ -104,9 +111,12 @@ namespace Messenger.Tests.Unit.Command
             responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
                 .Returns((string msg) => new ResponseModel { Error = msg, Success = false });
 
+            var notificationService = new Mock<INotificationService>();
+
             var command = new UpdateDirectMessageCommand { Id = 1, Read = true };
 
-            var res = await new UpdateDirectMessageHandler(responseFactory.Object, repository.Object).Handle(command, default);
+            var res = await new UpdateDirectMessageHandler(responseFactory.Object, repository.Object, notificationService.Object)
+                .Handle(command, default);
 
             Assert.False(res.Success);
             Assert.Equal(Error, res.Error);
