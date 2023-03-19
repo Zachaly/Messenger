@@ -11,5 +11,6 @@ namespace Messenger.Models.DirectMessage
         public DateTime Created { get; set; }
         [SqlName(Name = "[User].[Name]")]
         public string SenderName { get; set; }
+        public long SenderId { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
 using Messenger.Application.Command;
 using Messenger.Models.DirectMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Messenger.Api.Controllers
 {
@@ -12,10 +14,12 @@ namespace Messenger.Api.Controllers
     public class DirectMessageController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<DirectMessageHub, IDirectMessageClient> _messageHub;
 
-        public DirectMessageController(IMediator mediator)
+        public DirectMessageController(IMediator mediator, IHubContext<DirectMessageHub, IDirectMessageClient> messageHub)
         {
             _mediator = mediator;
+            _messageHub = messageHub;
         }
 
         /// <summary>
@@ -29,6 +33,12 @@ namespace Messenger.Api.Controllers
         public async Task<ActionResult> PostAsync(AddDirectMessageCommand command)
         {
             var res = await _mediator.Send(command);
+
+            if(res.Data != null)
+            {
+                await _messageHub.Clients.Users(new string[] { command.SenderId.ToString(), command.ReceiverId.ToString()})
+                    .GetMessage(res.Data);
+            }
 
             return res.ReturnNoContentOrBadRequest();
         }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import DirectMessage from 'src/app/models/DirectMessage';
 import FriendRequestResponse from 'src/app/models/FriendRequestResponse';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
@@ -15,7 +16,7 @@ export class NotificationListComponent {
 
   constructor(private authService: AuthService, private signalRService: SignalrService, friendRequestService: FriendRequestService) {
     this.authService.onAuthChange().subscribe(res => {
-      if(!res.authToken){
+      if (!res.authToken) {
         this.signalRService.friendConnection?.stop()
         return
       }
@@ -23,14 +24,22 @@ export class NotificationListComponent {
       this.signalRService.openFriendConnection()
       this.signalRService.setFriendConnectionListener('GetRequest', (id: number) => {
         friendRequestService.getFriendRequests({ id, receiverId: this.authService.currentUser.userId })
-        .subscribe(x => {
-          const text = `${x[0].name} send you a friend request`
-          this.notifications.push(text)
-        })
+          .subscribe(x => {
+            const text = `${x[0].name} send you a friend request`
+            this.notifications.push(text)
+          })
       })
       this.signalRService.setFriendConnectionListener('GetRequestResponse', (x: FriendRequestResponse) => {
-        const text = `${x.name} ${x.accepted ? 'accepted': 'denied'} your request`
+        const text = `${x.name} ${x.accepted ? 'accepted' : 'denied'} your request`
         this.notifications.push(text)
+      })
+
+      this.signalRService.openDirectMessageConnection()
+      this.signalRService.setDirectMessageConnectionListener('GetMessage', (msg: DirectMessage) => {
+        if (msg.senderId == authService.currentUser.userId) {
+          return
+        }
+        this.notifications.push(`${msg.senderName} writes: ${msg.content}`)
       })
     })
 

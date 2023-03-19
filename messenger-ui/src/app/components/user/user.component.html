@@ -3,6 +3,10 @@
         <div class="media p-1 is-fullwidth">
             <div class="media-left">
                 <p class="title is-3">{{user.name}}</p>
+
+            </div>
+            <div class="media-right" *ngIf="isFriend">
+                <a [routerLink]="['/direct-chat', user.id]" class="button is-info">Chat</a>
             </div>
             <div class="media-right" *ngIf="!isFriend">
                 <button class="button is-info" (click)="onAddFriend()">Add friend</button>
