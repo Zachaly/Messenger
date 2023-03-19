@@ -7,23 +7,25 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class AddDirectMessageCommand : AddDirectMessageRequest, IRequest<DataResponseModel<DirectMessageModel>> { }
+    public class AddDirectMessageCommand : AddDirectMessageRequest, IRequest<ResponseModel> { }
 
-    public class AddDirectMessageHandler : IRequestHandler<AddDirectMessageCommand, DataResponseModel<DirectMessageModel>>
+    public class AddDirectMessageHandler : IRequestHandler<AddDirectMessageCommand, ResponseModel>
     {
         private readonly IResponseFactory _responseFactory;
         private readonly IDirectMessageFactory _directMessageFactory;
         private readonly IDirectMessageRepository _directMessageRepository;
+        private readonly INotificationService _notificationService;
 
         public AddDirectMessageHandler(IResponseFactory responseFactory, IDirectMessageFactory directMessageFactory, 
-            IDirectMessageRepository directMessageRepository)
+            IDirectMessageRepository directMessageRepository, INotificationService notificationService)
         {
             _responseFactory = responseFactory;
             _directMessageFactory = directMessageFactory;
             _directMessageRepository = directMessageRepository;
+            _notificationService = notificationService;
         }
 
-        public async Task<DataResponseModel<DirectMessageModel>> Handle(AddDirectMessageCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddDirectMessageCommand request, CancellationToken cancellationToken)
         {
             var message = _directMessageFactory.Create(request);
 
@@ -31,7 +33,9 @@ namespace Messenger.Application.Command
 
             var model = await _directMessageRepository.GetByIdAsync(id);
 
-            return _responseFactory.CreateSuccess(model);
+            _notificationService.SendDirectMessage(model, request.SenderId, request.ReceiverId);
+
+            return _responseFactory.CreateSuccess();
         }
     }
 }

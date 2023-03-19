@@ -48,12 +48,6 @@ namespace Messenger.Api.Controllers
         {
             var res = await _mediator.Send(command);
 
-            if(res.NewEntityId is not null)
-            {
-                 await _friendHub.Clients.User(command.ReceiverId.ToString()).GetRequest(res.NewEntityId.GetValueOrDefault());
-            }
-            
-
             return res.ReturnCreatedOrBadRequest("/api/friend-request");
         }
 
@@ -67,9 +61,7 @@ namespace Messenger.Api.Controllers
         {
             var res = await _mediator.Send(command);
 
-            await _friendHub.Clients.User(res.SenderId.ToString()).GetRequestResponse(res);
-
-            return NoContent();
+            return res.ReturnNoContentOrBadRequest();
         }
 
         /// <summary>

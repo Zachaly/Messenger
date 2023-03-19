@@ -15,12 +15,15 @@ namespace Messenger.Application.Command
         private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IFriendFactory _friendFactory;
         private readonly IResponseFactory _responseFactory;
+        private readonly INotificationService _notificationService;
 
-        public AddFriendHandler(IFriendRequestRepository friendRequestRepository, IFriendFactory friendFactory, IResponseFactory responseFactory)
+        public AddFriendHandler(IFriendRequestRepository friendRequestRepository, IFriendFactory friendFactory, IResponseFactory responseFactory,
+            INotificationService notificationService)
         {
             _friendRequestRepository = friendRequestRepository;
             _friendFactory = friendFactory;
             _responseFactory = responseFactory;
+            _notificationService = notificationService;
         }
 
         public async Task<ResponseModel> Handle(AddFriendCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,8 @@ namespace Messenger.Application.Command
             var friendRequest = _friendFactory.CreateRequest(request);
 
             var id = await _friendRequestRepository.InsertAsync(friendRequest);
+
+            _notificationService.SendFriendRequest(id, request.ReceiverId);
 
             return _responseFactory.CreateCreatedSuccess(id);
         }

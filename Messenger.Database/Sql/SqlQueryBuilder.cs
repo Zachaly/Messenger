@@ -9,7 +9,7 @@ namespace Messenger.Database.Sql
 {
     public class SqlQueryBuilder : ISqlQueryBuilder
     {
-        private readonly SqlBuilder _builder;
+        private SqlBuilder _builder;
         private string _pagination = "";
         private readonly StringBuilder _joinBuilder = new StringBuilder();
         private DynamicParameters? _parameters = new DynamicParameters();
@@ -54,6 +54,8 @@ namespace Messenger.Database.Sql
 
             var temp = _builder.AddTemplate(template, _parameters);
 
+            _builder = new SqlBuilder();
+
             return (temp.RawSql, temp.Parameters);
         }
         
@@ -62,6 +64,8 @@ namespace Messenger.Database.Sql
             var template = $"SELECT COUNT(*) FROM [{table}] {_joinBuilder}/**where**/";
 
             var temp = _builder.AddTemplate(template, _parameters);
+
+            _builder = new SqlBuilder();
 
             return (temp.RawSql, temp.Parameters);
         }
@@ -93,6 +97,8 @@ namespace Messenger.Database.Sql
             var template = $"INSERT INTO [{typeInfo.Name}]({columns}) {output} VALUES({values})";
 
             var temp = _builder.AddTemplate(template, parameters);
+
+            _builder = new SqlBuilder();
 
             return (temp.RawSql, temp.Parameters);
         }
@@ -172,6 +178,8 @@ namespace Messenger.Database.Sql
 
             var temp = _builder.AddTemplate(template, _parameters);
 
+            _builder = new SqlBuilder();
+
             return (temp.RawSql, temp.Parameters);
         }
 
@@ -193,6 +201,8 @@ namespace Messenger.Database.Sql
             var template = $"UPDATE [{table}] SET {setBuilder} /**where**/";
 
             var temp = _builder.AddTemplate(template, _parameters);
+
+            _builder = new SqlBuilder();
 
             return (temp.RawSql, temp.Parameters);
         }

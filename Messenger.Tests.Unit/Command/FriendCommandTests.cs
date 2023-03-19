@@ -35,9 +35,11 @@ namespace Messenger.Tests.Unit.Command
             friendRepository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequestsRequest>()))
                 .ReturnsAsync(0);
 
+            var notificationService = new Mock<INotificationService>();
+
             var request = new AddFriendCommand { SenderId = 1, ReceiverId = 2 };
 
-            var res = await new AddFriendHandler(friendRepository.Object, friendFactory.Object, responseFactory.Object)
+            var res = await new AddFriendHandler(friendRepository.Object, friendFactory.Object, responseFactory.Object, notificationService.Object)
                     .Handle(request, default);
 
             Assert.True(res.Success);
@@ -67,9 +69,11 @@ namespace Messenger.Tests.Unit.Command
             friendRepository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequestsRequest>()))
                 .ReturnsAsync(1);
 
+            var notificationService = new Mock<INotificationService>();
+
             var request = new AddFriendCommand { SenderId = 1, ReceiverId = 2 };
 
-            var res = await new AddFriendHandler(friendRepository.Object, friendFactory.Object, responseFactory.Object)
+            var res = await new AddFriendHandler(friendRepository.Object, friendFactory.Object, responseFactory.Object, notificationService.Object)
                     .Handle(request, default);
 
             Assert.False(res.Success);
@@ -153,6 +157,12 @@ namespace Messenger.Tests.Unit.Command
             userRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(receiver);
 
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var notificationService = new Mock<INotificationService>();
+
             var command = new RespondToFriendRequestCommand
             {
                 RequestId = 1,
@@ -160,12 +170,10 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var res = await new RespondToFriendRequestHandler(friendFactory.Object, friendRequestRepository.Object,
-                friendRepository.Object, userRepository.Object)
+                friendRepository.Object, userRepository.Object, notificationService.Object, responseFactory.Object)
                 .Handle(command, default);
 
-            Assert.True(res.Accepted);
-            Assert.Equal(receiver.Name, res.Name);
-            Assert.Equal(2, friends.Count);
+            Assert.True(res.Success);
         }
 
         [Fact]
@@ -191,6 +199,12 @@ namespace Messenger.Tests.Unit.Command
             userRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(receiver);
 
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var notificationService = new Mock<INotificationService>();
+
             var command = new RespondToFriendRequestCommand
             {
                 RequestId = 1,
@@ -198,11 +212,10 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var res = await new RespondToFriendRequestHandler(friendFactory.Object, friendRequestRepository.Object,
-                friendRepository.Object, userRepository.Object)
+                friendRepository.Object, userRepository.Object, notificationService.Object, responseFactory.Object)
                 .Handle(command, default);
 
-            Assert.False(res.Accepted);
-            Assert.Equal(receiver.Name, res.Name);
+            Assert.True(res.Success);
         }
 
         [Fact]
