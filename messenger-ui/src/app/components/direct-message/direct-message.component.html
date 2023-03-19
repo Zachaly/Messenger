@@ -10,4 +10,7 @@
     <div class="content is-4">
         {{ message.content }}
     </div>
+    <div class="readbar" [ngClass]="message.read ? 'has-background-success' : 'has-background-info'">
+
+    </div>
 </div>
