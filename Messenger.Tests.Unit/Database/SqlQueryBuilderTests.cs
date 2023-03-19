@@ -121,7 +121,7 @@ namespace Messenger.Tests.Unit.Database
 
             var res = _builder.Where(request).OrderBy("[Id]").BuildSelect<TestEntity>(Table);
 
-            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( [Name] LIKE @Name OR [Something]=@Something ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
+            Assert.Equal($"SELECT [{Table}].[Id] , [{Table}].[Name] FROM [{Table}] WHERE ( ([Name] LIKE @Name) OR ([Something]=@Something) ) ORDER BY [{Table}].[Id]", FormatQuery(res.Query));
         }
 
         [Fact]

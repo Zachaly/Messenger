@@ -47,6 +47,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<FriendHub>("/ws/friend");
+app.MapHub<DirectMessageHub>("/ws/direct-message");
 
 app.Run();
 

@@ -17,6 +17,8 @@ import { FriendRequestListPageComponent } from './pages/friend-request-list-page
 import { FriendComponent } from './components/friend/friend.component';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { DirectChatPageComponent } from './pages/direct-chat-page/direct-chat-page.component';
+import { DirectMessageComponent } from './components/direct-message/direct-message.component';
 
 const route = (path: string, component: any) => (
   {
@@ -30,7 +32,8 @@ const routes: Routes = [
   route('login', LoginPageComponent),
   route('register', RegisterPageComponent),
   route('friend-request', FriendRequestListPageComponent),
-  route('friend', FriendListPageComponent)
+  route('friend', FriendListPageComponent),
+  route('direct-chat/:userId', DirectChatPageComponent)
 ]
 
 @NgModule({
@@ -48,6 +51,8 @@ const routes: Routes = [
     FriendComponent,
     NotificationListComponent,
     NotificationComponent,
+    DirectChatPageComponent,
+    DirectMessageComponent,
   ],
   imports: [
     BrowserModule,

@@ -127,7 +127,7 @@ namespace Messenger.Database.Sql
                     } 
                     else
                     {
-                        _builder.OrWhere($"{column}{equal}@{prop.Name}", _parameters);
+                        _builder.OrWhere($"({column}{equal}@{prop.Name})", _parameters);
                     }
                 }
                 else if (prop.GetCustomAttribute<JoinAttribute>() is null)
@@ -169,6 +169,28 @@ namespace Messenger.Database.Sql
         public (string Query, object Params) BuildDelete(string table)
         {
             var template = $"DELETE FROM [{table}] /**where**/";
+
+            var temp = _builder.AddTemplate(template, _parameters);
+
+            return (temp.RawSql, temp.Parameters);
+        }
+
+        public (string Query, object Params) BuildSet<T>(T request, string table)
+        {
+            _parameters = new DynamicParameters(request);
+
+            _builder.Where("[Id]=@Id", _parameters);
+
+            var setBuilder = new StringBuilder();
+
+            var props = typeof(T).GetProperties().Where(x => x.Name != "Id" && x.GetValue(request) != default);
+
+            foreach(var prop in props) 
+            {
+                setBuilder.Append($"[{table}].[{prop.Name}]=@{prop.Name}");
+            }
+
+            var template = $"UPDATE [{table}] SET {setBuilder} /**where**/";
 
             var temp = _builder.AddTemplate(template, _parameters);
 

@@ -31,5 +31,18 @@ namespace Messenger.Tests.Integration
 
         public static IEnumerable<FriendRequest> CreateFriendRequests(IEnumerable<long> receiverIds, long senderId)
             => receiverIds.Select(id => new FriendRequest { Created = DateTime.Now, SenderId = senderId, ReceiverId = id });
+
+        public static IEnumerable<DirectMessage> CreateMessages(long senderId, long receiverId, int count)
+        {
+            var messages = new List<DirectMessage>();
+
+            for(int i = 0; i < count; i++)
+            {
+                messages.Add(new DirectMessage { Content = $"{senderId}-{receiverId}", Created = DateTime.Now,
+                    Read = false, ReceiverId = receiverId, SenderId = senderId });
+            }
+
+            return messages;
+        }
     }
 }

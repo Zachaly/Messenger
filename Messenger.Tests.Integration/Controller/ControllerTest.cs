@@ -23,7 +23,8 @@ namespace Messenger.Tests.Integration.Controller
             { 
                 "TRUNCATE TABLE [User]",
                 "TRUNCATE TABLE [Friend]",
-                "TRUNCATE TABLE [FriendRequest]"
+                "TRUNCATE TABLE [FriendRequest]",
+                "TRUNCATE TABLE [DirectMessage]"
             };
 
         public ControllerTest()
