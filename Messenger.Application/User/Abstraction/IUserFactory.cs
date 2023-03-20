@@ -9,5 +9,6 @@ namespace Messenger.Application.Abstraction
         User Create(AddUserRequest request, string passwordHash);
         UserModel CreateModel(User user);
         LoginResponse CreateLoginResponse(User user, string token);
+        LoginResponse CreateLoginResponse(UserModel user, string token);
     }
 }

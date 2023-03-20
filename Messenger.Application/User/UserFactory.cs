@@ -23,6 +23,14 @@ namespace Messenger.Application
                 UserName = user.Name,
             };
 
+        public LoginResponse CreateLoginResponse(UserModel user, string token)
+           => new LoginResponse
+           {
+               AuthToken = token,
+               UserId = user.Id,
+               UserName = user.Name,
+           };
+
         public UserModel CreateModel(User user)
             => new UserModel
             {

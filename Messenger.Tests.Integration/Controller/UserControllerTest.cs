@@ -118,5 +118,19 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(_authUsername, content.Name);
         }
+
+        [Fact]
+        public async Task GetCurrentUserAsync_Success()
+        {
+            await Authorize();
+
+            var response = await _httpClient.GetAsync($"{ApiUrl}/current");
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(_authUsername, content.UserName);
+            Assert.Equal(_authorizedUserId, content.UserId);
+            Assert.Equal(_httpClient.DefaultRequestHeaders.Authorization.Parameter, content.AuthToken);
+        }
     }
 }

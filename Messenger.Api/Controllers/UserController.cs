@@ -75,5 +75,19 @@ namespace Messenger.Api.Controllers
 
             return Ok(res);
         }
+
+        /// <summary>
+        /// Returns current user based on bearer token
+        /// </summary>
+        /// <response code="200">User data</response>
+        [HttpGet("current")]
+        [Authorize]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<LoginResponse>> GetCurrentUserAsync()
+        {
+            var res = await _mediator.Send(new GetCurrentUserQuery());
+
+            return Ok(res);
+        }
     }
 }

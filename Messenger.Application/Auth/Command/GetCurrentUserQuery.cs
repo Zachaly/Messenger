@@ -1,13 +1,11 @@
 ﻿using MediatR;
+using Messenger.Application.Abstraction;
+using Messenger.Database.Repository;
 using Messenger.Models.User;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
-namespace Messenger.Application.Auth.Command
+namespace Messenger.Application.Command
 {
     public class GetCurrentUserQuery : IRequest<LoginResponse>
     {
@@ -16,14 +14,25 @@ namespace Messenger.Application.Auth.Command
 
     public class GetCurrentUserHandler : IRequestHandler<GetCurrentUserQuery, LoginResponse>
     {
-        public GetCurrentUserHandler(IHttpContextAccessor)
-        {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserFactory _userFactory;
+        private readonly IUserRepository _userRepository;
 
+        public GetCurrentUserHandler(IHttpContextAccessor httpContextAccessor, IUserFactory userFactory, IUserRepository userRepository)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _userFactory = userFactory;
+            _userRepository = userRepository;
         }
 
-        public Task<LoginResponse> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        public async Task<LoginResponse> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var userId = long.Parse(_httpContextAccessor.HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            return _userFactory.CreateLoginResponse(user, token);
         }
     }
 }
