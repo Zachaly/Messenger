@@ -1,5 +1,6 @@
 ﻿using Messenger.Application;
 using Messenger.Domain.Entity;
+using Messenger.Models.User;
 using Messenger.Models.User.Request;
 
 namespace Messenger.Tests.Unit.Factory
@@ -32,12 +33,30 @@ namespace Messenger.Tests.Unit.Factory
         }
 
         [Fact]
-        public void CreateLoginResponse_Creates_Proper_Model()
+        public void CreateLoginResponse_With_Entity_Creates_Proper_Model()
         {
             var user = new User
             {
                 Id = 1,
                 Login = "login",
+                Name = "user",
+            };
+
+            const string Token = "token";
+
+            var response = _factory.CreateLoginResponse(user, Token);
+
+            Assert.Equal(Token, response.AuthToken);
+            Assert.Equal(user.Name, response.UserName);
+            Assert.Equal(user.Id, response.UserId);
+        }
+
+        [Fact]
+        public void CreateLoginResponse_With_Model_Creates_Proper_Model()
+        {
+            var user = new UserModel
+            {
+                Id = 1,
                 Name = "user",
             };
 

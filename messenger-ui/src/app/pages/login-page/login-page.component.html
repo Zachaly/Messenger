@@ -8,6 +8,12 @@
             <label for="password" class="label">Password:</label>
             <input type="password" name="password" class="input" [(ngModel)]="loginRequest.password">
         </div>
+        <div class="control">
+            <label class="checkbox" for="remember-me">
+                <input type="checkbox" name="remember-me" [(ngModel)]="rememberMe">
+                Remember me
+            </label>
+        </div>
         <div class="control mt-1">
             <button class="button is-success">Login</button>
         </div>

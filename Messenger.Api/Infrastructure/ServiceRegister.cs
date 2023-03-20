@@ -32,6 +32,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IFriendFactory, FriendFactory>();
             collection.AddScoped<IDirectMessageFactory, DirectMessageFactory>();
             collection.AddScoped<INotificationService, NotificationService>();
+            collection.AddHttpContextAccessor();
 
             collection.AddMediatR(opt =>
             {
