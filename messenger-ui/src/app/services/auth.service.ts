@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import LoginResponse from '../models/LoginResponse';
@@ -23,11 +23,10 @@ export class AuthService {
     return this.http.post(API_URL, request)
   }
 
-  login(request: LoginRequest, onLogin: Function) {
+  login(request: LoginRequest) {
     return this.http.post<LoginResponse>(`${API_URL}/login`, request).subscribe(res => {
       this.currentUser = res
       this.userSubject.next(this.currentUser)
-      onLogin()
     })
   }
 
@@ -38,5 +37,30 @@ export class AuthService {
   logout() {
     this.currentUser = { userName: '', userId: 0, authToken: '' }
     this.userSubject.next(this.currentUser)
+  }
+
+  saveUserData() {
+    localStorage.setItem('token', this.currentUser.authToken)
+  }
+
+  clearUserData() {
+    localStorage.setItem('token', '')
+  }
+
+  loadUserData() {
+    const token = localStorage.getItem('token')
+
+    if(!token){
+      return
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+
+    this.http.get<LoginResponse>(`${API_URL}/current`, { headers }).subscribe(res => {
+      this.currentUser = res
+      this.userSubject.next(this.currentUser)
+    })
   }
 }
