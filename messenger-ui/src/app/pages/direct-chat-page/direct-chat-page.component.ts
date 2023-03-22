@@ -10,7 +10,8 @@ import { SignalrService } from 'src/app/services/signalr.service';
 @Component({
   selector: 'app-direct-chat-page',
   templateUrl: './direct-chat-page.component.html',
-  styleUrls: ['./direct-chat-page.component.css']
+  styleUrls: ['./direct-chat-page.component.css'],
+  providers: [SignalrService]
 })
 export class DirectChatPageComponent implements OnInit, OnDestroy {
 
@@ -27,20 +28,21 @@ export class DirectChatPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.signalR.directMessageConnection?.off('ReadMessage')
+   this.signalR.stopAllConnections()
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(param => {
+    this.route.params.subscribe(async param => {
       this.userId = param['userId']
 
       this.messageService
         .getMessages({ user1Id: this.currentUserId, user2Id: this.userId })
         .subscribe(res => res.forEach(msg => this.readMessage(msg)))
 
-      this.signalR.openDirectMessageConnection()
-      this.signalR.setDirectMessageConnectionListener('GetMessage', (msg: DirectMessage) => this.readMessage(msg))
-      this.signalR.setDirectMessageConnectionListener('ReadMessage', (x: number, read: boolean) => {
+      const directMessageConnectionId = await this.signalR.openConnection('direct-message')
+
+      this.signalR.setConnectionListener(directMessageConnectionId, 'GetMessage', (msg: DirectMessage) => this.readMessage(msg))
+      this.signalR.setConnectionListener(directMessageConnectionId, 'ReadMessage', (x: number, read: boolean) => {
         this.messages.find(msg => msg.id === x)!.read = read
       })
     })
