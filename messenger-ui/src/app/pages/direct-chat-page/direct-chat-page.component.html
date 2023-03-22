@@ -1,13 +1,17 @@
-<div class="columns">
-    <div class="column">
-        <div *ngFor="let msg of messages" [ngClass]="msg.senderId == currentUserId ? 'is-justify-content-end' : 'is-justify-content-start'" class="is-flex">
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div *ngFor="let msg of messages"
+            [ngClass]="msg.senderId == currentUserId ? 'is-justify-content-end' : 'is-justify-content-start'"
+            class="is-flex">
             <div class="message">
-                <app-direct-message  [message]="msg" />
+                <app-direct-message [message]="msg" />
             </div>
         </div>
     </div>
 </div>
-<div>
-    <textarea class="textarea" name="content" [(ngModel)]="newMessageContent"></textarea>
-    <button class="button is-info" (click)="sendMessage()">Send</button>
+<div class="columns is-centered">
+    <div class="column is-8">
+        <textarea class="textarea" name="content" [(ngModel)]="newMessageContent"></textarea>
+        <button class="button is-info" (click)="sendMessage()">Send</button>
+    </div>
 </div>

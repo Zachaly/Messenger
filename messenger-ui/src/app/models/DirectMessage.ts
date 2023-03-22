@@ -2,7 +2,7 @@ export default interface DirectMessage {
     id: number,
     content: string,
     read: boolean,
-    created: Date,
+    created: string,
     senderName: string,
     senderId: number
 }

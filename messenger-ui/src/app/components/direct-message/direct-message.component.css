@@ -1,3 +1,7 @@
 .readbar {
     height: 5px;
 }
+
+.card {
+    min-width: 20rem;
+}
