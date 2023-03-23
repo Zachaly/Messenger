@@ -1,1 +1,1 @@
-<app-notification *ngFor="let text of notifications; index as index" [text]="text" (read)="remove(index)"/>
+<app-notification *ngFor="let text of notifications; index as index" [notification]="text" (delete)="remove(index)"/>

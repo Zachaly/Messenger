@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import DirectMessage from 'src/app/models/DirectMessage';
 import FriendRequestResponse from 'src/app/models/FriendRequestResponse';
+import NotificationModel from 'src/app/models/NotificationModel';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
 import { SignalrService } from 'src/app/services/signalr.service';
@@ -13,7 +14,7 @@ import { SignalrService } from 'src/app/services/signalr.service';
 })
 export class NotificationListComponent {
 
-  notifications: string[] = []
+  notifications: NotificationModel[] = []
 
   constructor(private authService: AuthService, private signalR: SignalrService, private friendRequestService: FriendRequestService) {
     this.authService.onAuthChange().subscribe(res => {
@@ -33,22 +34,22 @@ export class NotificationListComponent {
       this.friendRequestService.getFriendRequests({ id, receiverId: this.authService.currentUser.userId })
         .subscribe(x => {
           const text = `${x[0].name} send you a friend request`
-          this.notifications.push(text)
+          this.notifications.push({ text, read: false })
         })
     })
 
     this.signalR.setConnectionListener(friendConnectionId, 'GetRequestResponse', (x: FriendRequestResponse) => {
       const text = `${x.name} ${x.accepted ? 'accepted' : 'denied'} your request`
-      this.notifications.push(text)
+      this.notifications.push({ text, read: false })
     })
 
     const directMessageConnectionId = await this.signalR.openConnection('direct-message')
 
-    this.signalR.setConnectionListener(directMessageConnectionId,'GetMessage', (msg: DirectMessage) => {
+    this.signalR.setConnectionListener(directMessageConnectionId, 'GetMessage', (msg: DirectMessage) => {
       if (msg.senderId == this.authService.currentUser.userId) {
         return
       }
-      this.notifications.push(`${msg.senderName} writes: ${msg.content}`)
+      this.notifications.push({ text: `${msg.senderName} writes: ${msg.content}`, read: false })
     })
   }
 
