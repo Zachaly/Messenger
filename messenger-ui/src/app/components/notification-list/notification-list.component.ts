@@ -4,6 +4,7 @@ import FriendRequestResponse from 'src/app/models/FriendRequestResponse';
 import NotificationModel from 'src/app/models/NotificationModel';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 
 @Component({
@@ -16,7 +17,10 @@ export class NotificationListComponent {
 
   notifications: NotificationModel[] = []
 
-  constructor(private authService: AuthService, private signalR: SignalrService, private friendRequestService: FriendRequestService) {
+
+  constructor(private authService: AuthService, private signalR: SignalrService, private friendRequestService: FriendRequestService,
+    private notificationService: NotificationService) {
+    notificationService.notificationSubject.subscribe(res => this.notifications = res)
     this.authService.onAuthChange().subscribe(res => {
       if (!res.authToken) {
         this.signalR.stopAllConnections()
@@ -34,13 +38,13 @@ export class NotificationListComponent {
       this.friendRequestService.getFriendRequests({ id, receiverId: this.authService.currentUser.userId })
         .subscribe(x => {
           const text = `${x[0].name} send you a friend request`
-          this.notifications.push({ text, read: false })
+          this.notificationService.addNotification(text)
         })
     })
 
     this.signalR.setConnectionListener(friendConnectionId, 'GetRequestResponse', (x: FriendRequestResponse) => {
       const text = `${x.name} ${x.accepted ? 'accepted' : 'denied'} your request`
-      this.notifications.push({ text, read: false })
+      this.notificationService.addNotification(text)
     })
 
     const directMessageConnectionId = await this.signalR.openConnection('direct-message')
@@ -49,7 +53,7 @@ export class NotificationListComponent {
       if (msg.senderId == this.authService.currentUser.userId) {
         return
       }
-      this.notifications.push({ text: `${msg.senderName} writes: ${msg.content}`, read: false })
+      this.notificationService.addNotification(`${msg.senderName} writes: ${msg.content}`)
     })
   }
 

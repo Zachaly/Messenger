@@ -4,6 +4,15 @@
             <a class="navbar-item" routerLink="/">
                 <h1 class="title">Messenger</h1>
             </a>
+            <a *ngIf="authorized" class="navbar-item" [ngClass]="unreadNotifications > 0 ? 'has-text-danger' : '' "
+                (click)="toggleNotifications()">
+                <fa-icon [icon]="bell" />
+                <span class="unread">{{unreadNotifications}}</span>
+            </a>
+        </div>
+
+        <div [hidden]="!showNotifications">
+            <app-notification-list />
         </div>
 
         <div class="navbar-end" *ngIf="!authorized">
