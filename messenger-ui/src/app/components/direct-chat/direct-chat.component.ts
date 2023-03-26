@@ -107,7 +107,10 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     })
 
     this.signalR.openConnection('direct-message').then(directMessageConnectionId => {
-      this.signalR.setConnectionListener(directMessageConnectionId, 'GetMessage', (msg: DirectMessage) => this.readMessage(msg))
+      this.signalR.setConnectionListener(directMessageConnectionId, 'GetMessage', (msg: DirectMessage) => {
+        this.readMessage(msg)
+        this.scrollBottom()
+      })
       this.signalR.setConnectionListener(directMessageConnectionId, 'ReadMessage', (x: number, read: boolean) => {
         this.messages.find(msg => msg.id === x)!.read = read
       })

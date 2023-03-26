@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import DirectMessage from '../models/DirectMessage';
 import AddDirectMessageRequest from '../requests/AddDirectMessageRequest';
-import { GetDirectMessageRequest, mapGetDirectMessageRequestToParams } from '../requests/GetDirectMessagesRequest';
+import { GetDirectMessageRequest } from '../requests/GetDirectMessagesRequest';
+import MapDirectMessageRequest from '../requests/paramMappers/MapDirectMessageRequest';
 import UpdateDirectMessageRequest from '../requests/UpdateDirectMessageRequest';
 import { AuthService } from './auth.service';
 import ServiceBase from './service-base';
@@ -20,7 +21,7 @@ export class DirectMessageService extends ServiceBase {
   }
 
   getMessages(request: GetDirectMessageRequest): Observable<DirectMessage[]> {
-    const params = mapGetDirectMessageRequestToParams(request)
+    const params = MapDirectMessageRequest(request)
 
     return this.http.get<DirectMessage[]>(API_URL, { headers: this.httpHeaders(), params })
   }
@@ -34,7 +35,7 @@ export class DirectMessageService extends ServiceBase {
   }
 
   getMessageCount(request: GetDirectMessageRequest): Observable<number> {
-    const params = mapGetDirectMessageRequestToParams(request)
+    const params = MapDirectMessageRequest(request)
     return this.http.get<number>(`${API_URL}/count`, { headers: this.httpHeaders(), params })
   }
 }
