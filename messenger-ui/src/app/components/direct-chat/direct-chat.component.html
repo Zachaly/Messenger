@@ -1,4 +1,4 @@
-<div class="messages">
+<div class="messages" #messageBox (scroll)="onScroll($event)">
     <div *ngFor="let msg of messages"
         [ngClass]="msg.senderId == currentUserId ? 'is-justify-content-end' : 'is-justify-content-start'"
         class="is-flex">

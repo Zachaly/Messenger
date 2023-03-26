@@ -16,8 +16,8 @@ export class ChatListPageComponent implements OnInit {
 
   constructor(private authService: AuthService, private friendService: FriendService,
     private directMessageService: DirectMessageService) {
-
   }
+  
   ngOnInit(): void {
     this.friendService.getFriends(this.authService.currentUser.userId).subscribe(res => {
       res.forEach(chat => {
@@ -31,5 +31,9 @@ export class ChatListPageComponent implements OnInit {
 
   selectChat(user: UserListItem): void {
     this.selectedChat = user
+  }
+
+  onMessageRead(chat: UserListItem) {
+    this.chats.find(x => x[0] == chat)![1]--
   }
 }

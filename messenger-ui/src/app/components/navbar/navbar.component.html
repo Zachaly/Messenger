@@ -9,7 +9,7 @@
                 <fa-icon [icon]="bell" />
                 <span class="unread">{{unreadNotifications}}</span>
             </a>
-            <a class="navbar-item" routerLink="/chats">
+            <a *ngIf="authorized" class="navbar-item" routerLink="/chats">
                 Chats
             </a>
         </div>
