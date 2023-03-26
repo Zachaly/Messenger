@@ -38,12 +38,25 @@ namespace Messenger.Api.Controllers
         /// <response code="204">Friend deleted successfully</response>
         /// <response code="400">Failed to delete a friend</response>
         [HttpDelete("{user1Id}/{user2Id}")]
-        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<ResponseModel>> DeleteAsync(long user1Id, long user2Id)
         {
             var res = await _mediator.Send(new DeleteFriendCommand { User1Id = user1Id, User2Id = user2Id });
 
             return res.ReturnNoContentOrBadRequest();
+        }
+
+        /// <summary>
+        /// Returns number of user's friends
+        /// </summary>
+        /// <response code="200">Number of friends</response>
+        [HttpGet("count")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<int>> GetCountAsync([FromQuery] GetFriendCountQuery query)
+        {
+            var res = await _mediator.Send(query);
+            return Ok(res);
         }
     }
 }

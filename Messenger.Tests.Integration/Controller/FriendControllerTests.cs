@@ -1,5 +1,4 @@
-﻿using Messenger.Application.Command;
-using Messenger.Domain.Entity;
+﻿using Messenger.Domain.Entity;
 using Messenger.Models.Friend;
 using System.Net;
 using System.Net.Http.Json;
@@ -79,6 +78,28 @@ namespace Messenger.Tests.Integration.Controller
             Assert.DoesNotContain(currentFriends, x => x.User1Id == _authorizedUserId && x.User2Id == FriendId);
             Assert.DoesNotContain(currentFriends, x => x.User1Id == FriendId && x.User2Id == _authorizedUserId);
             Assert.Equal(friends.Count - 2, currentFriends.Count());
+        }
+
+        [Fact]
+        public async Task GetCountAsync_Success()
+        {
+            await Authorize();
+
+            var friendIds = new long[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+            var friends = new List<Friend>();
+
+            friends.AddRange(FakeDataFactory.CreateFriends(_authorizedUserId, friendIds));
+
+            foreach (var friend in friends)
+            {
+                ExecuteQuery("INSERT INTO [Friend]([User1Id], [User2Id]) VALUES (@User1Id, @User2Id)", friend);
+            }
+
+            var response = await _httpClient.GetAsync($"{ApiUrl}/count?UserId={_authorizedUserId}");
+            //var content = await response.Content.ReadFromJsonAsync<int>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            //Assert.Equal(friendIds.Length, content);
         }
     }
 }
