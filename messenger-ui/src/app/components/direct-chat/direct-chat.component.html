@@ -1,0 +1,12 @@
+<div class="messages">
+    <div *ngFor="let msg of messages"
+        [ngClass]="msg.senderId == currentUserId ? 'is-justify-content-end' : 'is-justify-content-start'"
+        class="is-flex">
+        <div class="message">
+            <app-direct-message [message]="msg" />
+        </div>
+    </div>
+</div>
+
+<textarea class="textarea" name="content" [(ngModel)]="newMessageContent"></textarea>
+<button class="button is-info" (click)="sendMessage()">Send</button>

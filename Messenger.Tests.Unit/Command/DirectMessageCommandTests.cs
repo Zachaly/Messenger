@@ -121,5 +121,20 @@ namespace Messenger.Tests.Unit.Command
             Assert.False(res.Success);
             Assert.Equal(Error, res.Error);
         }
+
+        [Fact]
+        public async Task GetDirectMessageCountQuery_Success()
+        {
+            const int Count = 10;
+            var repository = new Mock<IDirectMessageRepository>();
+            repository.Setup(x => x.GetCount(It.IsAny<GetDirectMessagesRequest>()))
+                .ReturnsAsync(Count);
+
+            var query = new GetDirectMessageCountQuery();
+
+            var res = await new GetDirectMessageCountHandler(repository.Object).Handle(query, default);
+
+            Assert.Equal(Count, res);
+        }
     }
 }
