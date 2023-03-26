@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import NotificationModel from 'src/app/models/NotificationModel';
+import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-notification',
@@ -6,10 +8,17 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./notification.component.css']
 })
 export class NotificationComponent {
-  @Input() text: string = ''
-  @Output() read: EventEmitter<any> = new EventEmitter()
 
+  @Input() notification: NotificationModel = { text: '', read: false }
+  @Output() delete: EventEmitter<any> = new EventEmitter()
+  xMark = faXmark
+  check = faCheck
+  
   onRead() {
-    this.read.emit()
+    this.notification.read = true
+  }
+
+  onDelete() {
+    this.delete.emit()
   }
 } 

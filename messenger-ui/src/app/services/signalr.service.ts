@@ -4,49 +4,46 @@ import { HubConnectionBuilder } from '@microsoft/signalr/dist/esm/HubConnectionB
 import { IHttpConnectionOptions } from '@microsoft/signalr/dist/esm/IHttpConnectionOptions';
 import { AuthService } from './auth.service';
 
+const WS_ENDPOINT = 'https://localhost:5001/ws'
+
 @Injectable({
   providedIn: 'root'
 })
 export class SignalrService {
+
+  private connections: HubConnection[] = []
 
   friendConnection: HubConnection | null = null
   directMessageConnection: HubConnection | null = null
 
   constructor(private authService: AuthService) { }
 
-  openFriendConnection() {
+  async openConnection(name: string) : Promise<string> {
     const options: IHttpConnectionOptions = {
       headers: { 'Authorization': 'Bearer ' + this.authService.currentUser.authToken },
       withCredentials: true,
       accessTokenFactory: () => this.authService.currentUser.authToken
     }
 
-    this.friendConnection = new HubConnectionBuilder()
-      .withUrl('https://localhost:5001/ws/friend', options)
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${WS_ENDPOINT}/${name}`, options)
       .build()
+    
+    await connection.start()
 
-    this.friendConnection?.start()
+    this.connections.push(connection)
+
+    return connection.connectionId!
   }
 
-  setFriendConnectionListener(event: string, callback: (...args: any[]) => any) {
-    this.friendConnection?.on(event, callback)
+  setConnectionListener(id: string, event: string, callback: (...args: any[]) => any){
+    const connection = this.connections.find(x => x.connectionId == id)
+
+    connection?.on(event, callback)
   }
 
-  openDirectMessageConnection() {
-    const options: IHttpConnectionOptions = {
-      headers: { 'Authorization': 'Bearer ' + this.authService.currentUser.authToken },
-      withCredentials: true,
-      accessTokenFactory: () => this.authService.currentUser.authToken
-    }
-
-    this.directMessageConnection = new HubConnectionBuilder()
-      .withUrl('https://localhost:5001/ws/direct-message', options)
-      .build()
-
-    this.directMessageConnection?.start()
-  }
-
-  setDirectMessageConnectionListener(event: string, callback: (...args: any[]) => any) {
-    this.directMessageConnection?.on(event, callback)
+  stopAllConnections() {
+    this.connections.forEach(conn => conn.stop())
+    this.connections = []
   }
 }

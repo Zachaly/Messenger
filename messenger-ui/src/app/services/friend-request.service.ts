@@ -8,6 +8,7 @@ import RespondToFriendRequestRequest from '../requests/RespondToFriendRequestReq
 import { AuthService } from './auth.service';
 import ServiceBase from './service-base';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
+import MapFriendRequestRequest from '../requests/paramMappers/MapFriendRequestRequest';
 
 const API_URL = 'https://localhost:5001/api/friend-request'
 
@@ -41,12 +42,7 @@ export class FriendRequestService extends ServiceBase {
   }
 
   getFriendRequestCount(request: GetFriendRequestsRequest): Observable<number> {
-    let params = new HttpParams()
-    if (request.receiverId) {
-      params = params.append('ReceiverId', request.receiverId)
-    } else if (request.senderId) {
-      params = params.append('SenderId', request.senderId)
-    }
+    const params = MapFriendRequestRequest(request)
 
     return this.http.get<number>(`${API_URL}/count`, { params, headers: this.httpHeaders() })
   }

@@ -1,1 +1,5 @@
-<app-notification *ngFor="let text of notifications; index as index" [text]="text" (read)="remove(index)"/>
+<div class="mt-2 p-2 has-background-grey-light">
+    <p class="title">Notifications</p>
+    <app-notification *ngFor="let text of notifications; index as index" [notification]="text"
+        (delete)="remove(index)" />
+</div>

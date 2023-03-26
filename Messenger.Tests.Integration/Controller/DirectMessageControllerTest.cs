@@ -94,5 +94,25 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Contains(messages, x => x.Id == idToUpdate && x.Read);
         }
+
+        [Theory]
+        [InlineData(0, true)]
+        [InlineData(20, false)]
+        public async Task GetCountAsync_Success(int expectedCount, bool read)
+        {
+            await Authorize();
+
+            const int MessageCount = 20;
+            const int SecondUserId = 21;
+
+            InsertMessages(FakeDataFactory.CreateMessages(_authorizedUserId, SecondUserId, MessageCount));
+            InsertMessages(FakeDataFactory.CreateMessages(_authorizedUserId, 37, MessageCount));
+
+            var response = await _httpClient.GetAsync($"{ApiUrl}/count?SenderId={_authorizedUserId}&ReceiverId={SecondUserId}&Read={read}");
+            var content = await response.Content.ReadFromJsonAsync<int>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equivalent(expectedCount, content);
+        }
     }
 }

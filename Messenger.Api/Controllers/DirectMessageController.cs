@@ -64,5 +64,18 @@ namespace Messenger.Api.Controllers
 
             return res.ReturnNoContentOrBadRequest();
         }
+
+        /// <summary>
+        /// Returns count of direct messages
+        /// </summary>
+        /// <response code="200">Number of messages</response>
+        [HttpGet("count")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<int>> GetCountAsync([FromQuery] GetDirectMessageCountQuery query)
+        {
+            var res = await _mediator.Send(query);
+            
+            return Ok(res);
+        }
     }
 }

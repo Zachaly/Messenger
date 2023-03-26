@@ -1,0 +1,13 @@
+<div class="columns">
+    <div class="column is-2">
+        <div *ngFor="let chat of chats">
+            <app-direct-chat-list-item [user]="chat[0]" [unreadMessages]="chat[1]" (selectChat)="selectChat(chat[0])"/>
+        </div>
+    </div>
+    <div *ngIf="selectedChat" class="column">
+        <div class="title has-text-centered">
+            {{ selectedChat.name }}
+        </div>
+        <app-direct-chat [userId]="selectedChat.id" (messageRead)="onMessageRead(selectedChat)"/>
+    </div>
+</div>

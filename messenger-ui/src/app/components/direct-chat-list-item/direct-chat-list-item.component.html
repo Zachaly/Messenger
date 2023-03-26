@@ -1,0 +1,6 @@
+<div class="card p-2 has-background-info m-1" (click)="onSelect()">
+    <p class="title">
+        {{user.name}}
+        <span *ngIf="unreadMessages > 0" class="has-text-danger m-1">{{ unreadMessages }}</span>
+    </p>
+</div>

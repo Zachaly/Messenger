@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http'
 import { RouterModule, Routes } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -19,6 +20,9 @@ import { NotificationListComponent } from './components/notification-list/notifi
 import { NotificationComponent } from './components/notification/notification.component';
 import { DirectChatPageComponent } from './pages/direct-chat-page/direct-chat-page.component';
 import { DirectMessageComponent } from './components/direct-message/direct-message.component';
+import { ChatListPageComponent } from './pages/chat-list-page/chat-list-page.component';
+import { DirectChatListItemComponent } from './components/direct-chat-list-item/direct-chat-list-item.component';
+import { DirectChatComponent } from './components/direct-chat/direct-chat.component';
 
 const route = (path: string, component: any) => (
   {
@@ -33,7 +37,8 @@ const routes: Routes = [
   route('register', RegisterPageComponent),
   route('friend-request', FriendRequestListPageComponent),
   route('friend', FriendListPageComponent),
-  route('direct-chat/:userId', DirectChatPageComponent)
+  route('direct-chat/:userId', DirectChatPageComponent),
+  route('chats', ChatListPageComponent)
 ]
 
 @NgModule({
@@ -53,12 +58,16 @@ const routes: Routes = [
     NotificationComponent,
     DirectChatPageComponent,
     DirectMessageComponent,
+    ChatListPageComponent,
+    DirectChatListItemComponent,
+    DirectChatComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes),
     FormsModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
