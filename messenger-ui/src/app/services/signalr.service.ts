@@ -46,4 +46,16 @@ export class SignalrService {
     this.connections.forEach(conn => conn.stop())
     this.connections = []
   }
+
+  invoke<T>(id: string, method: string) : Promise<T> {
+    const connection = this.connections.find(x => x.connectionId == id)
+
+    return connection?.invoke<T>(method)!
+  }
+
+  invokeWithArgs(id: string, method: string, ...args: any[]){
+    const connection = this.connections.find(x => x.connectionId == id)
+
+    connection?.invoke(method, args)
+  }
 }

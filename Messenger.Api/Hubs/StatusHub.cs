@@ -51,16 +51,13 @@ namespace Messenger.Api.Hubs
             base.OnConnectedAsync();
         }
 
-        public async Task GetOnlineFriends()
+        public async Task<IEnumerable<FriendListItem>> GetOnlineFriends()
         {
             var id = GetUserId();
 
             var onlineFriends = (await GetFriends(id)).Where(friend => ConnectedUsers.Ids.Contains(friend.Id));
             
-            foreach(var friend in onlineFriends)
-            {
-                Clients.Caller.FriendConnected(friend);
-            }
+            return onlineFriends;
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

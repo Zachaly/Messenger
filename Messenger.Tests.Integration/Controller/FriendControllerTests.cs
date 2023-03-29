@@ -96,10 +96,10 @@ namespace Messenger.Tests.Integration.Controller
             }
 
             var response = await _httpClient.GetAsync($"{ApiUrl}/count?UserId={_authorizedUserId}");
-            //var content = await response.Content.ReadFromJsonAsync<int>();
+            var content = await response.Content.ReadFromJsonAsync<int>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            //Assert.Equal(friendIds.Length, content);
+            Assert.Equal(friendIds.Length, content);
         }
     }
 }

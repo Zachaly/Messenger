@@ -22,7 +22,7 @@ export class LoginPageComponent implements OnInit {
   ngOnInit(): void {
     this.authService.onAuthChange().subscribe(res => {
       if (res.authToken) {
-        if(this.rememberMe) {
+        if (this.rememberMe) {
           this.authService.saveUserData()
         }
         this.router.navigateByUrl('/')
