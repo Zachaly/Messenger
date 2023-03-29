@@ -48,6 +48,7 @@ app.MapControllers();
 
 app.MapHub<FriendHub>("/ws/friend");
 app.MapHub<DirectMessageHub>("/ws/direct-message");
+app.MapHub<StatusHub>("/ws/online-status");
 
 app.Run();
 

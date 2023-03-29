@@ -335,5 +335,19 @@ namespace Messenger.Tests.Unit.Command
 
             Assert.Equal(Count, res);
         }
+
+        [Fact]
+        public async Task GetFriendCountQuery_Success()
+        {
+            const int Count = 10;
+            var repository = new Mock<IFriendRepository>();
+            repository.Setup(x => x.GetCount(It.IsAny<GetFriendsRequest>()))
+                .ReturnsAsync(Count);
+
+            var query = new GetFriendCountQuery();
+            var res = await new GetFriendCountHandler(repository.Object).Handle(query, default);
+
+            Assert.Equal(Count, res);
+        }
     }
 }
