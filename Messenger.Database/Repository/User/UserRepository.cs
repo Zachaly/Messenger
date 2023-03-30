@@ -31,5 +31,10 @@ namespace Messenger.Database.Repository
 
             return QuerySingleAsync<User>(query.Query, query.Params);
         }
+
+        public Task UpdateAsync(UpdateUserRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace Messenger.Database.Repository.Abstraction
 
         public override Task<long> InsertAsync(TEntity entity)
         {
-            var query = _sqlQueryBuilder
+                                                                                                                 var query = _sqlQueryBuilder
                 .BuildInsert(entity);
 
             return QuerySingleAsync<long>(query.Query, query.Params);
