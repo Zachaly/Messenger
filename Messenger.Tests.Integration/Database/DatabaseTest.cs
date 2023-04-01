@@ -51,6 +51,17 @@ namespace Messenger.Tests.Integration.Database
             }
         }
 
+        protected async Task InsertImagesToDatabase(IEnumerable<DirectMessageImage> images)
+        {
+            using (var connection = _connectionFactory.GetConnection())
+            {
+                foreach (var image in images)
+                {
+                    await connection.ExecuteAsync("INSERT INTO [DirectMessageImage]([MessageId], [FileName]) VALUES(@MessageId, @FileName)", image);
+                }
+            }
+        }
+
         protected async Task InsertFriendsToDatabase(IEnumerable<Friend> friends)
         {
             using (var connection = new SqlConnection(_connectionString))

@@ -6,5 +6,6 @@ namespace Messenger.Database.Repository
 {
     public interface IDirectMessageImageRepository : IRepository<DirectMessageImage, DirectMessageImage, GetDirectMessageImageRequest>
     {
+        Task<DirectMessageImage> GetByIdAsync(long id);
     }
 }

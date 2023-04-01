@@ -13,5 +13,10 @@ namespace Messenger.Database.Repository
         {
             Table = "DirectMessageImage";
         }
+
+        public Task<DirectMessageImage> GetByIdAsync(long id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

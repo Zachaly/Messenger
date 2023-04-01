@@ -12,5 +12,6 @@ namespace Messenger.Models.DirectMessage
         [SqlName(Name = "[User].[Name]")]
         public string SenderName { get; set; }
         public long SenderId { get; set; }
+        public IEnumerable<long> ImageIds { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Messenger.Application.Abstraction;
+using Messenger.Database.Repository;
 using Messenger.Models.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +17,16 @@ namespace Messenger.Application.Command
     {
         private readonly IFileService _fileService;
         private readonly IResponseFactory _responseFactory;
+        private readonly IFileFactory _fileFactory;
+        private readonly IDirectMessageImageRepository _directMessageImageRepository;
 
-        public SaveDirectMessageImagesHandler(IFileService fileService, IResponseFactory responseFactory)
+        public SaveDirectMessageImagesHandler(IFileService fileService, IResponseFactory responseFactory, IFileFactory fileFactory,
+            IDirectMessageImageRepository directMessageImageRepository)
         {
             _fileService = fileService;
             _responseFactory = responseFactory;
+            _fileFactory = fileFactory;
+            _directMessageImageRepository = directMessageImageRepository;
         }
 
         public Task<ResponseModel> Handle(SaveDirectMessageImagesCommand request, CancellationToken cancellationToken)

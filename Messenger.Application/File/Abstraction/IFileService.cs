@@ -8,7 +8,7 @@ namespace Messenger.Application.Abstraction
         Task<bool> DeleteProfilePicture(string fileName);
         Task<FileStream> GetProfilePicture(string fileName);
 
-        Task<string> SaveDirectMessageImages(IEnumerable<IFormFile> files);
+        Task<IEnumerable<string>> SaveDirectMessageImages(IEnumerable<IFormFile> files);
         Task<FileStream> GetDirectMessageImage(string fileName);
     }
 }

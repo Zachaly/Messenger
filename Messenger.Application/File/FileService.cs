@@ -26,7 +26,7 @@ namespace Messenger.Application
             throw new NotImplementedException();
         }
 
-        public Task<string> SaveDirectMessageImages(IEnumerable<IFormFile> files)
+        public Task<IEnumerable<string>> SaveDirectMessageImages(IEnumerable<IFormFile> files)
         {
             throw new NotImplementedException();
         }
