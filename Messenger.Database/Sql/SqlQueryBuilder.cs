@@ -24,11 +24,11 @@ namespace Messenger.Database.Sql
         {
             var typeInfo = typeof(T);
 
-            var joinAttr = typeInfo.GetCustomAttribute<JoinAttribute>();
+            var joinAttr = typeInfo.GetCustomAttributes<JoinAttribute>();
 
-            if (joinAttr is not null)
+            foreach(var join in joinAttr)
             {
-                _joinBuilder.Append(joinAttr.Statement);
+                _joinBuilder.Append(join.Statement);
                 _joinBuilder.Append(' ');
             }
 
@@ -37,7 +37,8 @@ namespace Messenger.Database.Sql
                 var nameAttr = prop.GetCustomAttribute<SqlNameAttribute>();
                 if(nameAttr is not null)
                 {
-                    _builder.Select($"{nameAttr.Name} as [{prop.Name}]");
+                    var propName = nameAttr.SkipName ? "" : $"as [{prop.Name}]";
+                    _builder.Select($"{nameAttr.Name} {propName}");
                 } 
                 else
                 {
@@ -193,9 +194,13 @@ namespace Messenger.Database.Sql
 
             var props = typeof(T).GetProperties().Where(x => x.Name != "Id" && x.GetValue(request) != default);
 
+            var index = 0;
+            var count = props.Count();
             foreach(var prop in props) 
             {
-                setBuilder.Append($"[{table}].[{prop.Name}]=@{prop.Name}");
+                index++;
+                var colon = index < count ? "," : "";
+                setBuilder.Append($"[{table}].[{prop.Name}]=@{prop.Name}{colon} ");
             }
 
             var template = $"UPDATE [{table}] SET {setBuilder} /**where**/";

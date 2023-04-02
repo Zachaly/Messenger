@@ -6,8 +6,10 @@ namespace Messenger.Application
     public class FileFactory : IFileFactory
     {
         public DirectMessageImage CreateImage(string fileName, long messageId)
-        {
-            throw new NotImplementedException();
-        }
+            => new DirectMessageImage
+            {
+                MessageId = messageId,
+                FileName = fileName,
+            };
     }
 }

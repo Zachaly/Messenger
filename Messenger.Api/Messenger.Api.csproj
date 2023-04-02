@@ -21,4 +21,9 @@
     <ProjectReference Include="..\Messenger.Models\Messenger.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\image\direct-message\" />
+    <Folder Include="wwwroot\image\profile\" />
+  </ItemGroup>
+
 </Project>

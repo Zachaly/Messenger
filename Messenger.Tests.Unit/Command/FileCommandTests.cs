@@ -57,7 +57,7 @@ namespace Messenger.Tests.Unit.Command
         [Fact]
         public async Task SaveProfileImageCommand_Success()
         {
-            var user = new User();
+            var user = new User { ProfileImage = "img" };
 
             var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(x => x.UpdateAsync(It.IsAny<UpdateUserRequest>()))
@@ -65,6 +65,8 @@ namespace Messenger.Tests.Unit.Command
                 {
                     user.ProfileImage = request.ProfileImage;
                 });
+            userRepository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(user);
 
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateSuccess())
@@ -72,6 +74,7 @@ namespace Messenger.Tests.Unit.Command
 
             _fileService.Setup(x => x.SaveProfilePicture(It.IsAny<IFormFile>()))
                 .ReturnsAsync((IFormFile file) => file.Name);
+            _fileService.Setup(x => x.DeleteProfilePicture(It.IsAny<string>()));
 
             const string FileName = "filename";
             var mockFile = new Mock<IFormFile>();
@@ -97,6 +100,8 @@ namespace Messenger.Tests.Unit.Command
                 {
                     user.ProfileImage = request.ProfileImage;
                 });
+            userRepository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(user);
 
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
@@ -106,6 +111,7 @@ namespace Messenger.Tests.Unit.Command
 
             _fileService.Setup(x => x.SaveProfilePicture(It.IsAny<IFormFile>()))
                 .Callback(() => throw new Exception(ErrorMessage));
+            _fileService.Setup(x => x.DeleteProfilePicture(It.IsAny<string>()));
 
             const string FileName = "filename";
             var mockFile = new Mock<IFormFile>();
@@ -156,7 +162,7 @@ namespace Messenger.Tests.Unit.Command
 
             Assert.True(res.Success);
             Assert.Equivalent(files.Select(x => x.Name), images.Select(x => x.FileName));
-            Assert.All(images, x => Assert.Equal(command.MessageId, x.Id));
+            Assert.All(images, x => Assert.Equal(command.MessageId, x.MessageId));
         }
 
         [Fact]

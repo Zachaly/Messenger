@@ -29,9 +29,25 @@ namespace Messenger.Application.Command
             _directMessageImageRepository = directMessageImageRepository;
         }
 
-        public Task<ResponseModel> Handle(SaveDirectMessageImagesCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(SaveDirectMessageImagesCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var fileNames = await _fileService.SaveDirectMessageImages(request.Files);
+
+                var images = fileNames.Select(name => _fileFactory.CreateImage(name, request.MessageId));
+
+                foreach(var image in images)
+                {
+                    await _directMessageImageRepository.InsertAsync(image);
+                }
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

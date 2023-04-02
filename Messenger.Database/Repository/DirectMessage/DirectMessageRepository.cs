@@ -18,6 +18,37 @@ namespace Messenger.Database.Repository
             DefaultOrderBy = "[Created] DESC";
         }
 
+        public override async Task<IEnumerable<DirectMessageModel>> GetAsync(GetDirectMessagesRequest request)
+        {
+            var query = _sqlQueryBuilder.Join(request)
+                .Where(request)
+                .OrderBy(DefaultOrderBy)
+                .AddPagination(request)
+                .BuildSelect<DirectMessageModel>(Table);
+
+            using(var connection = _connectionFactory.GetConnection())
+            {
+                var lookup = new Dictionary<long, DirectMessageModel>();
+                await connection.QueryAsync<DirectMessageModel, DirectMessageImage, DirectMessageModel>(query.Query, (model, image) =>
+                {
+                    DirectMessageModel message;
+                    if(!lookup.TryGetValue(model.Id, out message))
+                    {
+                        lookup.Add(model.Id, model);
+                        message = model;
+                    }
+                    message.ImageIds ??= new List<long>();
+                    if(image is not null)
+                    {
+                        (message.ImageIds as List<long>)!.Add(image.Id);
+                    }
+                    
+                    return model;
+                }, query.Params);
+                return lookup.Values;
+            }
+        }
+
         public Task<DirectMessageModel> GetByIdAsync(long id)
         {
             var query = _sqlQueryBuilder.Where(new GetDirectMessagesRequest { Id = id }).BuildSelect<DirectMessageModel>(Table);

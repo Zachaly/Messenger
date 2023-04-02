@@ -11,10 +11,11 @@ namespace Messenger.Tests.Integration.Database
     {
         private readonly DirectMessageRepository _repository;
 
-        public DirectMessageRepositoryTests()
+        public DirectMessageRepositoryTests() : base()
         {
             _teardownQueries.Add("TRUNCATE TABLE [User]");
             _teardownQueries.Add("TRUNCATE TABLE [DirectMessage]");
+            _teardownQueries.Add("TRUNCATE TABLE [DirectMessageImage]");
 
             _repository = new DirectMessageRepository(_connectionFactory, new SqlQueryBuilder());
         }
@@ -94,6 +95,34 @@ namespace Messenger.Tests.Integration.Database
 
             Assert.Equal(8, res.Count());
             Assert.Equivalent(messages.Select(x => x.Id), res.Select(x => x.Id));
+        }
+
+        [Fact]
+        public async Task GetAsync_ImageIdsIncluded()
+        {
+            await InsertUsersToDatabase(FakeDataFactory.CreateUsers(2));
+
+            var users = await GetAllFromDatabase<User>("User");
+
+            var sender = users.First();
+            var receiver = users.ElementAt(1);
+
+            var message = new DirectMessage { Content = "msg", Created = DateTime.Now, ReceiverId = receiver.Id, SenderId = sender.Id };
+
+            await InsertMessagesAsync(new List<DirectMessage> { message });
+
+            var messageId = (await GetAllFromDatabase<DirectMessage>("DirectMessage")).First().Id;
+
+            await InsertImagesToDatabase(FakeDataFactory.CreateMessageImages(messageId, 5));
+            await InsertImagesToDatabase(FakeDataFactory.CreateMessageImages(20, 5));
+
+            var imageIds = (await GetAllFromDatabase<DirectMessageImage>("DirectMessageImage"))
+                .Where(x => x.MessageId == messageId)
+                .Select(x => x.Id);
+
+            var res = (await _repository.GetAsync(new GetDirectMessagesRequest { Id = messageId })).First();
+
+            Assert.Equivalent(imageIds, res.ImageIds);
         }
     }
 }

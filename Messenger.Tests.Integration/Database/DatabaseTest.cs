@@ -12,7 +12,7 @@ namespace Messenger.Tests.Integration.Database
         protected List<string> _teardownQueries = new List<string>();
         protected readonly IConnectionFactory _connectionFactory;
 
-        public DatabaseTest()
+        protected DatabaseTest()
         {
             var connectionFactory = new Mock<IConnectionFactory>();
             connectionFactory.Setup(x => x.GetConnection())
@@ -53,7 +53,7 @@ namespace Messenger.Tests.Integration.Database
 
         protected async Task InsertImagesToDatabase(IEnumerable<DirectMessageImage> images)
         {
-            using (var connection = _connectionFactory.GetConnection())
+            using (var connection = new SqlConnection(_connectionString))
             {
                 foreach (var image in images)
                 {

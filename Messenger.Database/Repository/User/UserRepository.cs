@@ -34,12 +34,16 @@ namespace Messenger.Database.Repository
 
         public Task<User> GetEntityByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<User>(Table);
+
+            return QuerySingleAsync<User>(query.Query, query.Params);
         }
 
         public Task UpdateAsync(UpdateUserRequest request)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.BuildSet(request, Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

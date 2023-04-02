@@ -10,7 +10,7 @@ namespace Messenger.Tests.Integration
 
             for(int i = 1; i <= count; i++)
             {
-                users.Add(new User { Id = i, Login = $"log{i}", Name = $"name{i}", PasswordHash = $"hash{i}" });
+                users.Add(new User { Id = i, Login = $"log{i}", Name = $"name{i}", PasswordHash = $"hash{i}", ProfileImage = $"profile {i}" });
             }
 
             return users;
@@ -43,6 +43,18 @@ namespace Messenger.Tests.Integration
             }
 
             return messages;
+        }
+
+        public static IEnumerable<DirectMessageImage> CreateMessageImages(long messageId, int count)
+        {
+            var images = new List<DirectMessageImage>();
+
+            for(int i = 0; i < count; i++)
+            {
+                images.Add(new DirectMessageImage { MessageId = messageId, FileName = $"image {i}" });
+            }
+
+            return images;
         }
     }
 }

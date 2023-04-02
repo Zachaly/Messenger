@@ -20,9 +20,10 @@ namespace Messenger.Application.Command
             _directMessageImageRepository = directMessageImageRepository;
         }
 
-        public Task<FileStream> Handle(GetDirectMessageImageQuery request, CancellationToken cancellationToken)
+        public async Task<FileStream> Handle(GetDirectMessageImageQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var image = await _directMessageImageRepository.GetByIdAsync(request.ImageId);
+            return await _fileService.GetDirectMessageImage(image.FileName);
         }
     }
 }

@@ -16,7 +16,9 @@ namespace Messenger.Database.Repository
 
         public Task<DirectMessageImage> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<DirectMessageImage>(Table);
+
+            return QuerySingleAsync<DirectMessageImage>(query.Query, query.Params);
         }
     }
 }

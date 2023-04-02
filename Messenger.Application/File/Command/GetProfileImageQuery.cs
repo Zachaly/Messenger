@@ -21,9 +21,10 @@ namespace Messenger.Application.Command
             _userRepository = userRepository;
         }
 
-        public Task<FileStream> Handle(GetProfileImageQuery request, CancellationToken cancellationToken)
+        public async Task<FileStream> Handle(GetProfileImageQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetEntityByIdAsync(request.UserId);
+            return await _fileService.GetProfilePicture(user.ProfileImage);
         }
     }
 }

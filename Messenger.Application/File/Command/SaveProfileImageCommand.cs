@@ -2,6 +2,7 @@
 using Messenger.Application.Abstraction;
 using Messenger.Database.Repository;
 using Messenger.Models.Response;
+using Messenger.Models.User.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -26,9 +27,24 @@ namespace Messenger.Application.Command
             _userRepository = userRepository;
         }
 
-        public Task<ResponseModel> Handle(SaveProfileImageCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(SaveProfileImageCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetEntityByIdAsync(request.UserId);
+
+                await _fileService.DeleteProfilePicture(user.ProfileImage);
+
+                var fileName = await _fileService.SaveProfilePicture(request.File);
+
+                await _userRepository.UpdateAsync(new UpdateUserRequest { Id = request.UserId, ProfileImage = fileName });
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }
