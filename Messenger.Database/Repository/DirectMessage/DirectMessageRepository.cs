@@ -15,7 +15,7 @@ namespace Messenger.Database.Repository
         {
             SqlMapper.AddTypeMap(typeof(DateTime), System.Data.DbType.DateTime2);
             Table = "DirectMessage";
-            DefaultOrderBy = "[Created] DESC";
+            DefaultOrderBy = "[Id] DESC";
         }
 
         public override async Task<IEnumerable<DirectMessageModel>> GetAsync(GetDirectMessagesRequest request)

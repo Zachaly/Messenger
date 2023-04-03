@@ -67,7 +67,7 @@ namespace Messenger.Tests.Integration.Controller
 
             var messages = GetFromDatabase<DirectMessage>("SELECT * FROM [DirectMessage]");
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.Contains(messages, x => x.Content == request.Content && x.ReceiverId == request.ReceiverId && x.SenderId == request.SenderId);
             Assert.Single(messages);
         }

@@ -3,6 +3,6 @@
     public class SqlNameAttribute : Attribute
     {
         public string Name { get; set; }
-        public bool SkipName { get; set; } = false;
+        public bool JoinOutside { get; set; } = false;
     }
 }
