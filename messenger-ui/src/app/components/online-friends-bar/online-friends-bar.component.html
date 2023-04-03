@@ -2,8 +2,17 @@
     <h3 class="title is-5 mb-0 has-text-centered">Online friends</h3>
     <div class="is-flex">
         <div class="card m-2 p-2 has-background-success has-text-info-dark" *ngFor="let friend of friends">
-            <span [routerLink]="['/direct-chat', friend.id]">{{friend.name}}</span>
+            <div class="media">
+                <div class="media-left">
+                    <figure class="image is-48x48">
+                        <img [src]="getImage(friend.id)" alt="">
+                    </figure>
+                </div>
+                <div class="media-content">
+                    <span [routerLink]="['/direct-chat', friend.id]">{{friend.name}}</span>
+                </div>
+            </div>
+            
         </div>
     </div>
-
 </div>

@@ -1,1 +1,5 @@
 @import url('../node_modules/bulma/css/bulma.css');
+
+.navbar-item img {
+    max-height: 100%;
+}

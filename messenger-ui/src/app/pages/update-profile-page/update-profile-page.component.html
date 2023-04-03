@@ -1,0 +1,10 @@
+<form (submit)="submitImage()">
+    <h1 class="title has-text-centered">Update profile image</h1>
+    <div class="control">
+        <label class="label">Profile picture</label>
+        <input type="file" class="input" (change)="changeImage()" #fileInput>
+    </div>
+    <div class="control">
+        <button class="is-success">Confirm</button>
+    </div>
+</form>

@@ -10,6 +10,11 @@ export default class ServiceBase {
             'Authorization': `Bearer ${this.token()}`
         })
 
+    authorizeHeader = () =>
+        new HttpHeaders({
+            'Authorization': `Bearer ${this.token()}`
+        })
+
     constructor(private authService: AuthService) {
 
     }

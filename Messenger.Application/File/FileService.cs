@@ -38,9 +38,9 @@ namespace Messenger.Application
 
         public Task<bool> DeleteProfilePicture(string fileName)
         {
-            if(fileName != _defaultProfileImage)
+            if(!string.IsNullOrEmpty(fileName) && fileName != _defaultProfileImage)
             {
-                return DeleteFile(fileName, _defaultProfileImage);
+                return DeleteFile(fileName, _profileImagePath);
             }
 
             return Task.FromResult(true);
@@ -51,7 +51,7 @@ namespace Messenger.Application
 
         public Task<FileStream> GetProfilePicture(string? fileName)
         {
-            var name = fileName ?? _defaultProfileImage;
+            var name = string.IsNullOrEmpty(fileName) ? _defaultProfileImage : fileName;
 
             return GetFile(name, _profileImagePath);
         }

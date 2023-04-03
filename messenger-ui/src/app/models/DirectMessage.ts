@@ -4,5 +4,6 @@ export default interface DirectMessage {
     read: boolean,
     created: string,
     senderName: string,
-    senderId: number
+    senderId: number,
+    imageIds: number[]
 }

@@ -35,7 +35,7 @@ namespace Messenger.Application.Command
 
             _notificationService.SendDirectMessage(model, request.SenderId, request.ReceiverId);
 
-            return _responseFactory.CreateSuccess();
+            return _responseFactory.CreateCreatedSuccess(id);
         }
     }
 }

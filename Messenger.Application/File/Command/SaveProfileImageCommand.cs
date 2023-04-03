@@ -4,14 +4,13 @@ using Messenger.Database.Repository;
 using Messenger.Models.Response;
 using Messenger.Models.User.Request;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace Messenger.Application.Command
 {
     public class SaveProfileImageCommand : IRequest<ResponseModel>
     {
         public long UserId { get; set; }
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
     }
 
     public class SaveProfileImageHandler : IRequestHandler<SaveProfileImageCommand, ResponseModel>
