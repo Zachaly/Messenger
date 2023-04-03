@@ -22,6 +22,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IFriendRepository, FriendRepository>();
             collection.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
             collection.AddScoped<IDirectMessageRepository, DirectMessageRepository>();
+            collection.AddScoped<IDirectMessageImageRepository, DirectMessageImageRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -32,6 +33,8 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IFriendFactory, FriendFactory>();
             collection.AddScoped<IDirectMessageFactory, DirectMessageFactory>();
             collection.AddScoped<INotificationService, NotificationService>();
+            collection.AddScoped<IFileService, FileService>();
+            collection.AddScoped<IFileFactory, FileFactory>();
             collection.AddHttpContextAccessor();
 
             collection.AddMediatR(opt =>

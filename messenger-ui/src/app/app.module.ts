@@ -24,6 +24,7 @@ import { ChatListPageComponent } from './pages/chat-list-page/chat-list-page.com
 import { DirectChatListItemComponent } from './components/direct-chat-list-item/direct-chat-list-item.component';
 import { DirectChatComponent } from './components/direct-chat/direct-chat.component';
 import { OnlineFriendsBarComponent } from './components/online-friends-bar/online-friends-bar.component';
+import { UpdateProfilePageComponent } from './pages/update-profile-page/update-profile-page.component';
 
 const route = (path: string, component: any) => (
   {
@@ -39,7 +40,8 @@ const routes: Routes = [
   route('friend-request', FriendRequestListPageComponent),
   route('friend', FriendListPageComponent),
   route('direct-chat/:userId', DirectChatPageComponent),
-  route('chats', ChatListPageComponent)
+  route('chats', ChatListPageComponent),
+  route('update-profile', UpdateProfilePageComponent)
 ]
 
 @NgModule({
@@ -63,6 +65,7 @@ const routes: Routes = [
     DirectChatListItemComponent,
     DirectChatComponent,
     OnlineFriendsBarComponent,
+    UpdateProfilePageComponent,
   ],
   imports: [
     BrowserModule,

@@ -12,7 +12,7 @@ namespace Messenger.Tests.Integration.Database
         protected List<string> _teardownQueries = new List<string>();
         protected readonly IConnectionFactory _connectionFactory;
 
-        public DatabaseTest()
+        protected DatabaseTest()
         {
             var connectionFactory = new Mock<IConnectionFactory>();
             connectionFactory.Setup(x => x.GetConnection())
@@ -47,6 +47,17 @@ namespace Messenger.Tests.Integration.Database
                 foreach (var user in users)
                 {
                     await connection.QueryAsync("INSERT INTO [User]([Login], [Name], [PasswordHash]) VALUES(@Login, @Name, @PasswordHash)", user);
+                }
+            }
+        }
+
+        protected async Task InsertImagesToDatabase(IEnumerable<DirectMessageImage> images)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                foreach (var image in images)
+                {
+                    await connection.ExecuteAsync("INSERT INTO [DirectMessageImage]([MessageId], [FileName]) VALUES(@MessageId, @FileName)", image);
                 }
             }
         }

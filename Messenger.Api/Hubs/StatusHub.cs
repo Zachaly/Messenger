@@ -46,8 +46,11 @@ namespace Messenger.Api.Hubs
 
             await Clients.Users(friends.Select(friend => friend.Id.ToString())).FriendConnected(user);
 
-            ConnectedUsers.Ids.Add(id);
-
+            if (!ConnectedUsers.Ids.Contains(id))
+            {
+                ConnectedUsers.Ids.Add(id);
+            }
+            
             base.OnConnectedAsync();
         }
 

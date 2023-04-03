@@ -31,5 +31,19 @@ namespace Messenger.Database.Repository
 
             return QuerySingleAsync<User>(query.Query, query.Params);
         }
+
+        public Task<User> GetEntityByIdAsync(long id)
+        {
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<User>(Table);
+
+            return QuerySingleAsync<User>(query.Query, query.Params);
+        }
+
+        public Task UpdateAsync(UpdateUserRequest request)
+        {
+            var query = _sqlQueryBuilder.BuildSet(request, Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
+        }
     }
 }

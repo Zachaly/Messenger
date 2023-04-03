@@ -4,6 +4,7 @@ import AddDirectMessageRequest from 'src/app/requests/AddDirectMessageRequest';
 import UpdateDirectMessageRequest from 'src/app/requests/UpdateDirectMessageRequest';
 import { AuthService } from 'src/app/services/auth.service';
 import { DirectMessageService } from 'src/app/services/direct-message.service';
+import { ImageService } from 'src/app/services/image.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 
 const PAGE_SIZE = 5
@@ -16,6 +17,7 @@ const PAGE_SIZE = 5
 export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
 
   @ViewChild('messageBox') messageBox!: ElementRef<HTMLDivElement>
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>
 
   @Input() userId: number = 0
   currentUserId: number = 0
@@ -31,8 +33,10 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   messages: DirectMessage[] = []
 
   newMessageContent: string = ''
+  newMessageFiles: FileList | null = null
 
-  constructor(authSevice: AuthService, private messageService: DirectMessageService, private signalR: SignalrService) {
+  constructor(authSevice: AuthService, private messageService: DirectMessageService,
+    private signalR: SignalrService, private imageService: ImageService) {
     this.currentUserId = authSevice.currentUser.userId
   }
 
@@ -82,6 +86,7 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   private loadMessages() {
+    console.log(this.nextPage)
     if (this.nextPage >= this.maxPage) {
       return
     }
@@ -91,6 +96,7 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.messageService
       .getMessages({ user1Id: this.currentUserId, user2Id: this.userId, pageSize: PAGE_SIZE, pageIndex })
       .subscribe(res => {
+        console.log(res)
         res.forEach(msg => this.readMessage(msg, false))
         this.loading = false
       })
@@ -102,6 +108,7 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.signalR.stopAllConnections()
 
     this.messageService.getMessageCount({ user1Id: this.currentUserId, user2Id: this.userId }).subscribe(count => {
+      console.log(count)
       this.maxPage = Math.ceil(count / PAGE_SIZE)
       this.loadMessages()
     })
@@ -119,9 +126,21 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   sendMessage() {
     const request: AddDirectMessageRequest = { senderId: this.currentUserId, receiverId: this.userId, content: this.newMessageContent }
-    this.messageService.postMessage(request).subscribe(() => {
+    this.messageService.postMessage(request).subscribe((res) => {
+      if (this.newMessageFiles) {
+        const messageId: number = res.newEntityId!
+        this.imageService.uploadDirectMessageImages(this.newMessageFiles, messageId).subscribe(() => {
+          this.messageService.getMessages({ id: messageId }).subscribe(res => {
+            const message = res[0]!
+            this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
+            this.newMessageFiles = null
+            this.fileInput.nativeElement.files = null
+          })
+        })
+      }
       this.newMessageContent = ''
       this.scrollBottom()
+
     })
   }
 
@@ -131,5 +150,9 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (target.scrollTop < target.scrollHeight / 20 && !this.loading) {
       this.loadMessages()
     }
+  }
+
+  selectImages() {
+    this.newMessageFiles = this.fileInput.nativeElement.files
   }
 }

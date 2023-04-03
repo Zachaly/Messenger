@@ -34,7 +34,7 @@ namespace Messenger.Api.Controllers
         {
             var res = await _mediator.Send(command);
 
-            return res.ReturnNoContentOrBadRequest();
+            return res.ReturnCreatedOrBadRequest("");
         }
 
         /// <summary>

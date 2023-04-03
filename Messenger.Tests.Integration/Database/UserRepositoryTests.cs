@@ -95,5 +95,37 @@ namespace Messenger.Tests.Integration.Database
             Assert.Equal(user.Id, res.Id);
             Assert.Equal(user.Name, res.Name);
         }
+
+        [Fact]
+        public async Task UpdateUserAsync()
+        {
+            await InsertUsersToDatabase(FakeDataFactory.CreateUsers(5));
+
+            var userId = (await GetAllFromDatabase<User>("User")).Last().Id;
+
+            var request = new UpdateUserRequest { Id = userId, Name = "updated name", ProfileImage = "image" };
+
+            await _repository.UpdateAsync(request);
+
+            var user = (await GetAllFromDatabase<User>("User")).First(x => x.Id == userId);
+
+            Assert.Equal(request.Name, user.Name);
+            Assert.Equal(request.ProfileImage, user.ProfileImage);
+        }
+
+        [Fact]
+        public async Task GetEntityByIdAsync()
+        {
+            await InsertUsersToDatabase(FakeDataFactory.CreateUsers(5));
+
+            var user = (await GetAllFromDatabase<User>("User")).Last();
+
+            var res = await _repository.GetEntityByIdAsync(user.Id);
+
+            Assert.IsType<User>(res);
+            Assert.Equal(user.Name, res.Name);
+            Assert.Equal(user.Login, res.Login);
+            Assert.Equal(user.ProfileImage, res.ProfileImage);
+        }
     }
 }

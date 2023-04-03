@@ -32,10 +32,14 @@
         </div>
         <div class="navbar-end" *ngIf="authorized">
             <div class="navbar-item">
-                <p class="title is-small"> Hello {{ currentUser }}</p>
+                <figure class="image is-48x48 m-1">
+                    <img [src]="imageUrl" alt="">
+                </figure>
+                <p class="title is-small"> {{ currentUser }}</p>
             </div>
             <a routerLink="/friend-request" class="navbar-item">Friend requests</a>
             <a routerLink="/friend" class="navbar-item">Friends</a>
+            <a routerLink="/update-profile" class="navbar-item">Update profile</a>
             <div class="navbar-item">
                 <div class="buttons">
                     <button class="button is-danger" (click)="logout()">

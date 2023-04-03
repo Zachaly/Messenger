@@ -1,6 +1,19 @@
 <div class="card p-2 has-background-info m-1" (click)="onSelect()">
-    <p class="title">
-        {{user.name}}
-        <span *ngIf="unreadMessages > 0" class="has-text-danger m-1">{{ unreadMessages }}</span>
-    </p>
+    <div class="card-header">
+        <div class="media p-1 is-fullwidth">
+            <div class="media-left">
+                <figure class="image is-48x48">
+                    <img [src]="imageUrl()" alt="">
+                </figure>
+            </div>
+            <div class="media-content">
+                <p class="title is-5 mb-0">
+                    {{user.name}}
+                </p>
+                <p *ngIf="unreadMessages > 0" class="has-text-danger m-1 subtitle">
+                    {{ unreadMessages }}
+                </p>
+            </div>
+        </div>
+    </div>
 </div>

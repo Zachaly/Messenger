@@ -24,17 +24,25 @@ namespace Messenger.Database.Sql
         {
             var typeInfo = typeof(T);
 
-            var joinAttr = typeInfo.GetCustomAttribute<JoinAttribute>();
+            var joinAttr = typeInfo.GetCustomAttributes<JoinAttribute>().Where(attr => !attr.Outside);
+            var outsideJoins = typeInfo.GetCustomAttributes<JoinAttribute>().Where(attr => attr.Outside);
 
-            if (joinAttr is not null)
+            foreach(var join in joinAttr)
             {
-                _joinBuilder.Append(joinAttr.Statement);
+                _joinBuilder.Append(join.Statement);
                 _joinBuilder.Append(' ');
             }
 
-            foreach (var prop in typeInfo.GetProperties())
+            var properties = typeInfo.GetProperties();
+
+            foreach (var prop in properties)
             {
                 var nameAttr = prop.GetCustomAttribute<SqlNameAttribute>();
+                if (nameAttr is not null && nameAttr.JoinOutside)
+                {
+                    continue;
+                }
+
                 if(nameAttr is not null)
                 {
                     _builder.Select($"{nameAttr.Name} as [{prop.Name}]");
@@ -52,11 +60,54 @@ namespace Messenger.Database.Sql
 
             var template = $"SELECT /**select**/ FROM [{table}] {_joinBuilder}/**where**/ /**orderby**/{_pagination}";
 
-            var temp = _builder.AddTemplate(template, _parameters);
 
-            _builder = new SqlBuilder();
+            if(outsideJoins.Any())
+            {
+                var innerTemplate = _builder.AddTemplate(template, _parameters);
 
-            return (temp.RawSql, temp.Parameters);
+                _builder = new SqlBuilder();
+
+                var outsideJoinBuilder = new StringBuilder();
+                var namesBuilder = new StringBuilder();
+
+                var outsideNames = properties
+                    .Select(prop => new { Prop = prop, Attr = prop.GetCustomAttribute<SqlNameAttribute>() })
+                    .Where(prop => prop.Attr is not null && prop.Attr.JoinOutside);
+
+                foreach(var join in outsideJoins)
+                {
+                    outsideJoinBuilder.Append(join.Statement);
+                }
+
+                foreach(var prop in outsideNames)
+                {
+                    namesBuilder.Append(',');
+                    namesBuilder.Append(prop.Attr.Name);
+                }
+
+                if (!string.IsNullOrEmpty(_orderBy))
+                {
+                    _builder.OrderBy($"t.{_orderBy}");
+                }
+
+                var t = $"SELECT t.*{namesBuilder} FROM ({innerTemplate.RawSql}) as t {outsideJoinBuilder} /**orderby**/";
+
+                var temp = _builder.AddTemplate(t, _parameters);
+
+                _builder = new SqlBuilder();
+
+                return (temp.RawSql, temp.Parameters);
+            } 
+            else
+            {
+                var temp = _builder.AddTemplate(template, _parameters);
+
+                _builder = new SqlBuilder();
+
+                return (temp.RawSql, temp.Parameters);
+            }
+
+            
         }
         
         public (string Query, object Params) BuildCount(string table)
@@ -193,9 +244,13 @@ namespace Messenger.Database.Sql
 
             var props = typeof(T).GetProperties().Where(x => x.Name != "Id" && x.GetValue(request) != default);
 
+            var index = 0;
+            var count = props.Count();
             foreach(var prop in props) 
             {
-                setBuilder.Append($"[{table}].[{prop.Name}]=@{prop.Name}");
+                index++;
+                var colon = index < count ? "," : "";
+                setBuilder.Append($"[{table}].[{prop.Name}]=@{prop.Name}{colon} ");
             }
 
             var template = $"UPDATE [{table}] SET {setBuilder} /**where**/";

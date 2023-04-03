@@ -9,5 +9,7 @@ namespace Messenger.Database.Repository
     {
         Task<User> GetByLoginAsync(string login);
         Task<UserModel> GetByIdAsync(long id);
+        Task UpdateAsync(UpdateUserRequest request);
+        Task<User> GetEntityByIdAsync(long id);
     }
 }

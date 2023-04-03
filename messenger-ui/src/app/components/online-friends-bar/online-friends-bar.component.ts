@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import UserListItem from 'src/app/models/UserListItem';
 import { AuthService } from 'src/app/services/auth.service';
+import { ImageService } from 'src/app/services/image.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class OnlineFriendsBarComponent implements OnInit {
   friends: UserListItem[] = []
   authorized = false
 
-  constructor(private signalR: SignalrService, private authService: AuthService) {
+  constructor(private signalR: SignalrService, private authService: AuthService, private imageService: ImageService) {
 
   }
   ngOnInit(): void {
@@ -36,7 +37,9 @@ export class OnlineFriendsBarComponent implements OnInit {
     const connectionId = await this.signalR.openConnection('online-status')
 
     this.signalR.setConnectionListener(connectionId, 'FriendConnected', (friend: UserListItem) => {
-      this.friends.push(friend)
+      if (!this.friends.some(x => x.id == friend.id)) {
+        this.friends.push(friend)
+      }
     })
 
     this.signalR.setConnectionListener(connectionId, 'FriendDisconnected', (id: number) => {
@@ -44,8 +47,10 @@ export class OnlineFriendsBarComponent implements OnInit {
     })
 
     this.signalR.invoke<UserListItem[]>(connectionId, 'GetOnlineFriends').then(res => {
-      this.friends.push(...res)
+      this.friends.push(...res.filter(x => !this.friends.some(friend => friend.id == x.id)))
     })
   }
+
+  getImage = (id: number) => this.imageService.getUrl('profile', id)
 
 }
