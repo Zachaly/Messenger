@@ -25,6 +25,8 @@ import { DirectChatListItemComponent } from './components/direct-chat-list-item/
 import { DirectChatComponent } from './components/direct-chat/direct-chat.component';
 import { OnlineFriendsBarComponent } from './components/online-friends-bar/online-friends-bar.component';
 import { UpdateProfilePageComponent } from './pages/update-profile-page/update-profile-page.component';
+import { NavbarDropdownComponent } from './components/navbar-dropdown/navbar-dropdown.component';
+import { NavbarDropdownItemComponent } from './components/navbar-dropdown-item/navbar-dropdown-item.component';
 
 const route = (path: string, component: any) => (
   {
@@ -66,6 +68,8 @@ const routes: Routes = [
     DirectChatComponent,
     OnlineFriendsBarComponent,
     UpdateProfilePageComponent,
+    NavbarDropdownComponent,
+    NavbarDropdownItemComponent,
   ],
   imports: [
     BrowserModule,

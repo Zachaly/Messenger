@@ -2,3 +2,7 @@
     position: relative;
     bottom: 0;
 }
+
+.unread {
+    user-select: none;
+}

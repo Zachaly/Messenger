@@ -17,7 +17,6 @@ export class NotificationListComponent {
 
   notifications: NotificationModel[] = []
 
-
   constructor(private authService: AuthService, private signalR: SignalrService, private friendRequestService: FriendRequestService,
     private notificationService: NotificationService) {
     notificationService.notificationSubject.subscribe(res => this.notifications = res)

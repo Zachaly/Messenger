@@ -9,9 +9,6 @@
                 <fa-icon [icon]="bell" />
                 <span class="unread">{{unreadNotifications}}</span>
             </a>
-            <a *ngIf="authorized" class="navbar-item" routerLink="/chats">
-                Chats
-            </a>
         </div>
 
         <div [hidden]="!showNotifications">
@@ -31,22 +28,7 @@
             </div>
         </div>
         <div class="navbar-end" *ngIf="authorized">
-            <div class="navbar-item">
-                <figure class="image is-48x48 m-1">
-                    <img [src]="imageUrl" alt="">
-                </figure>
-                <p class="title is-small"> {{ currentUser }}</p>
-            </div>
-            <a routerLink="/friend-request" class="navbar-item">Friend requests</a>
-            <a routerLink="/friend" class="navbar-item">Friends</a>
-            <a routerLink="/update-profile" class="navbar-item">Update profile</a>
-            <div class="navbar-item">
-                <div class="buttons">
-                    <button class="button is-danger" (click)="logout()">
-                        Logout
-                    </button>
-                </div>
-            </div>
+            <app-navbar-dropdown [user]="currentUser" [userId]="userId" (logout)="logout()" />
         </div>
     </div>
 </nav>

@@ -3,3 +3,7 @@
 .navbar-item img {
     max-height: 100%;
 }
+
+.username {
+    user-select: none;
+}

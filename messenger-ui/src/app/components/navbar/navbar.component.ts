@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { NotificationService } from 'src/app/services/notification.service';
@@ -16,14 +16,14 @@ export class NavbarComponent {
   bell = faBell
   showNotifications = false
   unreadNotifications: number = 0
-  imageUrl = ''
+  userId = 0
 
-  constructor(private authService: AuthService, private router: Router,
-    private notificationService: NotificationService, private imageService: ImageService) {
+
+  constructor(private authService: AuthService, private notificationService: NotificationService) {
     authService.onAuthChange().subscribe(res => {
       this.currentUser = res.userName
       this.authorized = res.userName != ''
-      this.imageUrl = imageService.getUrl('profile', res.userId)
+      this.userId = res.userId
     })
     notificationService.notificationCountSubject.subscribe(res => this.unreadNotifications = this.showNotifications ? 0 : res)
   }
@@ -38,6 +38,5 @@ export class NavbarComponent {
   logout() {
     this.authService.logout()
     this.authService.clearUserData()
-    this.router.navigateByUrl('/login')
   }
 }

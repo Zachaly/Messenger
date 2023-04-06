@@ -86,7 +86,6 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   private loadMessages() {
-    console.log(this.nextPage)
     if (this.nextPage >= this.maxPage) {
       return
     }
@@ -96,7 +95,6 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.messageService
       .getMessages({ user1Id: this.currentUserId, user2Id: this.userId, pageSize: PAGE_SIZE, pageIndex })
       .subscribe(res => {
-        console.log(res)
         res.forEach(msg => this.readMessage(msg, false))
         this.loading = false
       })
@@ -108,7 +106,6 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.signalR.stopAllConnections()
 
     this.messageService.getMessageCount({ user1Id: this.currentUserId, user2Id: this.userId }).subscribe(count => {
-      console.log(count)
       this.maxPage = Math.ceil(count / PAGE_SIZE)
       this.loadMessages()
     })

@@ -1,0 +1,22 @@
+<div class="dropdown navbar-item" [ngClass]="{ 'is-active': isActive }">
+    <div class="dropdown-trigger">
+        <div class="navbar-item" (click)="isActive = !isActive">
+            <figure class="image is-48x48 m-1">
+                <img [src]="imageUrl" alt="">
+            </figure>
+            <p class="title is-small username"> {{ user }}</p>
+        </div>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+            <app-navbar-dropdown-item *ngFor="let route of routes" [name]="route[0]" [link]="route[1]"
+                [isActive]="isCurrentRoute(route[1])" (click)="isActive = false" />
+            <hr class="dropdown-divider">
+            <div class="dropdown-item">
+                <button class="button is-danger" (click)="onLogout()">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
