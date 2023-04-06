@@ -2,5 +2,6 @@
 {
     public class GetUserRequest : PagedRequest
     {
+        public long? Id { get; set; }
     }
 }
