@@ -77,6 +77,22 @@ namespace Messenger.Api.Controllers
         }
 
         /// <summary>
+        /// Updates username of given user
+        /// </summary>
+        /// <response code="204">User updated successfully</response>
+        /// <response code="400">Failed to update user</response>
+        [HttpPatch]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [Authorize]
+        public async Task <ActionResult<ResponseModel>> UpdateAsync(UpdateUsernameCommand command)
+        {
+            var res = await _mediator.Send(command);
+
+            return res.ReturnNoContentOrBadRequest();
+        }
+
+        /// <summary>
         /// Returns current user based on bearer token
         /// </summary>
         /// <response code="200">User data</response>

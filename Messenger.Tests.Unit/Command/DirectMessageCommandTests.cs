@@ -30,7 +30,7 @@ namespace Messenger.Tests.Unit.Command
                 .Returns(new DirectMessage());
 
             var responseFactory = new Mock<IResponseFactory>();
-            responseFactory.Setup(x => x.CreateSuccess())
+            responseFactory.Setup(x => x.CreateCreatedSuccess(It.IsAny<long>()))
                 .Returns(new ResponseModel { Success = true });
 
             var notificationService = new Mock<INotificationService>();
