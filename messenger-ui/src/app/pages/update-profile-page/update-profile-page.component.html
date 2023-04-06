@@ -1,3 +1,14 @@
+<form (submit)="submitName()">
+    <h1 class="title has-text-centered">Update name</h1>
+    <div class="control">
+        <label for="name" class="label">Name</label>
+        <input name="name" class="input" [(ngModel)]="user.name">
+    </div>
+    <div class="control">
+        <button class="button is-success">Confirm</button>
+    </div>
+</form>
+
 <form (submit)="submitImage()">
     <h1 class="title has-text-centered">Update profile image</h1>
     <div class="control">
@@ -5,6 +16,6 @@
         <input type="file" class="input" (change)="changeImage()" #fileInput>
     </div>
     <div class="control">
-        <button class="is-success">Confirm</button>
+        <button class="button is-success">Confirm</button>
     </div>
 </form>

@@ -235,5 +235,54 @@ namespace Messenger.Tests.Unit.Command
             Assert.Equal(user.Id, res.Id);
             Assert.Equal(user.Name, res.Name);
         }
+
+        [Fact]
+        public async Task UpdateUsernameCommand_Succcess()
+        {
+            var user = new User { Id = 1, Name = "name" };
+
+            var userRepository = new Mock<IUserRepository>();
+            userRepository.Setup(x => x.UpdateAsync(It.IsAny<UpdateUserRequest>())).Callback((UpdateUserRequest request) =>
+            {
+                user.Name = request.Name;
+            });
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(() => new ResponseModel { Success = true });
+
+            var command = new UpdateUsernameCommand { Id = 1, Name = "new name" };
+
+            var res = await new UpdateUsernameHandler(userRepository.Object, responseFactory.Object).Handle(command, default);
+
+            Assert.True(res.Success);
+            Assert.Equal(user.Name, command.Name);
+        }
+
+        [Fact]
+        public async Task UpdateUsernameCommand_ExceptionThrown_Failure()
+        {
+            var user = new User { Id = 1, Name = "name" };
+
+            const string Error = "Error";
+
+            var userRepository = new Mock<IUserRepository>();
+            userRepository.Setup(x => x.UpdateAsync(It.IsAny<UpdateUserRequest>())).Callback((UpdateUserRequest request) =>
+            {
+                throw new Exception(Error);
+            });
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
+
+            var command = new UpdateUsernameCommand { Id = 1, Name = "new name" };
+
+            var res = await new UpdateUsernameHandler(userRepository.Object, responseFactory.Object).Handle(command, default);
+
+            Assert.False(res.Success);
+            Assert.Equal(Error, res.Error);
+            Assert.NotEqual(user.Name, command.Name);
+        }
     }
 }

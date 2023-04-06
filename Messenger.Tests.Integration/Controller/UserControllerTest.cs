@@ -132,5 +132,19 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(_authorizedUserId, content.UserId);
             Assert.Equal(_httpClient.DefaultRequestHeaders.Authorization.Parameter, content.AuthToken);
         }
+
+        [Fact]
+        public async Task UpdateUserAsync_Success()
+        {
+            await Authorize();
+
+            var command = new UpdateUsernameCommand { Id = _authorizedUserId, Name = "new name" };
+            var response = await _httpClient.PatchAsJsonAsync(ApiUrl, command);
+            
+            var user = GetFromDatabase<User>("SELECT * FROM [User]").First();
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(command.Name, user.Name);
+        }
     }
 }

@@ -5,6 +5,8 @@ import UserListItem from '../models/UserListItem';
 import PagedRequest from '../requests/PagedRequest';
 import MapPagedRequest from '../requests/paramMappers/MapPagedRequest';
 import { AuthService } from './auth.service';
+import UpdateUsernameRequest from '../requests/UpdateUsernameRequest';
+import GetUsersRequest from '../requests/GetUsersRequest';
 
 const API_URL = 'https://localhost:5001/api/user'
 
@@ -26,12 +28,18 @@ export class UserService {
 
   }
 
-  getUsers(request: PagedRequest): Observable<UserListItem[]> {
+  getUsers(request: GetUsersRequest): Observable<UserListItem[]> {
     const params = MapPagedRequest(request)
     
     return this.http.get<UserListItem[]>(API_URL, {
       headers: this.httpHeaders(),
       params
+    })
+  }
+
+  updateUser(request: UpdateUsernameRequest) : Observable<any> {
+    return this.http.patch(API_URL, request, {
+      headers: this.httpHeaders()
     })
   }
 }
