@@ -1,5 +1,5 @@
 ﻿using Messenger.Application.Abstraction;
-using Messenger.Application.Reaction.Command;
+using Messenger.Application.Command;
 using Messenger.Database.Repository;
 using Messenger.Domain.Entity;
 using Messenger.Models.DirectMessageReaction.Request;
@@ -86,6 +86,70 @@ namespace Messenger.Tests.Unit.Command
             Assert.False(res.Success);
             Assert.Equal(Error, res.Error);
             Assert.Empty(reactions);
+        }
+
+        [Fact]
+        public async Task DeleteDirectMessageReactionCommand_Success()
+        {
+            const long MessageId = 1;
+            var reactions = new List<DirectMessageReaction>
+            {
+                new DirectMessageReaction { MessageId = MessageId },
+                new DirectMessageReaction { MessageId = 2 },
+                new DirectMessageReaction { MessageId = 3 },
+            };
+
+            var reactionRepository = new Mock<IDirectMessageReactionRepository>();
+            reactionRepository.Setup(x => x.DeleteAsync(It.IsAny<long>()))
+                .Callback((long id) => reactions.Remove(reactions.First(x => x.MessageId == id)));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            var notificationService = new Mock<INotificationService>();
+            notificationService.Setup(x => x.DirectMessageReactionChanged(It.IsAny<long>(), It.IsAny<string>(), It.IsAny<long>()));
+
+            var command = new DeleteDirectMessageReactionCommand { MessageId = MessageId, ReceiverId = 2 };
+
+            var res = await new DeleteDirectMessageReactionHandler(notificationService.Object, reactionRepository.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.True(res.Success);
+            Assert.DoesNotContain(reactions, x => x.MessageId == command.MessageId);
+        }
+
+        [Fact]
+        public async Task DeleteDirectMessageReactionCommand_ExceptionThrown_Fail()
+        {
+            const long MessageId = 1;
+            var reactions = new List<DirectMessageReaction>
+            {
+                new DirectMessageReaction { MessageId = MessageId },
+                new DirectMessageReaction { MessageId = 2 },
+                new DirectMessageReaction { MessageId = 3 },
+            };
+
+            const string Error = "err";
+
+            var reactionRepository = new Mock<IDirectMessageReactionRepository>();
+            reactionRepository.Setup(x => x.DeleteAsync(It.IsAny<long>()))
+                .Callback((long id) => throw new Exception(Error));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
+
+            var notificationService = new Mock<INotificationService>();
+            notificationService.Setup(x => x.DirectMessageReactionChanged(It.IsAny<long>(), It.IsAny<string>(), It.IsAny<long>()));
+
+            var command = new DeleteDirectMessageReactionCommand { MessageId = MessageId, ReceiverId = 2 };
+
+            var res = await new DeleteDirectMessageReactionHandler(notificationService.Object, reactionRepository.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.False(res.Success);
+            Assert.Contains(reactions, x => x.MessageId == command.MessageId);
         }
     }
 }

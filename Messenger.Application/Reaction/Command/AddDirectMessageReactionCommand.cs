@@ -4,7 +4,7 @@ using Messenger.Database.Repository;
 using Messenger.Models.DirectMessageReaction.Request;
 using Messenger.Models.Response;
 
-namespace Messenger.Application.Reaction.Command
+namespace Messenger.Application.Command
 {
     public class AddDirectMessageReactionCommand : AddDirectMessageReactionRequest, IRequest<ResponseModel>
     {

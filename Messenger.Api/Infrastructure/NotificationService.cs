@@ -20,7 +20,7 @@ namespace Messenger.Api.Infrastructure
 
         public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)
         {
-            throw new NotImplementedException();
+            return _directMessageHub.Clients.User(receiverId.ToString()).ReactionUpdated(messageId, reaction);
         }
 
         public Task ReadDirectMessage(long messageId, long senderId)
