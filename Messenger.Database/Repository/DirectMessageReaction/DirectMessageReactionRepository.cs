@@ -6,7 +6,7 @@ using Messenger.Models.DirectMessageReaction.Request;
 
 namespace Messenger.Database.Repository
 {
-    internal class DirectMessageReactionRepository
+    public class DirectMessageReactionRepository
         : KeylessRepositoryBase<DirectMessageReaction, DirectMessageReaction, UpdateDirectMessageReactionRequest>, IDirectMessageReactionRepository
     {
         public DirectMessageReactionRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
