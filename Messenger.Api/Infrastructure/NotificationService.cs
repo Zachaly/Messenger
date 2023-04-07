@@ -18,6 +18,11 @@ namespace Messenger.Api.Infrastructure
             _friendHub = friendHub;
         }
 
+        public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task ReadDirectMessage(long messageId, long senderId)
         {
             return _directMessageHub.Clients.User(senderId.ToString()).ReadMessage(messageId, true);

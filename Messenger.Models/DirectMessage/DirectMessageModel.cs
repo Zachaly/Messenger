@@ -3,6 +3,7 @@
 namespace Messenger.Models.DirectMessage
 {
     [Join(Statement = "LEFT OUTER JOIN [User] ON [User].[Id]=[DirectMessage].[SenderId]")]
+    [Join(Statement = "LEFT OUTER JOIN [DirectMessageReaction] ON [DirectMessage].[Id]=[DirectMessageReaction].[MessageId]")]
     [Join(Statement = "LEFT OUTER JOIN [DirectMessageImage] ON t.[Id]=[DirectMessageImage].[MessageId]", Outside = true)]
     public class DirectMessageModel
     {
@@ -15,5 +16,7 @@ namespace Messenger.Models.DirectMessage
         public long SenderId { get; set; }
         [SqlName(Name = "[DirectMessageImage].*", JoinOutside = true)]
         public IEnumerable<long> ImageIds { get; set; }
+        [SqlName(Name = "[DirectMessageReaction].[Reaction]")]
+        public string? Reaction { get; set; }
     }
 }
