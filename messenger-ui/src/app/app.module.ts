@@ -27,6 +27,7 @@ import { OnlineFriendsBarComponent } from './components/online-friends-bar/onlin
 import { UpdateProfilePageComponent } from './pages/update-profile-page/update-profile-page.component';
 import { NavbarDropdownComponent } from './components/navbar-dropdown/navbar-dropdown.component';
 import { NavbarDropdownItemComponent } from './components/navbar-dropdown-item/navbar-dropdown-item.component';
+import { EmojiSelectComponent } from './components/emoji-select/emoji-select.component';
 
 const route = (path: string, component: any) => (
   {
@@ -70,6 +71,7 @@ const routes: Routes = [
     UpdateProfilePageComponent,
     NavbarDropdownComponent,
     NavbarDropdownItemComponent,
+    EmojiSelectComponent,
   ],
   imports: [
     BrowserModule,

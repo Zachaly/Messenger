@@ -8,6 +8,7 @@ namespace Messenger.Api.Hubs
     {
         Task GetMessage(DirectMessageModel message);
         Task ReadMessage(long messageId, bool read);
+        Task ReactionUpdated(long messageId, string? reaction);
     }
 
     [Authorize(AuthenticationSchemes = "Websocket")]

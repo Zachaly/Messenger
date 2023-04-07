@@ -1,10 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewChecked, Output, EventEmitter } from '@angular/core';
 import DirectMessage from 'src/app/models/DirectMessage';
 import AddDirectMessageRequest from 'src/app/requests/AddDirectMessageRequest';
+import ChangeDirectMessageReactionRequest from 'src/app/requests/ChangeDirectMessageReactionRequest';
 import UpdateDirectMessageRequest from 'src/app/requests/UpdateDirectMessageRequest';
 import { AuthService } from 'src/app/services/auth.service';
 import { DirectMessageService } from 'src/app/services/direct-message.service';
 import { ImageService } from 'src/app/services/image.service';
+import { ReactionService } from 'src/app/services/reaction.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 
 const PAGE_SIZE = 5
@@ -29,6 +31,7 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   loading = false
 
   firstScrolled = false
+  showEmoji = false
 
   messages: DirectMessage[] = []
 
@@ -36,7 +39,8 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   newMessageFiles: FileList | null = null
 
   constructor(authSevice: AuthService, private messageService: DirectMessageService,
-    private signalR: SignalrService, private imageService: ImageService) {
+    private signalR: SignalrService, private imageService: ImageService,
+    private reactionService: ReactionService) {
     this.currentUserId = authSevice.currentUser.userId
   }
 
@@ -118,6 +122,12 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.signalR.setConnectionListener(directMessageConnectionId, 'ReadMessage', (x: number, read: boolean) => {
         this.messages.find(msg => msg.id === x)!.read = read
       })
+      this.signalR.setConnectionListener(directMessageConnectionId, 'ReactionUpdated', (id: number, reaction?: string) => {
+        const msg = this.messages.find(msg => msg.id === id)
+        if (msg) {
+          msg.reaction = reaction
+        }
+      })
     })
   }
 
@@ -151,5 +161,26 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   selectImages() {
     this.newMessageFiles = this.fileInput.nativeElement.files
+  }
+
+  selectEmoji(emoji: string) {
+    this.newMessageContent += emoji
+    this.showEmoji = false
+  }
+
+  changeReaction(message: DirectMessage, reaction?: string) {
+    if (message.senderId == this.currentUserId) {
+      return
+    }
+    message.reaction = reaction
+    if (reaction) {
+      const request: ChangeDirectMessageReactionRequest = {
+        messageId: message.id,
+        receiverId: message.senderId,
+        reaction: reaction
+      }
+
+      this.reactionService.changeReaction(request).subscribe()
+    }
   }
 }

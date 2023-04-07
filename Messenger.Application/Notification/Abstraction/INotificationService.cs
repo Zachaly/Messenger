@@ -9,5 +9,6 @@ namespace Messenger.Application.Abstraction
         Task ReadDirectMessage(long messageId, long senderId);
         Task SendFriendRequest(long requestId, long receiverId);
         Task SendFriendRequestResponse(FriendAcceptedResponse response);
+        Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId);
     }
 }
