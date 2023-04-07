@@ -14,3 +14,9 @@
 img {
     max-height: 100%;
 }
+
+.emojis {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}

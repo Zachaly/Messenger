@@ -5,5 +5,6 @@ export default interface DirectMessage {
     created: string,
     senderName: string,
     senderId: number,
-    imageIds: number[]
+    imageIds: number[],
+    reaction?: string
 }

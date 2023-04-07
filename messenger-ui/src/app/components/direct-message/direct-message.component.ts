@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import DirectMessage from 'src/app/models/DirectMessage';
 import { ImageService } from 'src/app/services/image.service';
 
@@ -9,6 +9,8 @@ import { ImageService } from 'src/app/services/image.service';
 })
 export class DirectMessageComponent {
   @Input() message: DirectMessage = { id: 0, content: '', read: false, created: '', senderName: '', senderId: 0, imageIds: [] }
+  @Output() selectEmoji: EventEmitter<string> = new EventEmitter()
+  showEmoji = false
 
   constructor(private imageService: ImageService) {
 
@@ -20,4 +22,9 @@ export class DirectMessageComponent {
   }
 
   getImage = (id: number) => this.imageService.getUrl('direct-message', id)
+
+  onSelectEmoji(emoji: string) {
+    this.showEmoji = false
+    this.selectEmoji.emit(emoji)
+  }
 }
