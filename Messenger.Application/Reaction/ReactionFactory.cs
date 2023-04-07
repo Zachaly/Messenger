@@ -7,8 +7,10 @@ namespace Messenger.Application
     public class ReactionFactory : IReactionFactory
     {
         public DirectMessageReaction CreateDirectMessageReaction(AddDirectMessageReactionRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new DirectMessageReaction
+            {
+                MessageId = request.MessageId,
+                Reaction = request.Reaction,
+            };
     }
 }

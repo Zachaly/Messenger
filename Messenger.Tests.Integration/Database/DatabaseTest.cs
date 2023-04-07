@@ -72,5 +72,13 @@ namespace Messenger.Tests.Integration.Database
                 }
             }
         }
+
+        protected async Task InsertDirectMessageReactionToDatabase(DirectMessageReaction reaction)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                await connection.QueryAsync("INSERT INTO [DirectMessageReaction]([MessageId], [Reaction]) VALUES(@MessageId, @Reaction)", reaction);
+            }
+        }
     }
 }

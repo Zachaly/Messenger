@@ -7,7 +7,7 @@ using Messenger.Models.DirectMessageReaction.Request;
 namespace Messenger.Database.Repository
 {
     public class DirectMessageReactionRepository
-        : KeylessRepositoryBase<DirectMessageReaction, DirectMessageReaction, UpdateDirectMessageReactionRequest>, IDirectMessageReactionRepository
+        : KeylessRepositoryBase<DirectMessageReaction, DirectMessageReaction, GetDirectMessageReactionRequest>, IDirectMessageReactionRepository
     {
         public DirectMessageReactionRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
         {
@@ -16,7 +16,9 @@ namespace Messenger.Database.Repository
 
         public Task DeleteAsync(long messageId)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { MessageId = messageId }).BuildDelete(Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

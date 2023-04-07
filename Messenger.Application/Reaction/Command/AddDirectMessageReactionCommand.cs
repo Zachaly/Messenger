@@ -27,9 +27,24 @@ namespace Messenger.Application.Reaction.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(AddDirectMessageReactionCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddDirectMessageReactionCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var reaction = _reactionFactory.CreateDirectMessageReaction(request);
+
+                await _reactionRepository.DeleteAsync(request.MessageId);
+
+                await _reactionRepository.InsertAsync(reaction);
+
+                await _notificationService.DirectMessageReactionChanged(reaction.MessageId, reaction.Reaction, request.ReceiverId);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

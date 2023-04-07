@@ -5,7 +5,7 @@ using Messenger.Models.DirectMessageReaction.Request;
 namespace Messenger.Database.Repository
 {
     public interface IDirectMessageReactionRepository 
-        : IKeylessRepository<DirectMessageReaction, DirectMessageReaction, UpdateDirectMessageReactionRequest>
+        : IKeylessRepository<DirectMessageReaction, DirectMessageReaction, GetDirectMessageReactionRequest>
     {
         Task DeleteAsync(long messageId);
     }

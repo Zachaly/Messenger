@@ -16,6 +16,7 @@ namespace Messenger.Tests.Integration.Database
             _teardownQueries.Add("TRUNCATE TABLE [User]");
             _teardownQueries.Add("TRUNCATE TABLE [DirectMessage]");
             _teardownQueries.Add("TRUNCATE TABLE [DirectMessageImage]");
+            _teardownQueries.Add("TRUNCATE TABLE [DirectMessageReaction]");
 
             _repository = new DirectMessageRepository(_connectionFactory, new SqlQueryBuilder());
         }
@@ -98,7 +99,7 @@ namespace Messenger.Tests.Integration.Database
         }
 
         [Fact]
-        public async Task GetAsync_ImageIdsIncluded()
+        public async Task GetAsync_ImageIds_And_Reaction_Included()
         {
             await InsertUsersToDatabase(FakeDataFactory.CreateUsers(2));
 
@@ -111,10 +112,14 @@ namespace Messenger.Tests.Integration.Database
 
             await InsertMessagesAsync(new List<DirectMessage> { message });
 
+
             var messageId = (await GetAllFromDatabase<DirectMessage>("DirectMessage")).First().Id;
 
             await InsertImagesToDatabase(FakeDataFactory.CreateMessageImages(messageId, 5));
             await InsertImagesToDatabase(FakeDataFactory.CreateMessageImages(20, 5));
+            const string Reaction = "😀";
+
+            await InsertDirectMessageReactionToDatabase(new DirectMessageReaction { MessageId = messageId, Reaction = Reaction });
 
             var imageIds = (await GetAllFromDatabase<DirectMessageImage>("DirectMessageImage"))
                 .Where(x => x.MessageId == messageId)
@@ -123,6 +128,7 @@ namespace Messenger.Tests.Integration.Database
             var res = (await _repository.GetAsync(new GetDirectMessagesRequest { Id = messageId })).First();
 
             Assert.Equivalent(imageIds, res.ImageIds);
+            Assert.Equal(Reaction, res.Reaction);
         }
     }
 }

@@ -5,10 +5,11 @@ using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.DirectMessage;
 using Messenger.Models.DirectMessage.Request;
+using Messenger.Models.DirectMessageReaction.Request;
 
 namespace Messenger.Database.Repository
 {
-    public class DirectMessageRepository : RepositoryBase<DirectMessage, DirectMessageModel, GetDirectMessagesRequest>, IDirectMessageRepository
+    public class DirectMessageRepository : RepositoryBase<DirectMessage, DirectMessageModel,  GetDirectMessagesRequest>, IDirectMessageRepository
     {
         public DirectMessageRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) 
             : base(connectionFactory, sqlQueryBuilder)
