@@ -7,13 +7,19 @@ namespace Messenger.Application
     public class ChatUserFactory : IChatUserFactory
     {
         public ChatUser Create(AddChatUserRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new ChatUser
+            {
+                IsAdmin = false,
+                ChatId = request.ChatId,
+                UserId = request.UserId,
+            };
 
         public ChatUser Create(long chatId, long userId, bool isAdmin = true)
-        {
-            throw new NotImplementedException();
-        }
+            => new ChatUser
+            {
+                ChatId = chatId,
+                IsAdmin = isAdmin,
+                UserId = userId,
+            };
     }
 }

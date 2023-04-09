@@ -11,14 +11,16 @@ namespace Messenger.Application.Command
 
     public class GetChatHandler : IRequestHandler<GetChatQuery, IEnumerable<ChatModel>>
     {
+        private IChatRepository _chatRepository;
+
         public GetChatHandler(IChatRepository chatRepository)
         {
-
+            _chatRepository = chatRepository;
         }
 
         public Task<IEnumerable<ChatModel>> Handle(GetChatQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _chatRepository.GetAsync(request);
         }
     }
 }

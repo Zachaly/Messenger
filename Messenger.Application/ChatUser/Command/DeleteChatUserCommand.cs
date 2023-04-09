@@ -13,15 +13,32 @@ namespace Messenger.Application.Command
 
     public class DeleteChatUserHandler : IRequestHandler<DeleteChatUserCommand, ResponseModel>
     {
+        private readonly IChatUserRepository _chatUserRepository;
+        private readonly IResponseFactory _responseFactory;
+        private readonly INotificationService _notificationService;
+
         public DeleteChatUserHandler(IChatUserRepository chatUserRepository, IResponseFactory responseFactory,
             INotificationService notificationService)
         {
-
+            _chatUserRepository = chatUserRepository;
+            _responseFactory = responseFactory;
+            _notificationService = notificationService;
         }
 
-        public Task<ResponseModel> Handle(DeleteChatUserCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteChatUserCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _chatUserRepository.DeleteAsync(request.UserId, request.ChatId);
+
+                await _notificationService.RemovedFromChat(request.UserId, request.ChatId);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

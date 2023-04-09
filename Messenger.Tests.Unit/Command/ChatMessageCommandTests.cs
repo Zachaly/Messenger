@@ -62,7 +62,7 @@ namespace Messenger.Tests.Unit.Command
 
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
-                .Returns((string msg) => new ResponseModel { Success = true, Error = msg });
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
 
             var notificationService = new Mock<INotificationService>();
 

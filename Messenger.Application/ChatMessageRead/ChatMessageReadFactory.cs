@@ -7,8 +7,10 @@ namespace Messenger.Application
     public class ChatMessageReadFactory : IChatMessageReadFactory
     {
         public ChatMessageRead Create(AddChatMessageReadRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new ChatMessageRead
+            {
+                MessageId = request.MessageId,
+                UserId = request.UserId,
+            };
     }
 }

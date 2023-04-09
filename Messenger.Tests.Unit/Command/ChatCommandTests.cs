@@ -104,7 +104,7 @@ namespace Messenger.Tests.Unit.Command
         }
 
         [Fact]
-        public async Task UpdateChatCommand_ExceptionThrown_Success()
+        public async Task UpdateChatCommand_Success()
         {
             var chat = new Chat { Name = "old name" };
 
@@ -112,11 +112,15 @@ namespace Messenger.Tests.Unit.Command
             chatRepository.Setup(x => x.UpdateAsync(It.IsAny<UpdateChatRequest>()))
                 .Callback((UpdateChatRequest request) => chat.Name = request.Name);
 
+            chatRepository.Setup(x => x.GetAsync(It.IsAny<GetChatRequest>()))
+                .ReturnsAsync(new List<ChatModel> { new ChatModel { Name = chat.Name } });
+
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateSuccess())
                 .Returns(new ResponseModel { Success = true });
 
             var notificationService = new Mock<INotificationService>();
+            notificationService.Setup(x => x.ChatUpdated(It.IsAny<ChatModel>()));
 
             var command = new UpdateChatCommand { Id = 1, Name = "name" };
             var res = await new UpdateChatHandler(chatRepository.Object, responseFactory.Object, notificationService.Object)
@@ -127,7 +131,7 @@ namespace Messenger.Tests.Unit.Command
         }
 
         [Fact]
-        public async Task UpdateChatCommand_Fail()
+        public async Task UpdateChatCommand_ExceptionThrown_Fail()
         {
             var chat = new Chat { Name = "old name" };
 

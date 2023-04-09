@@ -10,14 +10,16 @@ namespace Messenger.Application.Command
 
     public class GetChatMessageCountHandler : IRequestHandler<GetChatMessageCountQuery, int>
     {
+        private readonly IChatMessageRepository _chatMessageRepository;
+
         public GetChatMessageCountHandler(IChatMessageRepository chatMessageRepository)
         {
-
+            _chatMessageRepository = chatMessageRepository;
         }
 
         public Task<int> Handle(GetChatMessageCountQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _chatMessageRepository.GetCount(request);
         }
     }
 }

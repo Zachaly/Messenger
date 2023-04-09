@@ -10,14 +10,16 @@ namespace Messenger.Application.Command
 
     public class GetChatUserCountHandler : IRequestHandler<GetChatUserCountQuery, int>
     {
+        private IChatUserRepository _chatUserRepository;
+
         public GetChatUserCountHandler(IChatUserRepository chatUserRepository)
         {
-
+            _chatUserRepository = chatUserRepository;
         }
 
         public Task<int> Handle(GetChatUserCountQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _chatUserRepository.GetCount(request);
         }
     }
 }

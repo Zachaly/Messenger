@@ -7,8 +7,10 @@ namespace Messenger.Application
     public class ChatFactory : IChatFactory
     {
         public Chat Create(AddChatRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new Chat
+            {
+                CreatorId = request.UserId,
+                Name = request.Name,
+            };
     }
 }
