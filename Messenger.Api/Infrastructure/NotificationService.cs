@@ -1,5 +1,8 @@
 ﻿using Messenger.Api.Hubs;
 using Messenger.Application.Abstraction;
+using Messenger.Models.Chat;
+using Messenger.Models.ChatMessage;
+using Messenger.Models.ChatUser;
 using Messenger.Models.DirectMessage;
 using Messenger.Models.Friend;
 using Microsoft.AspNetCore.SignalR;
@@ -18,6 +21,31 @@ namespace Messenger.Api.Infrastructure
             _friendHub = friendHub;
         }
 
+        public Task AddedToChat(ChatUserModel user, long chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ChatMessageRead(long chatId, long userId, long messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ChatMessageSend(ChatMessageModel message, long chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ChatUpdated(ChatModel chat)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ChatUserUpdated(ChatUserModel user, long chatId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)
         {
             return _directMessageHub.Clients.User(receiverId.ToString()).ReactionUpdated(messageId, reaction);
@@ -26,6 +54,11 @@ namespace Messenger.Api.Infrastructure
         public Task ReadDirectMessage(long messageId, long senderId)
         {
             return _directMessageHub.Clients.User(senderId.ToString()).ReadMessage(messageId, true);
+        }
+
+        public Task RemovedFromChat(long userId, long chatId)
+        {
+            throw new NotImplementedException();
         }
 
         public Task SendDirectMessage(DirectMessageModel message, long senderId, long receiverId)

@@ -12,8 +12,8 @@ namespace Messenger.Application.Command
 
     public class AddChatHandler : IRequestHandler<AddChatCommand, ResponseModel>
     {
-        public AddChatHandler(IChatRepository chatRepository, IChatFactory chatFactory, IResponseFactory responseFactory,
-            INotificationService notificationService)
+        public AddChatHandler(IChatRepository chatRepository, IChatFactory chatFactory, IResponseFactory responseFactory, 
+            IChatUserRepository chatUserRepository, IChatUserFactory chatUserFactory)
         {
 
         }

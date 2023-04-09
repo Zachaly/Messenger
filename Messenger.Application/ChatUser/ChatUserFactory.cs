@@ -10,5 +10,10 @@ namespace Messenger.Application
         {
             throw new NotImplementedException();
         }
+
+        public ChatUser Create(long chatId, long userId, bool isAdmin = true)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -14,8 +14,8 @@ namespace Messenger.Application.Abstraction
         Task SendFriendRequestResponse(FriendAcceptedResponse response);
         Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId);
 
-        Task AddedToChat(ChatModel chat, long userId);
-        Task RemovedFromChat(ChatModel chat, long userId);
+        Task AddedToChat(ChatUserModel user, long chatId);
+        Task RemovedFromChat(long userId, long chatId);
         Task ChatUserUpdated(ChatUserModel user, long chatId);
         Task ChatMessageSend(ChatMessageModel message, long chatId);
         Task ChatMessageRead(long chatId, long userId, long messageId);
