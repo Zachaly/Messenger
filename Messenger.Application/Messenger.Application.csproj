@@ -19,10 +19,4 @@
     <ProjectReference Include="..\Messenger.Models\Messenger.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ChatMessageRead\Command\" />
-    <Folder Include="ChatMessage\Command\" />
-    <Folder Include="Chat\Command\" />
-  </ItemGroup>
-
 </Project>

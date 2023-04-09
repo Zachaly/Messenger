@@ -1,4 +1,7 @@
-﻿using Messenger.Models.DirectMessage;
+﻿using Messenger.Models.Chat;
+using Messenger.Models.ChatMessage;
+using Messenger.Models.ChatUser;
+using Messenger.Models.DirectMessage;
 using Messenger.Models.Friend;
 
 namespace Messenger.Application.Abstraction
@@ -10,5 +13,12 @@ namespace Messenger.Application.Abstraction
         Task SendFriendRequest(long requestId, long receiverId);
         Task SendFriendRequestResponse(FriendAcceptedResponse response);
         Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId);
+
+        Task AddedToChat(ChatModel chat, long userId);
+        Task RemovedFromChat(ChatModel chat, long userId);
+        Task ChatUserUpdated(ChatUserModel user, long chatId);
+        Task ChatMessageSend(ChatMessageModel message, long chatId);
+        Task ChatMessageRead(long chatId, long userId, long messageId);
+        Task ChatUpdated(ChatModel chat);
     }
 }

@@ -17,5 +17,10 @@ namespace Messenger.Database.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task UpdateAsync(UpdateChatUserRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
