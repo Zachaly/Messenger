@@ -11,11 +11,14 @@ namespace Messenger.Database.Repository
     {
         public ChatRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
         {
+            Table = "Chat";
         }
 
         public Task UpdateAsync(UpdateChatRequest updateRequest)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { Id = updateRequest.Id }).BuildSet(updateRequest, Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

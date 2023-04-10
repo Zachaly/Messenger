@@ -7,20 +7,25 @@ using Messenger.Models.ChatUser.Request;
 
 namespace Messenger.Database.Repository
 {
-    internal class ChatUserRepository : KeylessRepositoryBase<ChatUser, ChatUserModel, GetChatUserRequest>, IChatUserRepository
+    public class ChatUserRepository : KeylessRepositoryBase<ChatUser, ChatUserModel, GetChatUserRequest>, IChatUserRepository
     {
         public ChatUserRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
         {
+            Table = "ChatUser";
         }
 
         public Task DeleteAsync(long userId, long chatId)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { UserId = userId, ChatId = chatId }).BuildDelete(Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
 
         public Task UpdateAsync(UpdateChatUserRequest request)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(request).BuildSet(request, Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

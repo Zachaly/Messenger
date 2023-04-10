@@ -1,4 +1,5 @@
 ﻿using Messenger.Domain.Entity;
+using System.ComponentModel;
 
 namespace Messenger.Tests.Integration
 {
@@ -56,5 +57,14 @@ namespace Messenger.Tests.Integration
 
             return images;
         }
+
+        public static IEnumerable<ChatMessage> CreateChatMessages(long chatId, IEnumerable<long> senderIds)
+            => senderIds.Select(id => new ChatMessage { ChatId = chatId, Content = $"Sender{id}{chatId}", Created = DateTime.Now, SenderId = id });
+
+        public static IEnumerable<ChatMessageRead> CreateChatMessageReads(long messageId, IEnumerable<long> readerIds)
+            => readerIds.Select(id => new ChatMessageRead { MessageId = messageId, UserId = id });
+
+        public static IEnumerable<ChatUser> CreateChatUsers(long chatId, IEnumerable<long> userIds)
+            => userIds.Select(id => new ChatUser { ChatId = chatId, UserId = id });
     }
 }
