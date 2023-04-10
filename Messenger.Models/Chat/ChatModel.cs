@@ -8,7 +8,7 @@ namespace Messenger.Models.Chat
         public long Id { get; set; }
         public string Name { get; set; }
         public long CreatorId { get; set; }
-        [SqlName(Name = "[User.Name]")]
+        [SqlName(Name = "[User].[Name]")]
         public string CreatorName { get; set; }
     }
 }

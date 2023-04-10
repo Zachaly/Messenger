@@ -35,11 +35,9 @@ namespace Messenger.Api.Hubs
             return (await _mediator.Send(new GetFriendsQuery { UserId = userId, PageSize = friendCount }));
         }
 
-        private long GetUserId() => long.Parse(Context.UserIdentifier);
-
         public override async Task OnConnectedAsync()
         {
-            var id = GetUserId();
+            var id = this.GetUserId();
 
             var friends = await GetFriends(id);
             var user = await _mediator.Send(new GetUserByIdQuery { UserId = id });
@@ -56,7 +54,7 @@ namespace Messenger.Api.Hubs
 
         public async Task<IEnumerable<FriendListItem>> GetOnlineFriends()
         {
-            var id = GetUserId();
+            var id = this.GetUserId();
 
             var onlineFriends = (await GetFriends(id)).Where(friend => ConnectedUsers.Ids.Contains(friend.Id));
             

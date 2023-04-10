@@ -66,5 +66,17 @@ namespace Messenger.Tests.Integration
 
         public static IEnumerable<ChatUser> CreateChatUsers(long chatId, IEnumerable<long> userIds)
             => userIds.Select(id => new ChatUser { ChatId = chatId, UserId = id });
+
+        public static IEnumerable<Chat> CreateChats(long creatorId, int count)
+        {
+            var chats = new List<Chat>();
+
+            for(int i = 0; i < count; i++)
+            {
+                chats.Add(new Chat { CreatorId = creatorId, Name = $"Chat{i}" });
+            }
+
+            return chats;
+        }
     }
 }

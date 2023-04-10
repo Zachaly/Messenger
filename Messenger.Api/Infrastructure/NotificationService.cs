@@ -13,37 +13,39 @@ namespace Messenger.Api.Infrastructure
     {
         private readonly IHubContext<DirectMessageHub, IDirectMessageClient> _directMessageHub;
         private readonly IHubContext<FriendHub, IFriendClient> _friendHub;
+        private readonly IHubContext<ChatHub, IChatClient> _chatHub;
 
         public NotificationService(IHubContext<DirectMessageHub, IDirectMessageClient> directMessageHub,
-            IHubContext<FriendHub, IFriendClient> friendHub)
+            IHubContext<FriendHub, IFriendClient> friendHub, IHubContext<ChatHub, IChatClient> chatHub)
         {
             _directMessageHub = directMessageHub;
             _friendHub = friendHub;
+            _chatHub = chatHub;
         }
 
         public Task AddedToChat(ChatUserModel user, long chatId)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chatId.ToString()).ChatUserAdded(user);
         }
 
         public Task ChatMessageRead(long chatId, long userId, long messageId)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chatId.ToString()).ChatMessageRead(messageId, userId);
         }
 
         public Task ChatMessageSend(ChatMessageModel message, long chatId)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chatId.ToString()).ChatMessageSend(message);
         }
 
         public Task ChatUpdated(ChatModel chat)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chat.Id.ToString()).ChatUpdated(chat);
         }
 
         public Task ChatUserUpdated(ChatUserModel user, long chatId)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chatId.ToString()).ChatUserUpdated(user);
         }
 
         public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)
@@ -58,7 +60,7 @@ namespace Messenger.Api.Infrastructure
 
         public Task RemovedFromChat(long userId, long chatId)
         {
-            throw new NotImplementedException();
+            return _chatHub.Clients.Group(chatId.ToString()).ChatUserRemoved(userId);
         }
 
         public Task SendDirectMessage(DirectMessageModel message, long senderId, long receiverId)

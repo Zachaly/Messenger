@@ -24,6 +24,10 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IDirectMessageRepository, DirectMessageRepository>();
             collection.AddScoped<IDirectMessageImageRepository, DirectMessageImageRepository>();
             collection.AddScoped<IDirectMessageReactionRepository, DirectMessageReactionRepository>();
+            collection.AddScoped<IChatRepository, ChatRepository>();
+            collection.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+            collection.AddScoped<IChatMessageReadRepository, ChatMessageReadRepository>();
+            collection.AddScoped<IChatUserRepository, ChatUserRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -37,6 +41,10 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IFileService, FileService>();
             collection.AddScoped<IFileFactory, FileFactory>();
             collection.AddScoped<IReactionFactory, ReactionFactory>();
+            collection.AddScoped<IChatFactory, ChatFactory>();
+            collection.AddScoped<IChatMessageFactory, ChatMessageFactory>();
+            collection.AddScoped<IChatMessageReadFactory, ChatMessageReadFactory>();
+            collection.AddScoped<IChatUserFactory, ChatUserFactory>();
             collection.AddHttpContextAccessor();
 
             collection.AddMediatR(opt =>

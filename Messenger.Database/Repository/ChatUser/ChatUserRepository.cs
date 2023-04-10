@@ -12,6 +12,7 @@ namespace Messenger.Database.Repository
         public ChatUserRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
         {
             Table = "ChatUser";
+            DefaultOrderBy = "[ChatId]";
         }
 
         public Task DeleteAsync(long userId, long chatId)
