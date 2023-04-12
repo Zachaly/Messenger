@@ -14,6 +14,7 @@ namespace Messenger.Database.Sql
         private readonly StringBuilder _joinBuilder = new StringBuilder();
         private DynamicParameters? _parameters = new DynamicParameters();
         private string _orderBy = "";
+        private bool _whereSet = false;
 
         public SqlQueryBuilder()
         {
@@ -171,7 +172,7 @@ namespace Messenger.Database.Sql
             var typeInfo = typeof(T);
 
             foreach(var prop in typeInfo.GetProperties().Where(prop => prop.GetValue(request) != default
-                && prop.Name != "PageIndex" && prop.Name != "PageSize"))
+                && prop.Name != "PageIndex" && prop.Name != "PageSize" && prop.GetCustomAttribute<SkipWhereAttribute>() is null))
             {
                 var whereAttrib = prop.GetCustomAttribute<WhereAttribute>();
                 if(whereAttrib is not null)
@@ -196,6 +197,8 @@ namespace Messenger.Database.Sql
                     _builder.Where($"[{prop.Name}]=@{prop.Name}");
                 }
             }
+
+            _whereSet = true;
 
             return this;
         }
@@ -238,11 +241,15 @@ namespace Messenger.Database.Sql
         {
             _parameters = new DynamicParameters(request);
 
-            _builder.Where("[Id]=@Id", _parameters);
+            if (!_whereSet)
+            {
+                _builder.Where("[Id]=@Id", _parameters);
+            }
 
             var setBuilder = new StringBuilder();
 
-            var props = typeof(T).GetProperties().Where(x => x.Name != "Id" && x.GetValue(request) != default);
+            var props = typeof(T).GetProperties().Where(x => x.Name != "Id" && x.GetValue(request) != default 
+                && x.GetCustomAttribute<WhereAttribute>() is null);
 
             var index = 0;
             var count = props.Count();

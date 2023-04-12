@@ -1,0 +1,13 @@
+.messages {
+    max-height: 70vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 10px;
+    color: gray;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #534e4e;
+}

@@ -40,6 +40,51 @@ namespace Messenger.Tests.Integration.Database
             }
         }
 
+        protected async Task InsertChatsToDatabase(IEnumerable<Chat> chats)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var chat in chats)
+                {
+                    await connection.QueryAsync("INSERT INTO [Chat]([CreatorId], [Name]) VALUES(@CreatorId, @Name)", chat);
+                }
+            }
+        }
+
+        protected async Task InsertChatMessagesToDatabase(IEnumerable<ChatMessage> messages)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var msg in messages)
+                {
+                    await connection.QueryAsync("INSERT INTO [ChatMessage]([SenderId], [ChatId], [Created], [Content])" +
+                        " VALUES (@SenderId, @ChatId, @Created, @Content)", msg);
+                }
+            }
+        }
+
+        protected async Task InsertChatMessageReadsToDatabase(IEnumerable<ChatMessageRead> messages)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var read in messages)
+                {
+                    await connection.QueryAsync("INSERT INTO [ChatMessageRead]([UserId], [MessageId]) VALUES (@UserId, @MessageId)", read);
+                }
+            }
+        }
+
+        protected async Task InsertChatUsersToDatabase(IEnumerable<ChatUser> users)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var user in users)
+                {
+                    await connection.QueryAsync("INSERT INTO [ChatUser]([ChatId], [UserId], [IsAdmin]) VALUES (@ChatId, @UserId, @IsAdmin)", user);
+                }
+            }
+        }
+
         protected async Task InsertUsersToDatabase(IEnumerable<User> users)
         {
             using (var connection = new SqlConnection(_connectionString))

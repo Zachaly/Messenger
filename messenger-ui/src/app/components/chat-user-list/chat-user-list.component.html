@@ -1,0 +1,13 @@
+<div (scroll)="onScroll($event)" class="list">
+    <p class="title is-3 has-text-centered">Chat users ({{count}})</p>
+    <p class="has-text-centered m-1" *ngIf="isAdmin()">
+        <button class="button is-info" (click)="addingUser = true">Add new</button>
+    </p>
+    <app-chat-user *ngFor="let user of users" [user]="user" [removable]="canRemove(user)" (remove)="removeUser(user)"
+        [isCurrentUserCreator]="currentUserId === creatorId" (makeAdmin)="makeAdmin(user)" />
+</div>
+
+<div class="add-user p-1" *ngIf="addingUser">
+    <app-add-chat-user [currentChatUsers]="userIds" [chatId]="chatId" (addUser)="addUser($event)"
+        (cancel)="addingUser = false" />
+</div>

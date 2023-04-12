@@ -28,6 +28,15 @@ import { UpdateProfilePageComponent } from './pages/update-profile-page/update-p
 import { NavbarDropdownComponent } from './components/navbar-dropdown/navbar-dropdown.component';
 import { NavbarDropdownItemComponent } from './components/navbar-dropdown-item/navbar-dropdown-item.component';
 import { EmojiSelectComponent } from './components/emoji-select/emoji-select.component';
+import { GroupChatListPageComponent } from './pages/group-chat-list-page/group-chat-list-page.component';
+import { GroupChatComponent } from './components/group-chat/group-chat.component';
+import { ChatMessageComponent } from './components/chat-message/chat-message.component';
+import { ChatUserComponent } from './components/chat-user/chat-user.component';
+import { AddChatComponent } from './components/add-chat/add-chat.component';
+import { AddChatUserComponent } from './components/add-chat-user/add-chat-user.component';
+import { GroupChatListItemComponent } from './components/group-chat-list-item/group-chat-list-item.component';
+import { ChatUserListComponent } from './components/chat-user-list/chat-user-list.component';
+import { UpdateChatComponent } from './components/update-chat/update-chat.component';
 
 const route = (path: string, component: any) => (
   {
@@ -44,7 +53,8 @@ const routes: Routes = [
   route('friend', FriendListPageComponent),
   route('direct-chat/:userId', DirectChatPageComponent),
   route('chats', ChatListPageComponent),
-  route('update-profile', UpdateProfilePageComponent)
+  route('update-profile', UpdateProfilePageComponent),
+  route('group-chats', GroupChatListPageComponent)
 ]
 
 @NgModule({
@@ -72,6 +82,15 @@ const routes: Routes = [
     NavbarDropdownComponent,
     NavbarDropdownItemComponent,
     EmojiSelectComponent,
+    GroupChatListPageComponent,
+    GroupChatComponent,
+    ChatMessageComponent,
+    ChatUserComponent,
+    AddChatComponent,
+    AddChatUserComponent,
+    GroupChatListItemComponent,
+    ChatUserListComponent,
+    UpdateChatComponent,
   ],
   imports: [
     BrowserModule,

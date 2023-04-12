@@ -1,0 +1,22 @@
+<div class="columns">
+    <div class="column is-2 has-text-centered">
+        <button class="button is-info" (click)="addingChat = true">Add new!</button>
+        <app-group-chat-list-item *ngFor="let chat of chats" [chat]="chat" (selectChat)="selectChat(chat)" />
+    </div>
+    <div class="column is-10">
+        <div *ngIf="selectedChat">
+            <p class="title has-text-centered">{{selectedChat.name}}
+                <button *ngIf="selectedChat.creatorId == userId" class="button" (click)="updatedChat = selectedChat">Update name</button>
+            </p>
+            <app-group-chat [chatId]="selectedChat.id" [creatorId]="selectedChat.creatorId" />
+        </div>
+    </div>
+</div>
+
+<div class="add-chat p-2" *ngIf="addingChat">
+    <app-add-chat (submit)="onSubmitChat()" (cancel)="addingChat = false" />
+</div>
+
+<div class="add-chat p-2" *ngIf="updatedChat">
+    <app-update-chat (submit)="updateChat()" (cancel)="updateChat()" [chat]="updatedChat"/>
+</div>

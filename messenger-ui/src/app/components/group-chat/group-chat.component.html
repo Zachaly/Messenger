@@ -1,0 +1,27 @@
+<div class="columns">
+    <div class="column is-9">
+        <div class="messages" #messageBox (scroll)="onScroll($event)">
+            <div *ngFor="let msg of messages"
+                [ngClass]="msg.senderId == userId ? 'is-justify-content-end' : 'is-justify-content-start'"
+                class="is-flex">
+                <div class="message">
+                    <app-chat-message [message]="msg" />
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="columns">
+                <div class="column is-10">
+                    <textarea class="textarea" name="content" [(ngModel)]="newMessageContent"></textarea>
+                </div>
+                <div class="column">
+                    <button class="button is-info" (click)="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="column">
+        <app-chat-user-list [chatId]="chatId" [creatorId]="creatorId"/>
+    </div>
+</div>

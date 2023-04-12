@@ -17,9 +17,10 @@ export class NavbarDropdownComponent implements OnInit {
 
   routes: [string, string][] = [
     ['Chats', '/chats'],
+    ['Group chats', '/group-chats'],
     ['Friend Request', '/friend-request'],
     ['Friends', '/friend'],
-    ['Update profile', '/update-profile']
+    ['Update profile', '/update-profile'],
   ]
 
   constructor(private router: Router, private imageService: ImageService) {

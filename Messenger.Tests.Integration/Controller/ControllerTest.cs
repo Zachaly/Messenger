@@ -25,7 +25,11 @@ namespace Messenger.Tests.Integration.Controller
                 "TRUNCATE TABLE [Friend]",
                 "TRUNCATE TABLE [FriendRequest]",
                 "TRUNCATE TABLE [DirectMessage]",
-                "TRUNCATE TABLE [DirectMessageReaction]"
+                "TRUNCATE TABLE [DirectMessageReaction]",
+                "TRUNCATE TABLE [Chat]",
+                "TRUNCATE TABLE [ChatMessage]",
+                "TRUNCATE TABLE [ChatMessageRead]",
+                "TRUNCATE TABLE [ChatUser]"
             };
 
         public ControllerTest()

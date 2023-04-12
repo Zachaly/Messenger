@@ -1,0 +1,5 @@
+<div class="card p-1 m-1" [ngClass]="{'has-background-info': user.isAdmin}">
+    <p class="title has-text-centered is-4 m-1">{{ user.name }}</p>
+    <button class="button is-danger" *ngIf="removable" (click)="remove.emit()">Remove from chat</button>
+    <button class="button is-info" *ngIf="isCurrentUserCreator && !user.isAdmin" (click)="makeAdmin.emit()">Make admin</button>
+</div>
