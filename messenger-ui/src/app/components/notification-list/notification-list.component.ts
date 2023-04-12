@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import ChatMessageModel from 'src/app/models/ChatMessageModel';
+import ChatUserModel from 'src/app/models/ChatUserModel';
 import DirectMessage from 'src/app/models/DirectMessage';
 import FriendRequestResponse from 'src/app/models/FriendRequestResponse';
 import NotificationModel from 'src/app/models/NotificationModel';
@@ -53,6 +55,26 @@ export class NotificationListComponent {
         return
       }
       this.notificationService.addNotification(`${msg.senderName} writes: ${msg.content}`)
+    })
+
+    const chatConnectionId = await this.signalR.openConnection('chat')
+
+    this.signalR.setConnectionListener(chatConnectionId, 'ChatUserAdded', (user: ChatUserModel) => {
+      if (user.id == this.authService.currentUser.userId) {
+        this.notificationService.addNotification("You are added to new chat!")
+      }
+    })
+
+    this.signalR.setConnectionListener(chatConnectionId, 'ChatUserRemoved', (id: number) => {
+      if(id === this.authService.currentUser.userId) {
+        this.notificationService.addNotification("You are removed from chat")
+      }
+    })
+
+    this.signalR.setConnectionListener(chatConnectionId, 'ChatMessageSend', (msg: ChatMessageModel) => {
+      if(msg.senderId !== this.authService.currentUser.userId){
+        this.notificationService.addNotification(`${msg.senderName} wrote new message in chat!`)
+      }
     })
   }
 

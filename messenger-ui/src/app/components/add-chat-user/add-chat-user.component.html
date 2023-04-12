@@ -1,0 +1,7 @@
+<div class="card has-background-grey-lighter p-1">
+    <button class="button" (click)="onCancel()">Cancel</button>
+    <div *ngFor="let user of users">
+        <span class="subtitle m-1">{{user.name}}</span>
+        <button class="button is-info" (click)="selectUser(user)">Add</button>
+    </div>
+</div>

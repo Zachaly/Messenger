@@ -1,0 +1,7 @@
+.add-chat {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    width: fit-content;
+    height: min-content;
+}

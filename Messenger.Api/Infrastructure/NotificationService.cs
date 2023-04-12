@@ -23,9 +23,16 @@ namespace Messenger.Api.Infrastructure
             _chatHub = chatHub;
         }
 
-        public Task AddedToChat(ChatUserModel user, long chatId)
+        public async Task AddedToChat(ChatUserModel user, long chatId)
         {
-            return _chatHub.Clients.Group(chatId.ToString()).ChatUserAdded(user);
+            if(ChatUserConnections.Users.TryGetValue(chatId, out var userConnection))
+            {
+                foreach(var conn in userConnection)
+                {
+                    await _chatHub.Groups.AddToGroupAsync(conn, chatId.ToString());
+                }
+            }
+            await _chatHub.Clients.Group(chatId.ToString()).ChatUserAdded(user);
         }
 
         public Task ChatMessageRead(long chatId, long userId, long messageId)
@@ -58,9 +65,16 @@ namespace Messenger.Api.Infrastructure
             return _directMessageHub.Clients.User(senderId.ToString()).ReadMessage(messageId, true);
         }
 
-        public Task RemovedFromChat(long userId, long chatId)
-        {
-            return _chatHub.Clients.Group(chatId.ToString()).ChatUserRemoved(userId);
+        public async Task RemovedFromChat(long userId, long chatId)
+        {   
+            await _chatHub.Clients.Group(chatId.ToString()).ChatUserRemoved(userId);
+            if (ChatUserConnections.Users.TryGetValue(chatId, out var userConnection))
+            {
+                foreach (var conn in userConnection)
+                {
+                    await _chatHub.Groups.RemoveFromGroupAsync(conn, chatId.ToString());
+                }
+            }
         }
 
         public Task SendDirectMessage(DirectMessageModel message, long senderId, long receiverId)

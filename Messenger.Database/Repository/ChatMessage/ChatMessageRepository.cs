@@ -13,6 +13,7 @@ namespace Messenger.Database.Repository
         public ChatMessageRepository(IConnectionFactory connectionFactory, ISqlQueryBuilder sqlQueryBuilder) : base(connectionFactory, sqlQueryBuilder)
         {
             Table = "ChatMessage";
+            DefaultOrderBy = "[Id] DESC";
         }
 
         public override async Task<IEnumerable<ChatMessageModel>> GetAsync(GetChatMessageRequest request)

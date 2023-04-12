@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Messenger.Api.Hubs
 {
+    public static class ChatUserConnections
+    {
+        public static Dictionary<long, List<string>> Users { get; set; } = new Dictionary<long, List<string>>();
+    }
+
     public interface IChatClient
     {
         Task ChatMessageSend(ChatMessageModel message);
@@ -33,6 +38,16 @@ namespace Messenger.Api.Hubs
             var userId = this.GetUserId();
 
             var chats = await _mediator.Send(new GetChatQuery { UserId = userId });
+
+            List<string> connectionIds;
+
+            if(!ChatUserConnections.Users.TryGetValue(userId, out connectionIds))
+            {
+                connectionIds = new List<string>();
+                ChatUserConnections.Users.Add(userId, connectionIds);
+            }
+
+            connectionIds.Add(Context.ConnectionId);
 
             foreach(var chat in chats)
             {
