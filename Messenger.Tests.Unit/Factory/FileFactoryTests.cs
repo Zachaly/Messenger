@@ -27,5 +27,17 @@ namespace Messenger.Tests.Unit.Factory
             Assert.Equal(FileName, image.FileName);
             Assert.Equal(MessageId, image.MessageId);
         }
+
+        [Fact]
+        public void CreateChatImage_Creates_Proper_Entity()
+        {
+            const string FileName = "name";
+            const long MessageId = 1;
+
+            var image = _fileFactory.CreateChatImage(FileName, MessageId);
+
+            Assert.Equal(FileName, image.FileName);
+            Assert.Equal(MessageId, image.MessageId);
+        }
     }
 }
