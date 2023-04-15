@@ -97,5 +97,15 @@ namespace Messenger.Application
 
             return name;
         }
+
+        public Task<IEnumerable<string>> SaveChatMessageImages(IEnumerable<IFormFile> files)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FileStream> GetChatMessageImage(string fileName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
