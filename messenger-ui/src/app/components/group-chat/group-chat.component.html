@@ -16,6 +16,7 @@
                 </div>
                 <div class="column">
                     <button class="button is-info" (click)="sendMessage()">Send</button>
+                    <input #fileInput class="input" type="file" multiple (change)="selectImages()">
                 </div>
             </div>
         </div>

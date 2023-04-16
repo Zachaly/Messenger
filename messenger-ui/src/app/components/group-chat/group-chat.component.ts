@@ -7,6 +7,7 @@ import GetChatMessageRequest from 'src/app/requests/GetChatMessageRequest';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatMessageReadService } from 'src/app/services/chat-message-read.service';
 import { ChatMessageService } from 'src/app/services/chat-message.service';
+import { ImageService } from 'src/app/services/image.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 
 const PAGE_SIZE = 10
@@ -21,6 +22,7 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
   @Input() chatId: number = 0
   @Input() creatorId: number = 0
   @ViewChild('messageBox') messageBox!: ElementRef<HTMLDivElement>
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>
 
   messages: ChatMessageModel[] = []
   userId = 0
@@ -28,13 +30,16 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
   count = 0
   maxPage = (): number => Math.floor(this.count / PAGE_SIZE)
 
+  selectedFiles: FileList | null = null
+
   loading = false
   firstScrolled = false
 
   newMessageContent = ''
 
   constructor(private authService: AuthService, private chatMessageService: ChatMessageService,
-    private chatMessageReadService: ChatMessageReadService, private signalR: SignalrService) {
+    private chatMessageReadService: ChatMessageReadService, private signalR: SignalrService,
+    private imageService: ImageService) {
     this.userId = authService.currentUser.userId
   }
   
@@ -88,6 +93,18 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
     const request: AddChatMessageRequest = { chatId: this.chatId, senderId: this.userId, content: this.newMessageContent }
 
     this.chatMessageService.addChatMessage(request).subscribe(res => {
+      
+      if(this.selectedFiles) {
+        const messageId: number = res.newEntityId!
+        this.imageService.uploadChatMessageImages(this.selectedFiles, messageId).subscribe(() => {
+          this.chatMessageService.getChatMessage({ id: messageId }).subscribe(res => {
+            const message = res[0]!
+            this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
+            this.selectedFiles = null
+            this.fileInput.nativeElement.files = null
+          })
+        })
+      }
       this.newMessageContent = ''
       this.scrollBottom()
     })
@@ -128,5 +145,9 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
     if (target.scrollTop < target.scrollHeight / 20 && !this.loading) {
       this.loadNext()
     }
+  }
+
+  selectImages() {
+    this.selectedFiles = this.fileInput.nativeElement.files
   }
 }

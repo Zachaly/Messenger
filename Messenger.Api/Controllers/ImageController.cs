@@ -77,7 +77,7 @@ namespace Messenger.Api.Controllers
         /// </summary>
         /// <response code="204">Images added successfully</response>
         /// <response code="400">Invalid request</response>
-        [HttpPost("chat-message-image")]
+        [HttpPost("chat-message")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<ResponseModel>> PostChatMessageImageAsync([FromForm] SaveChatMessageImageCommand command)
@@ -91,7 +91,7 @@ namespace Messenger.Api.Controllers
         /// Returns chat message image with given id
         /// </summary>
         /// <response code="200">Message image</response>
-        [HttpGet("chat-message-image/{imageId}")]
+        [HttpGet("chat-message/{imageId}")]
         [ProducesResponseType(200)]
         public async Task<FileStreamResult> GetChatMessageImageAsync(long imageId)
         {

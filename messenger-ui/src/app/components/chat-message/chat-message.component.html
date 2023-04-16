@@ -6,8 +6,13 @@
         {{ message.content }}
     </div>
     <div class="is-flex">
-        <figure class="image is-24x24" *ngFor="let id of message.readByIds">
+        <figure class="image is-64x64 m-1" *ngFor="let id of message.imageIds">
             <img [src]="getImageUrl(id)" alt="">
+        </figure>
+    </div>
+    <div class="is-flex">
+        <figure class="image is-24x24" *ngFor="let id of message.readByIds">
+            <img [src]="getProfileUrl(id)" alt="">
         </figure>
     </div>
 </div>

@@ -8,9 +8,11 @@ import { ImageService } from 'src/app/services/image.service';
   styleUrls: ['./chat-message.component.css']
 })
 export class ChatMessageComponent {
-  @Input() message: ChatMessageModel = { id: 0, content: '', senderId: 0, senderName: '', readByIds: [] }
+  @Input() message: ChatMessageModel = { id: 0, content: '', senderId: 0, senderName: '', readByIds: [], imageIds: [] }
 
   constructor(private imageService: ImageService) { }
 
-  getImageUrl = (id: number) : string => this.imageService.getUrl('profile', id)
+  getProfileUrl = (id: number) : string => this.imageService.getUrl('profile', id)
+
+  getImageUrl = (id: number): string => this.imageService.getUrl('chat-message', id)
 }
