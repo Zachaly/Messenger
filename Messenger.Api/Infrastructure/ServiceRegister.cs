@@ -28,6 +28,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IChatMessageRepository, ChatMessageRepository>();
             collection.AddScoped<IChatMessageReadRepository, ChatMessageReadRepository>();
             collection.AddScoped<IChatUserRepository, ChatUserRepository>();
+            collection.AddScoped<IChatMessageImageRepository, ChatMessageImageRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)

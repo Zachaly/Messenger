@@ -9,12 +9,14 @@ namespace Messenger.Application
         private readonly string _directMessageImagePath;
         private readonly string _profileImagePath;
         private readonly string _defaultProfileImage;
+        private readonly string _chatMessageImagePath;
 
         public FileService(IConfiguration configuration)
         {
             _directMessageImagePath = configuration["Image:DirectMessage"]!;
             _profileImagePath = configuration["Image:ProfileImage"]!;
             _defaultProfileImage = configuration["Image:Default"]!;
+            _chatMessageImagePath = configuration["Image:ChatMessage"]!;
         }
 
         private Task<bool> DeleteFile(string name, string path)
@@ -98,14 +100,29 @@ namespace Messenger.Application
             return name;
         }
 
-        public Task<IEnumerable<string>> SaveChatMessageImages(IEnumerable<IFormFile> files)
+        public async Task<IEnumerable<string>> SaveChatMessageImages(IEnumerable<IFormFile> files)
         {
-            throw new NotImplementedException();
+            var fileNames = new List<string>();
+
+            Directory.CreateDirectory(_chatMessageImagePath);
+
+            foreach (var file in files)
+            {
+                var name = $"{Guid.NewGuid()}.png";
+                var path = Path.Combine(_chatMessageImagePath, name);
+
+                using (var stream = File.Create(path))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                fileNames.Add(name);
+            }
+
+            return fileNames;
         }
 
         public Task<FileStream> GetChatMessageImage(string fileName)
-        {
-            throw new NotImplementedException();
-        }
+            => GetFile(fileName, _chatMessageImagePath);
     }
 }

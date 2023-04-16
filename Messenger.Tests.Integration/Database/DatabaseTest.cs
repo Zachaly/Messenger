@@ -107,6 +107,17 @@ namespace Messenger.Tests.Integration.Database
             }
         }
 
+        protected async Task InsertImagesToDatabase(IEnumerable<ChatMessageImage> images)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                foreach (var image in images)
+                {
+                    await connection.ExecuteAsync("INSERT INTO [ChatMessageImage]([MessageId], [FileName]) VALUES(@MessageId, @FileName)", image);
+                }
+            }
+        }
+
         protected async Task InsertFriendsToDatabase(IEnumerable<Friend> friends)
         {
             using (var connection = new SqlConnection(_connectionString))

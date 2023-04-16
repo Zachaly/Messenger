@@ -2,11 +2,6 @@
 using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.ChatMessage.Request;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messenger.Tests.Integration.Database
 {
@@ -20,6 +15,7 @@ namespace Messenger.Tests.Integration.Database
             _teardownQueries.Add("TRUNCATE TABLE [ChatMessageRead]");
             _teardownQueries.Add("TRUNCATE TABLE [ChatMessage]");
             _teardownQueries.Add("TRUNCATE TABLE [User]");
+            _teardownQueries.Add("TRUNCATE TABLE [ChatMessageImage]");
         }
 
         [Fact]
@@ -36,10 +32,15 @@ namespace Messenger.Tests.Integration.Database
 
             var messageIds = (await GetAllFromDatabase<ChatMessage>("ChatMessage")).Where(x => x.ChatId == ChatId).Select(x => x.Id);
 
-            var readMessageId = messageIds.First();
+            var readMessageId = messageIds.Last();
             var readerIds = userIds.Take(5);
 
+            var images = FakeDataFactory.CreateChatMessageImages(readMessageId, 10);
+
             await InsertChatMessageReadsToDatabase(FakeDataFactory.CreateChatMessageReads(readMessageId, readerIds));
+            await InsertImagesToDatabase(images);
+
+            var imageIds = (await GetAllFromDatabase<ChatMessageImage>("ChatMessageImage")).Select(x => x.Id);
 
             var request = new GetChatMessageRequest { ChatId = 1, PageSize = 5 };
 
@@ -48,6 +49,7 @@ namespace Messenger.Tests.Integration.Database
 
             Assert.Equal(request.PageSize, res.Count());
             Assert.Equivalent(readerIds, readMessage.ReadByIds);
+            Assert.Equivalent(imageIds, readMessage.ImageIds);
             Assert.All(res.Select(x => x.Id), id => Assert.Contains(id, messageIds));
         }
     }
