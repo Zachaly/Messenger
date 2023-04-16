@@ -4,6 +4,7 @@ namespace Messenger.Models.ChatMessage
 {
     [Join(Statement = "LEFT OUTER JOIN [User] ON [User].[Id]=[ChatMessage].[SenderId]")]
     [Join(Statement = "LEFT OUTER JOIN [ChatMessageRead] ON t.[Id]=[ChatMessageRead].[MessageId]", Outside = true)]
+    [Join(Statement = "LEFT OUTER JOIN [ChatMessageImage] ON t.[Id]=[ChatMessageImage].[MessageId]", Outside = true)]
     public class ChatMessageModel
     {
         public long Id { get; set; }
@@ -13,5 +14,7 @@ namespace Messenger.Models.ChatMessage
         public string Content { get; set; }
         [SqlName(Name = "[ChatMessageRead].*", JoinOutside = true)]
         public IEnumerable<long> ReadByIds { get; set; }
+        [SqlName(Name = "[ChatMessageImage].*", JoinOutside =true)]
+        public IEnumerable<long> ImageIds { get; set; }
     }
 }

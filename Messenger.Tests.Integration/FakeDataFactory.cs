@@ -1,4 +1,5 @@
 ﻿using Messenger.Domain.Entity;
+using Messenger.Models.ChatMessage;
 using System.ComponentModel;
 
 namespace Messenger.Tests.Integration
@@ -77,6 +78,17 @@ namespace Messenger.Tests.Integration
             }
 
             return chats;
+        }
+
+        public static IEnumerable<ChatMessageImage> CreateChatMessageImages(long messageId, int count)
+        {
+            var images = new List<ChatMessageImage>();
+            for(int i = 0; i < count; i++)
+            {
+                images.Add(new ChatMessageImage { FileName = $"img{i}", MessageId = messageId });
+            }
+
+            return images;
         }
     }
 }

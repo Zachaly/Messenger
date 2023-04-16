@@ -2,6 +2,7 @@
 using Messenger.Application.Command;
 using Messenger.Database.Repository;
 using Messenger.Domain.Entity;
+using Messenger.Models.ChatMessageImage.Request;
 using Messenger.Models.Response;
 using Messenger.Models.User.Request;
 using Microsoft.AspNetCore.Http;
@@ -50,6 +51,24 @@ namespace Messenger.Tests.Unit.Command
 
             var query = new GetProfileImageQuery { UserId = 1 };
             var res = await new GetProfileImageHandler(_fileService.Object, userRepository.Object).Handle(query, default);
+
+            Assert.Null(res);
+        }
+
+        [Fact]
+        public async Task GetChatMessageImageQuery_Success()
+        {
+            var image = new ChatMessageImage { FileName = "file " };
+
+            var imageRepository = new Mock<IChatMessageImageRepository>();
+            imageRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(image);
+
+            _fileService.Setup(x => x.GetChatMessageImage(It.IsAny<string>()))
+                .ReturnsAsync(() => null);
+
+            var query = new GetChatMessageImageQuery { ImageId = 1 };
+            var res = await new GetChatMessageImageHandler(_fileService.Object, imageRepository.Object).Handle(query, default);
 
             Assert.Null(res);
         }
@@ -203,6 +222,83 @@ namespace Messenger.Tests.Unit.Command
             Assert.False(res.Success);
             Assert.Equal(Error, res.Error);
             Assert.Empty(images);
+        }
+
+        [Fact]
+        public async Task SaveChatImageCommand_Success()
+        {
+            var images = new List<ChatMessageImage>();
+
+            var imageRepository = new Mock<IChatMessageImageRepository>();
+            imageRepository.Setup(x => x.InsertAsync(It.IsAny<ChatMessageImage>()))
+                .Callback((ChatMessageImage img) => images.Add(img));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel() { Success = true });
+
+            var fileFactory = new Mock<IFileFactory>();
+            fileFactory.Setup(x => x.CreateChatImage(It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((string name, long id) => new ChatMessageImage { FileName = name, Id = id });
+
+            _fileService.Setup(x => x.SaveChatMessageImages(It.IsAny<IEnumerable<IFormFile>>()))
+                .ReturnsAsync((IEnumerable<IFormFile> files) => files.Select(x => x.Name));
+
+            var files = new List<IFormFile>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                var file = new Mock<IFormFile>();
+                file.Setup(x => x.Name).Returns($"img{i}");
+                files.Add(file.Object);
+            }
+
+            var command = new SaveChatMessageImageCommand { MessageId = 1, Files = files };
+            var res = await new SaveChatMessageImageHandler(_fileService.Object, fileFactory.Object, imageRepository.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.True(res.Success);
+            Assert.Equal(images.Count, files.Count);
+            Assert.Equivalent(images.Select(x => x.FileName), files.Select(x => x.Name));
+        }
+
+        [Fact]
+        public async Task SaveChatImageCommand_ExceptionThrown_Fail()
+        {
+            var images = new List<ChatMessageImage>();
+
+            const string Error = "error";
+            var imageRepository = new Mock<IChatMessageImageRepository>();
+            imageRepository.Setup(x => x.InsertAsync(It.IsAny<ChatMessageImage>()))
+                .Callback((ChatMessageImage img) => throw new Exception(Error));
+
+            var responseFactory = new Mock<IResponseFactory>();
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel() { Success = false, Error = msg });
+
+            var fileFactory = new Mock<IFileFactory>();
+            fileFactory.Setup(x => x.CreateChatImage(It.IsAny<string>(), It.IsAny<long>()))
+                .Returns((string name, long id) => new ChatMessageImage { FileName = name, Id = id });
+
+            _fileService.Setup(x => x.SaveChatMessageImages(It.IsAny<IEnumerable<IFormFile>>()))
+                .ReturnsAsync((IEnumerable<IFormFile> files) => files.Select(x => x.Name));
+
+            var files = new List<IFormFile>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                var file = new Mock<IFormFile>();
+                file.Setup(x => x.Name).Returns($"img{i}");
+                files.Add(file.Object);
+            }
+
+            var command = new SaveChatMessageImageCommand { MessageId = 1, Files = files };
+            var res = await new SaveChatMessageImageHandler(_fileService.Object, fileFactory.Object, imageRepository.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.False(res.Success);
+            Assert.Empty(images);
+            Assert.Equal(Error, res.Error);
         }
     }
 }

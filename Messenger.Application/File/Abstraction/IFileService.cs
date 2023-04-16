@@ -10,5 +10,8 @@ namespace Messenger.Application.Abstraction
 
         Task<IEnumerable<string>> SaveDirectMessageImages(IEnumerable<IFormFile> files);
         Task<FileStream> GetDirectMessageImage(string fileName);
+
+        Task<IEnumerable<string>> SaveChatMessageImages(IEnumerable<IFormFile> files);
+        Task<FileStream> GetChatMessageImage(string fileName);
     }
 }

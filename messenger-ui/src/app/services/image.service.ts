@@ -44,4 +44,16 @@ export class ImageService extends ServiceBase {
 
     return this.http.put(`${API_URL}/profile`, formData, { headers: this.authorizeHeader() })
   }
+
+  uploadChatMessageImages(files: FileList, messageId: number) : Observable<any> {
+    const formData = new FormData()
+
+    formData.append("MessageId", messageId.toString())
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('Files', files.item(i)!)
+    }
+
+    return this.http.post(`${API_URL}/chat-message`, formData, { headers: this.authorizeHeader() })
+  }
 }

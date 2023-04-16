@@ -3,5 +3,6 @@ export default interface ChatMessageModel {
     senderId: number,
     senderName: string,
     readByIds: number[],
-    content: string
+    content: string,
+    imageIds: []
 }

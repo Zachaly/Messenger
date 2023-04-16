@@ -28,7 +28,7 @@ namespace Messenger.Database.Repository
             {
                 var lookup = new Dictionary<long, ChatMessageModel>();
 
-                await connection.QueryAsync<ChatMessageModel, ChatMessageRead, ChatMessageModel>(query.Query, (message, read) =>
+                await connection.QueryAsync<ChatMessageModel, ChatMessageRead, ChatMessageImage, ChatMessageModel>(query.Query, (message, read, image) =>
                 {
                     ChatMessageModel msg;
 
@@ -39,14 +39,19 @@ namespace Messenger.Database.Repository
                     }
 
                     msg.ReadByIds ??= new List<long>();
+                    msg.ImageIds ??= new List<long>();
 
-                    if(read is not null)
+                    if(read is not null && !(msg.ReadByIds as List<long>)!.Contains(read.UserId))
                     {
                         (msg.ReadByIds as List<long>)!.Add(read.UserId);
                     }
+                    if(image is not null && !(msg.ImageIds as List<long>)!.Contains(image.Id))
+                    {
+                        (msg.ImageIds as List<long>)!.Add(image.Id);
+                    }
 
                     return message;
-                }, query.Params, splitOn: "MessageId");
+                }, query.Params, splitOn: "MessageId, Id");
 
                 return lookup.Values;
             }

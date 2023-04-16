@@ -71,5 +71,33 @@ namespace Messenger.Api.Controllers
 
             return res.ReturnNoContentOrBadRequest();
         }
+
+        /// <summary>
+        /// Adds images to chat message
+        /// </summary>
+        /// <response code="204">Images added successfully</response>
+        /// <response code="400">Invalid request</response>
+        [HttpPost("chat-message")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ResponseModel>> PostChatMessageImageAsync([FromForm] SaveChatMessageImageCommand command)
+        {
+            var res = await _mediator.Send(command);
+
+            return res.ReturnNoContentOrBadRequest();
+        }
+
+        /// <summary>
+        /// Returns chat message image with given id
+        /// </summary>
+        /// <response code="200">Message image</response>
+        [HttpGet("chat-message/{imageId}")]
+        [ProducesResponseType(200)]
+        public async Task<FileStreamResult> GetChatMessageImageAsync(long imageId)
+        {
+            var res = await _mediator.Send(new GetChatMessageImageQuery { ImageId = imageId });
+
+            return new FileStreamResult(res, "image/png");
+        }
     }
 }
