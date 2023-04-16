@@ -61,8 +61,8 @@ namespace Messenger.Tests.Unit.Command
             var image = new ChatMessageImage { FileName = "file " };
 
             var imageRepository = new Mock<IChatMessageImageRepository>();
-            imageRepository.Setup(x => x.GetAsync(It.IsAny<GetChatMessageImageRequest>()))
-                .ReturnsAsync(new List<ChatMessageImage> { image });
+            imageRepository.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(image);
 
             _fileService.Setup(x => x.GetChatMessageImage(It.IsAny<string>()))
                 .ReturnsAsync(() => null);

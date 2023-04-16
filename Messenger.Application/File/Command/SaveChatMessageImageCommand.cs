@@ -32,9 +32,25 @@ namespace Messenger.Application.Command
             _chatMessageImageRepository = chatMessageImageRepository;
             _responseFactory = responseFactory;
         }
-        public Task<ResponseModel> Handle(SaveChatMessageImageCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(SaveChatMessageImageCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var fileNames = await _fileService.SaveChatMessageImages(request.Files);
+
+                var images = fileNames.Select(name => _fileFactory.CreateChatImage(name, request.MessageId));
+
+                foreach(var image in images)
+                {
+                    await _chatMessageImageRepository.InsertAsync(image);
+                }
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception e)
+            {
+                return _responseFactory.CreateFailure(e.Message);
+            }
         }
     }
 

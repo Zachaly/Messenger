@@ -20,9 +20,11 @@ namespace Messenger.Application.Command
             _chatMessageImageRepository = chatMessageImageRepository;
         }
 
-        public Task<FileStream> Handle(GetChatMessageImageQuery request, CancellationToken cancellationToken)
+        public async Task<FileStream> Handle(GetChatMessageImageQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var image = await _chatMessageImageRepository.GetByIdAsync(request.ImageId);
+
+            return await _fileService.GetChatMessageImage(image.FileName);
         }
     }
 }

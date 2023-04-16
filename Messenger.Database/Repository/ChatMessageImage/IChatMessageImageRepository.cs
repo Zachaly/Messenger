@@ -6,6 +6,6 @@ namespace Messenger.Database.Repository
 {
     public interface IChatMessageImageRepository : IRepository<ChatMessageImage, ChatMessageImage, GetChatMessageImageRequest>
     {
-
+        Task<ChatMessageImage> GetByIdAsync(long id);
     }
 }

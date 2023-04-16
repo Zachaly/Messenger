@@ -13,5 +13,12 @@ namespace Messenger.Database.Repository
         {
             Table = "ChatMessageImage";
         }
+
+        public Task<ChatMessageImage> GetByIdAsync(long id)
+        {
+            var query = _sqlQueryBuilder.Where(new { Id = id }).BuildSelect<ChatMessageImage>(Table);
+
+            return QuerySingleAsync<ChatMessageImage>(query.Query, query.Params);
+        }
     }
 }
