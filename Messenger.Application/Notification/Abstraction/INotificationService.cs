@@ -20,5 +20,6 @@ namespace Messenger.Application.Abstraction
         Task ChatMessageSend(ChatMessageModel message, long chatId);
         Task ChatMessageRead(long chatId, long userId, long messageId);
         Task ChatUpdated(ChatModel chat);
+        Task ChatMessageReactionChanged(long chatId, long messageId, string? reaction);
     }
 }
