@@ -136,5 +136,14 @@ namespace Messenger.Tests.Integration.Database
                 await connection.QueryAsync("INSERT INTO [DirectMessageReaction]([MessageId], [Reaction]) VALUES(@MessageId, @Reaction)", reaction);
             }
         }
+
+        protected async Task InsertChatMessageReactionToDatabase(ChatMessageReaction reaction)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                await connection.QueryAsync("INSERT INTO [ChatMessageReaction]([MessageId], [UserId], [Reaction]) VALUES (@MessageId, @UserId, @Reaction)",
+                    reaction);
+            }
+        }
     }
 }

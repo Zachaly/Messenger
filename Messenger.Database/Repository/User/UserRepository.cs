@@ -41,7 +41,7 @@ namespace Messenger.Database.Repository
 
         public Task UpdateAsync(UpdateUserRequest request)
         {
-            var query = _sqlQueryBuilder.BuildSet(request, Table);
+            var query = _sqlQueryBuilder.Where(new { Id = request.Id }).BuildSet(request, Table);
 
             return ExecuteQueryAsync(query.Query, query.Params);
         }

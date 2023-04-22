@@ -29,7 +29,8 @@ namespace Messenger.Tests.Integration.Controller
                 "TRUNCATE TABLE [Chat]",
                 "TRUNCATE TABLE [ChatMessage]",
                 "TRUNCATE TABLE [ChatMessageRead]",
-                "TRUNCATE TABLE [ChatUser]"
+                "TRUNCATE TABLE [ChatUser]",
+                "TRUNCATE TABLE [ChatMessageReaction]"
             };
 
         public ControllerTest()

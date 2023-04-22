@@ -1,4 +1,4 @@
-<div class="card has-background-info px-1 m-1 has-text-light">
+<div class="card has-background-info px-1 m-1 has-text-light" (dblclick)="showEmoji = !showEmoji">
     <header class="card-header-title ">
         <p class="title is-4 username">{{ message.senderName }}</p>
     </header>
@@ -14,5 +14,11 @@
         <figure class="image is-24x24" *ngFor="let id of message.readByIds">
             <img [src]="getProfileUrl(id)" alt="">
         </figure>
+    </div>
+    <div *ngIf="showEmoji" class="emojis">
+        <app-emoji-select (select)="onSelectEmoji($event)" />
+    </div>
+    <div class="is-flex">
+        <app-chat-message-reaction *ngFor="let reaction of message.reactions" [reaction]="reaction" (click)="onReactionClick($event)"/>
     </div>
 </div>

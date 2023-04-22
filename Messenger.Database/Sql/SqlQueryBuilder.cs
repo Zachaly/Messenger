@@ -107,8 +107,6 @@ namespace Messenger.Database.Sql
 
                 return (temp.RawSql, temp.Parameters);
             }
-
-            
         }
         
         public (string Query, object Params) BuildCount(string table)

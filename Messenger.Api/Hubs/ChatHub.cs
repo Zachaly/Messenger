@@ -21,6 +21,7 @@ namespace Messenger.Api.Hubs
         Task ChatUserAdded(ChatUserModel user);
         Task ChatUserRemoved(long id);
         Task ChatUserUpdated(ChatUserModel user);
+        Task ChatMessageReactionUpdated(long messageId, long userId, string? reaction);
     }
 
     [Authorize(AuthenticationSchemes = "Websocket")]

@@ -37,6 +37,7 @@ import { AddChatUserComponent } from './components/add-chat-user/add-chat-user.c
 import { GroupChatListItemComponent } from './components/group-chat-list-item/group-chat-list-item.component';
 import { ChatUserListComponent } from './components/chat-user-list/chat-user-list.component';
 import { UpdateChatComponent } from './components/update-chat/update-chat.component';
+import { ChatMessageReactionComponent } from './components/chat-message-reaction/chat-message-reaction.component';
 
 const route = (path: string, component: any) => (
   {
@@ -91,6 +92,7 @@ const routes: Routes = [
     GroupChatListItemComponent,
     ChatUserListComponent,
     UpdateChatComponent,
+    ChatMessageReactionComponent,
   ],
   imports: [
     BrowserModule,
