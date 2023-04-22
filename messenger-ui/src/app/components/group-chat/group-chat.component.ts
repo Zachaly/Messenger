@@ -1,10 +1,12 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import ChatMessageModel from 'src/app/models/ChatMessageModel';
-import ChatUserModel from 'src/app/models/ChatUserModel';
+import ChatMessageReaction from 'src/app/models/ChatMessageReaction';
+import AddChatMessageReactionRequest from 'src/app/requests/AddChatMessageReactionRequest';
 import AddChatMessageReadRequest from 'src/app/requests/AddChatMessageReadRequest';
 import AddChatMessageRequest from 'src/app/requests/AddChatMessageRequest';
 import GetChatMessageRequest from 'src/app/requests/GetChatMessageRequest';
 import { AuthService } from 'src/app/services/auth.service';
+import { ChatMessageReactionService } from 'src/app/services/chat-message-reaction.service';
 import { ChatMessageReadService } from 'src/app/services/chat-message-read.service';
 import { ChatMessageService } from 'src/app/services/chat-message.service';
 import { ImageService } from 'src/app/services/image.service';
@@ -39,10 +41,10 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
   constructor(private authService: AuthService, private chatMessageService: ChatMessageService,
     private chatMessageReadService: ChatMessageReadService, private signalR: SignalrService,
-    private imageService: ImageService) {
+    private imageService: ImageService, private reactionService: ChatMessageReactionService) {
     this.userId = authService.currentUser.userId
   }
-  
+
   ngOnDestroy(): void {
     this.signalR.stopAllConnections()
   }
@@ -65,8 +67,24 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
     this.signalR.setConnectionListener(chatConnectionId, 'ChatMessageRead', (messageId: number, userId: number) => {
       const msg = this.messages.find(x => x.id == messageId)
-      if(msg){
+      if (msg) {
         msg.readByIds.push(userId)
+      }
+    })
+
+    this.signalR.setConnectionListener(chatConnectionId, 'ChatMessageReactionUpdated', (messageId: number, userId: number, reaction?: string) => {
+      const message = this.messages.find(x => x.id == messageId)
+      if (message) {
+        const userReaction = message.reactions.find(x => x.userId == userId)
+        if (userReaction) {
+          if(reaction){
+            userReaction.reaction = reaction
+          } else {
+            message.reactions = message.reactions.filter(x => x !== userReaction)
+          }
+        } else if (reaction) {
+          message.reactions.push({ userId, reaction })
+        }
       }
     })
 
@@ -93,8 +111,8 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
     const request: AddChatMessageRequest = { chatId: this.chatId, senderId: this.userId, content: this.newMessageContent }
 
     this.chatMessageService.addChatMessage(request).subscribe(res => {
-      
-      if(this.selectedFiles) {
+
+      if (this.selectedFiles) {
         const messageId: number = res.newEntityId!
         this.imageService.uploadChatMessageImages(this.selectedFiles, messageId).subscribe(() => {
           this.chatMessageService.getChatMessage({ id: messageId }).subscribe(res => {
@@ -149,5 +167,23 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
   selectImages() {
     this.selectedFiles = this.fileInput.nativeElement.files
+  }
+
+  addReaction(reaction: string, messageId: number) {
+    const request: AddChatMessageReactionRequest = {
+      userId: this.userId,
+      chatId: this.chatId,
+      reaction,
+      messageId
+    }
+
+    this.reactionService.postReaction(request).subscribe()
+  }
+
+  deleteReaction(reaction: ChatMessageReaction, messageId: number) {
+    if (reaction.userId !== this.userId) {
+      return
+    }
+    this.reactionService.deleteReaction(reaction.userId, messageId, this.chatId).subscribe()
   }
 }

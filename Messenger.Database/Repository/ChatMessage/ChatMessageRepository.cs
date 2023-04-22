@@ -52,7 +52,7 @@ namespace Messenger.Database.Repository
                     {
                         (msg.ImageIds as List<long>)!.Add(image.Id);
                     }
-                    if(reaction is not null)
+                    if(reaction is not null && !(msg.Reactions as List<ChatMessageReactionModel>)!.Any(x => x.UserId == reaction.UserId))
                     {
                         (msg.Reactions as List<ChatMessageReactionModel>)!.Add(reaction);
                     }

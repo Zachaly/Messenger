@@ -1,0 +1,7 @@
+<span (contextmenu)="onClick()" (mouseenter)="changeHover(true)" (mouseleave)="changeHover(false)"> {{ reaction.reaction }} </span>
+
+<div *ngIf="hover">
+    <figure class="image is-24x24">
+        <img [src]="userImage()" />
+    </figure>
+</div>
