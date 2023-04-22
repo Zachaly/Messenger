@@ -37,7 +37,7 @@ namespace Messenger.Application.Command
 
                 await _chatMessageReactionRepository.InsertAsync(reaction);
 
-                await _notificationService.ChatMessageReactionChanged(request.ChatId, reaction.MessageId, reaction.Reaction);
+                await _notificationService.ChatMessageReactionChanged(request.ChatId, reaction.MessageId, reaction.UserId, reaction.Reaction);
 
                 return _responseFactory.CreateSuccess();
             }

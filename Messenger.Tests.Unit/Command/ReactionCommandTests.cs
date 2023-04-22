@@ -170,7 +170,7 @@ namespace Messenger.Tests.Unit.Command
                 .Callback((long userId, long messageId) => reactions.Remove(reactions.First(x => x.UserId == userId && x.MessageId == messageId)));
 
             var notificationService = new Mock<INotificationService>();
-            notificationService.Setup(x => x.ChatMessageReactionChanged(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<string?>()));
+            notificationService.Setup(x => x.ChatMessageReactionChanged(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<string?>()));
 
             var reactionFactory = new Mock<IReactionFactory>();
             reactionFactory.Setup(x => x.CreateChatMessageReaction(It.IsAny<AddChatMessageReactionRequest>()))
@@ -258,7 +258,7 @@ namespace Messenger.Tests.Unit.Command
                 .Callback((long userId, long messageId) => reactions.Remove(reactions.First(x => x.UserId == userId && x.MessageId == messageId)));
 
             var notificationService = new Mock<INotificationService>();
-            notificationService.Setup(x => x.ChatMessageReactionChanged(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<string?>()));
+            notificationService.Setup(x => x.ChatMessageReactionChanged(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<string?>()));
 
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateSuccess())

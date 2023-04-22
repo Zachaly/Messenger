@@ -32,7 +32,7 @@ namespace Messenger.Application.Command
             {
                 await _chatMessageReactionRepository.DeleteAsync(request.UserId, request.MessageId);
 
-                await _notificationService.ChatMessageReactionChanged(request.ChatId, request.MessageId, null);
+                await _notificationService.ChatMessageReactionChanged(request.ChatId, request.MessageId, request.UserId,  null);
 
                 return _responseFactory.CreateSuccess();
             }
