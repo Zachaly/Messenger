@@ -262,7 +262,7 @@ namespace Messenger.Tests.Unit.Command
 
             var responseFactory = new Mock<IResponseFactory>();
             responseFactory.Setup(x => x.CreateSuccess())
-                .Returns(new ResponseModel { Success = false });
+                .Returns(new ResponseModel { Success = true });
 
             var command = new DeleteChatMessageReactionCommand { ChatId = 0, MessageId = MessageId, UserId = UserId };
             var res = await new DeleteChatMessageReactionHandler(reactionRepository.Object, responseFactory.Object, notificationService.Object)
@@ -289,7 +289,7 @@ namespace Messenger.Tests.Unit.Command
 
             var reactionRepository = new Mock<IChatMessageReactionRepository>();
             reactionRepository.Setup(x => x.DeleteAsync(It.IsAny<long>(), It.IsAny<long>()))
-                .Callback((long userId, long messageId) => reactions.Remove(reactions.First(x => x.UserId == userId && x.MessageId == messageId)));
+                .Callback((long userId, long messageId) => throw new Exception(Error));
 
             var notificationService = new Mock<INotificationService>();
 
@@ -302,7 +302,6 @@ namespace Messenger.Tests.Unit.Command
                 .Handle(command, default);
 
             Assert.False(res.Success);
-            Assert.Contains(reactions, x => x.UserId == command.UserId && x.MessageId == command.UserId);
             Assert.Equal(Error, res.Error);
         }
     }

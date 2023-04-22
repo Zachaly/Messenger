@@ -27,9 +27,24 @@ namespace Messenger.Application.Command
             _reactionFactory = reactionFactory;
         }
 
-        public Task<ResponseModel> Handle(AddChatMessageReactionCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddChatMessageReactionCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _chatMessageReactionRepository.DeleteAsync(request.UserId, request.MessageId);
+
+                var reaction = _reactionFactory.CreateChatMessageReaction(request);
+
+                await _chatMessageReactionRepository.InsertAsync(reaction);
+
+                await _notificationService.ChatMessageReactionChanged(request.ChatId, reaction.MessageId, reaction.Reaction);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

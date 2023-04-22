@@ -17,7 +17,9 @@ namespace Messenger.Database.Repository
 
         public Task DeleteAsync(long userId, long messageId)
         {
-            throw new NotImplementedException();
+            var query = _sqlQueryBuilder.Where(new { UserId = userId, MessageId = messageId }).BuildDelete(Table);
+
+            return ExecuteQueryAsync(query.Query, query.Params);
         }
     }
 }

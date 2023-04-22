@@ -8,9 +8,12 @@ namespace Messenger.Application
     public class ReactionFactory : IReactionFactory
     {
         public ChatMessageReaction CreateChatMessageReaction(AddChatMessageReactionRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new ChatMessageReaction
+            {
+                MessageId = request.MessageId,
+                Reaction = request.Reaction,
+                UserId = request.UserId,
+            };
 
         public DirectMessageReaction CreateDirectMessageReaction(AddDirectMessageReactionRequest request)
             => new DirectMessageReaction

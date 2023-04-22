@@ -16,6 +16,7 @@ namespace Messenger.Tests.Integration.Database
             _teardownQueries.Add("TRUNCATE TABLE [ChatMessage]");
             _teardownQueries.Add("TRUNCATE TABLE [User]");
             _teardownQueries.Add("TRUNCATE TABLE [ChatMessageImage]");
+            _teardownQueries.Add("TRUNCATE TABLE [ChatMessageReaction]");
         }
 
         [Fact]
@@ -40,6 +41,17 @@ namespace Messenger.Tests.Integration.Database
             await InsertChatMessageReadsToDatabase(FakeDataFactory.CreateChatMessageReads(readMessageId, readerIds));
             await InsertImagesToDatabase(images);
 
+            var reactions = new List<ChatMessageReaction>
+            {
+                new ChatMessageReaction { UserId = 1, MessageId = readMessageId, Reaction = "😀" },
+                new ChatMessageReaction { UserId = 2, MessageId = readMessageId, Reaction = "😀" },
+            };
+
+            foreach (var reaction in reactions)
+            {
+                await InsertChatMessageReactionToDatabase(reaction);
+            }
+
             var imageIds = (await GetAllFromDatabase<ChatMessageImage>("ChatMessageImage")).Select(x => x.Id);
 
             var request = new GetChatMessageRequest { ChatId = 1, PageSize = 5 };
@@ -51,6 +63,8 @@ namespace Messenger.Tests.Integration.Database
             Assert.Equivalent(readerIds, readMessage.ReadByIds);
             Assert.Equivalent(imageIds, readMessage.ImageIds);
             Assert.All(res.Select(x => x.Id), id => Assert.Contains(id, messageIds));
+            Assert.All(readMessage.Reactions,
+                reaction => Assert.Contains(reactions, x => x.UserId == reaction.UserId && x.Reaction == reaction.Reaction));
         }
     }
 }

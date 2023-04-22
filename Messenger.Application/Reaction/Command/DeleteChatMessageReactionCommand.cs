@@ -26,9 +26,20 @@ namespace Messenger.Application.Command
             _notificationService = notificationService;
         }
 
-        public Task<ResponseModel> Handle(DeleteChatMessageReactionCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteChatMessageReactionCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _chatMessageReactionRepository.DeleteAsync(request.UserId, request.MessageId);
+
+                await _notificationService.ChatMessageReactionChanged(request.ChatId, request.MessageId, null);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

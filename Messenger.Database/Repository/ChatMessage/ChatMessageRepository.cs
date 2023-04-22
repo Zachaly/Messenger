@@ -5,6 +5,7 @@ using Messenger.Database.Sql;
 using Messenger.Domain.Entity;
 using Messenger.Models.ChatMessage;
 using Messenger.Models.ChatMessage.Request;
+using Messenger.Models.ChatMessageReaction;
 
 namespace Messenger.Database.Repository
 {
@@ -28,7 +29,8 @@ namespace Messenger.Database.Repository
             {
                 var lookup = new Dictionary<long, ChatMessageModel>();
 
-                await connection.QueryAsync<ChatMessageModel, ChatMessageRead, ChatMessageImage, ChatMessageModel>(query.Query, (message, read, image) =>
+                await connection.QueryAsync<ChatMessageModel, ChatMessageRead, ChatMessageImage, ChatMessageReactionModel, ChatMessageModel>(query.Query,
+                    (message, read, image, reaction) =>
                 {
                     ChatMessageModel msg;
 
@@ -40,6 +42,7 @@ namespace Messenger.Database.Repository
 
                     msg.ReadByIds ??= new List<long>();
                     msg.ImageIds ??= new List<long>();
+                    msg.Reactions ??= new List<ChatMessageReactionModel>();
 
                     if(read is not null && !(msg.ReadByIds as List<long>)!.Contains(read.UserId))
                     {
@@ -49,9 +52,13 @@ namespace Messenger.Database.Repository
                     {
                         (msg.ImageIds as List<long>)!.Add(image.Id);
                     }
+                    if(reaction is not null)
+                    {
+                        (msg.Reactions as List<ChatMessageReactionModel>)!.Add(reaction);
+                    }
 
                     return message;
-                }, query.Params, splitOn: "MessageId, Id");
+                }, query.Params, splitOn: "MessageId, Id, UserId");
 
                 return lookup.Values;
             }

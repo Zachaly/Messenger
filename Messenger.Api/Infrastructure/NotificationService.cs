@@ -35,6 +35,11 @@ namespace Messenger.Api.Infrastructure
             await _chatHub.Clients.Group(chatId.ToString()).ChatUserAdded(user);
         }
 
+        public Task ChatMessageReactionChanged(long chatId, long messageId, string? reaction)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task ChatMessageRead(long chatId, long userId, long messageId)
         {
             return _chatHub.Clients.Group(chatId.ToString()).ChatMessageRead(messageId, userId);

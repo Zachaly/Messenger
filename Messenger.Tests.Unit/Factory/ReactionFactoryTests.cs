@@ -40,7 +40,7 @@ namespace Messenger.Tests.Unit.Factory
 
             var reaction = _reactionFactory.CreateChatMessageReaction(request);
 
-            Assert.Equal(request.UserId, reaction.MessageId);
+            Assert.Equal(request.UserId, reaction.UserId);
             Assert.Equal(request.MessageId, reaction.MessageId);
             Assert.Equal(request.Reaction, reaction.Reaction);
         }
