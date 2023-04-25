@@ -177,6 +177,10 @@ namespace Messenger.Database.Sql
                 {
                     var column = string.IsNullOrEmpty(whereAttrib.Column) ? $"[{prop.Name}]" : whereAttrib.Column;
                     var equal = $"[{prop.Name}]" == column ? "=" : "";
+                    if(prop.PropertyType == typeof(string) && whereAttrib.ContentWrapper != "")
+                    {
+                        prop.SetValue(request, whereAttrib.ContentWrapper + (prop.GetValue(request) as string) + whereAttrib.ContentWrapper, null);
+                    }
                     if (whereAttrib.Type == WhereType.AND)
                     {
                         _builder.Where($"{column}{equal}@{prop.Name}", _parameters);

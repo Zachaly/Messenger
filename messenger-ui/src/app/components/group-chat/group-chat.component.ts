@@ -36,6 +36,7 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
   loading = false
   firstScrolled = false
+  showEmoji = false
 
   newMessageContent = ''
 
@@ -185,5 +186,10 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
       return
     }
     this.reactionService.deleteReaction(reaction.userId, messageId, this.chatId).subscribe()
+  }
+
+  selectEmoji(emoji: string) {
+    this.newMessageContent += emoji
+    this.showEmoji = false
   }
 }

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import UserListItem from 'src/app/models/UserListItem';
 import AddFriendRequest from 'src/app/requests/AddFriendRequest';
+import GetUsersRequest from 'src/app/requests/GetUsersRequest';
 import { AuthService } from 'src/app/services/auth.service';
 import { FriendRequestService } from 'src/app/services/friend-request.service';
 import { FriendService } from 'src/app/services/friend.service';
-import { SignalrService } from 'src/app/services/signalr.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -17,6 +17,8 @@ export class MainPageComponent implements OnInit {
   users: UserListItem[] = []
   friends: UserListItem[] = []
 
+  searchRequest: GetUsersRequest = { searchName: '' }
+
   constructor(private authService: AuthService, private router: Router,
     private userService: UserService, private friendService: FriendService,
     private friendRequestService: FriendRequestService) {
@@ -24,6 +26,7 @@ export class MainPageComponent implements OnInit {
       router.navigateByUrl('/login')
     }
   }
+
   ngOnInit(): void {
     this.userService.getUsers({})
       .subscribe(res => this.users = res.filter(x => x.id !== this.authService.currentUser.userId))
@@ -43,6 +46,14 @@ export class MainPageComponent implements OnInit {
     this.friendRequestService.postFriendRequest(request).subscribe({
       next: () => alert('Friend request send'),
       error: (err) => alert(err.error.error)
+    })
+  }
+
+  search() {
+    this.userService.getUsers(this.searchRequest).subscribe(res => {
+      console.log(this.searchRequest)
+      console.log(res)
+      this.users = res.filter(x => x.id !== this.authService.currentUser.userId)
     })
   }
 }
