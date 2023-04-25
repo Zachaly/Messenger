@@ -9,5 +9,9 @@ export default (request: GetUsersRequest) : HttpParams => {
         params = params.append('Id', request.id)
     }
 
+    if(request.searchName){
+        params = params.append('SearchName', request.searchName)
+    }
+
     return params
 }

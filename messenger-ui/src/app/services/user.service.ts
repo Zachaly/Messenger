@@ -2,11 +2,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import UserListItem from '../models/UserListItem';
-import PagedRequest from '../requests/PagedRequest';
-import MapPagedRequest from '../requests/paramMappers/MapPagedRequest';
 import { AuthService } from './auth.service';
 import UpdateUsernameRequest from '../requests/UpdateUsernameRequest';
 import GetUsersRequest from '../requests/GetUsersRequest';
+import MapGetUsersRequest from '../requests/paramMappers/MapGetUsersRequest';
 
 const API_URL = 'https://localhost:5001/api/user'
 
@@ -29,7 +28,7 @@ export class UserService {
   }
 
   getUsers(request: GetUsersRequest): Observable<UserListItem[]> {
-    const params = MapPagedRequest(request)
+    const params = MapGetUsersRequest(request)
     
     return this.http.get<UserListItem[]>(API_URL, {
       headers: this.httpHeaders(),
