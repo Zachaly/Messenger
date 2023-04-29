@@ -5,6 +5,7 @@ using Messenger.Models.ChatMessage;
 using Messenger.Models.ChatUser;
 using Messenger.Models.DirectMessage;
 using Messenger.Models.Friend;
+using Messenger.Models.UserClaim;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Messenger.Api.Infrastructure
@@ -58,6 +59,11 @@ namespace Messenger.Api.Infrastructure
         public Task ChatUserUpdated(ChatUserModel user, long chatId)
         {
             return _chatHub.Clients.Group(chatId.ToString()).ChatUserUpdated(user);
+        }
+
+        public Task ClaimAdded(long userId, UserClaimModel claim)
+        {
+            throw new NotImplementedException();
         }
 
         public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)

@@ -1,8 +1,6 @@
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
