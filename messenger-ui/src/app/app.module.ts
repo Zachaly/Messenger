@@ -38,6 +38,8 @@ import { GroupChatListItemComponent } from './components/group-chat-list-item/gr
 import { ChatUserListComponent } from './components/chat-user-list/chat-user-list.component';
 import { UpdateChatComponent } from './components/update-chat/update-chat.component';
 import { ChatMessageReactionComponent } from './components/chat-message-reaction/chat-message-reaction.component';
+import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { ModerationPageComponent } from './pages/moderation-page/moderation-page.component';
 
 const route = (path: string, component: any) => (
   {
@@ -55,7 +57,9 @@ const routes: Routes = [
   route('direct-chat/:userId', DirectChatPageComponent),
   route('chats', ChatListPageComponent),
   route('update-profile', UpdateProfilePageComponent),
-  route('group-chats', GroupChatListPageComponent)
+  route('group-chats', GroupChatListPageComponent),
+  route('moderation', ModerationPageComponent),
+  route('admin', AdminPageComponent)
 ]
 
 @NgModule({
@@ -93,6 +97,8 @@ const routes: Routes = [
     ChatUserListComponent,
     UpdateChatComponent,
     ChatMessageReactionComponent,
+    AdminPageComponent,
+    ModerationPageComponent,
   ],
   imports: [
     BrowserModule,

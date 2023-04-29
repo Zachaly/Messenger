@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 import { ImageService } from 'src/app/services/image.service';
 
 @Component({
@@ -23,11 +24,30 @@ export class NavbarDropdownComponent implements OnInit {
     ['Update profile', '/update-profile'],
   ]
 
-  constructor(private router: Router, private imageService: ImageService) {
+  constructor(private router: Router, private imageService: ImageService, private authService: AuthService) {
+    authService.onAuthChange().subscribe(user => {
+      console.log(user, 'change')
+      if (user.claims.includes('Admin')) {
+        this.routes.push(['Admin', '/admin'])
+      }
 
+      if(user.claims.includes('Admin') || user.claims.includes('Moderator')){
+        this.routes.push(['Moderation', '/moderation'])
+      }
+    })
   }
   ngOnInit(): void {
     this.imageUrl = this.imageService.getUrl('profile', this.userId)
+    const user = this.authService.currentUser
+    console.log(user)
+
+    if (user.claims.includes('Admin')) {
+      this.routes.push(['Admin', '/admin'])
+    }
+
+    if(user.claims.includes('Admin') || user.claims.includes('Moderator')){
+      this.routes.push(['Moderation', '/moderation'])
+    }
   }
 
   onLogout() {
