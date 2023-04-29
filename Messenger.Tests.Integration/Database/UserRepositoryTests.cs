@@ -33,6 +33,32 @@ namespace Messenger.Tests.Integration.Database
             Assert.Equivalent(users.Skip(2).Take(2).Select(x => x.Id), res.Select(x => x.Id));
         }
 
+        [Theory]
+        [InlineData("name")]
+        [InlineData("eman")]
+        public async Task GetUsersAsync_WithSearchName_ReturnsProperUsers(string searchPhrase)
+        {
+            var users = new List<User>
+            {
+                new User { Login = "log1", Name = "name1", PasswordHash = "hash"},
+                new User { Login = "log2", Name = "name2", PasswordHash = "hash"},
+                new User { Login = "log3", Name = "name3", PasswordHash = "hash"},
+                new User { Login = "log4", Name = "name4", PasswordHash = "hash"},
+                new User { Login = "log5", Name = "eman1", PasswordHash = "hash"},
+                new User { Login = "log6", Name = "eman2", PasswordHash = "hash"},
+                new User { Login = "log7", Name = "eman3", PasswordHash = "hash"},
+                new User { Login = "log8", Name = "eman4", PasswordHash = "hash"},
+            };
+
+            await InsertUsersToDatabase(users);
+
+            var request = new GetUserRequest { SearchName = searchPhrase };
+
+            var res = await _repository.GetAsync(request);
+
+            Assert.All(res, user => Assert.Contains(searchPhrase, user.Name));
+        }
+
         [Fact]
         public async Task GetUserByLogin()
         {

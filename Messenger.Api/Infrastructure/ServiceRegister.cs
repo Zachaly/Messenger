@@ -109,6 +109,12 @@ namespace Messenger.Api.Infrastructure
                     }
                 };
             });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"));
+                options.AddPolicy("Moderator", policy => policy.RequireClaim("Role", "Admin", "Moderator"));
+            });
         }
 
         public static void ConfigureSwagger(this IServiceCollection collection)
