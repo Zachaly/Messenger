@@ -5,7 +5,10 @@ using Messenger.Domain.Entity;
 using Messenger.Models.Response;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
+using Messenger.Models.UserClaim;
+using Messenger.Models.UserClaim.Request;
 using Moq;
+using System.Security.Claims;
 
 namespace Messenger.Tests.Unit.Command
 {
@@ -55,7 +58,7 @@ namespace Messenger.Tests.Unit.Command
                 .ReturnsAsync(true);
 
             const string Token = "token";
-            authServiceMock.Setup(x => x.GenerateTokenAsync(It.IsAny<User>()))
+            authServiceMock.Setup(x => x.GenerateTokenAsync(It.IsAny<User>(), It.IsAny<IEnumerable<Claim>>()))
                 .ReturnsAsync(Token);
 
             var responseFactoryMock = new Mock<IResponseFactory>();
@@ -72,14 +75,23 @@ namespace Messenger.Tests.Unit.Command
             userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(user);
 
+            var userClaimRepositoryMock = new Mock<IUserClaimRepository>();
+            userClaimRepositoryMock.Setup(x => x.GetAsync(It.IsAny<GetUserClaimRequest>()))
+                .ReturnsAsync(new List<UserClaimModel>());
+
+            var userClaimFactoryMock = new Mock<IUserClaimFactory>();
+            userClaimFactoryMock.Setup(x => x.CreateSystemClaimFromModel(It.IsAny<UserClaimModel>()))
+                .Returns(new Claim("", ""));
+
             var command = new LoginCommand
             {
                 Password = "pass",
                 Login = "login"
             };
 
+
             var res = await new LoginHandler(authServiceMock.Object, userRepositoryMock.Object,
-                responseFactoryMock.Object, userFactoryMock.Object)
+                responseFactoryMock.Object, userFactoryMock.Object, userClaimRepositoryMock.Object, userClaimFactoryMock.Object)
                 .Handle(command, default);
 
             Assert.True(res.Success);
@@ -109,6 +121,10 @@ namespace Messenger.Tests.Unit.Command
             userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(user);
 
+            var userClaimRepositoryMock = new Mock<IUserClaimRepository>();
+            
+            var userClaimFactoryMock = new Mock<IUserClaimFactory>();
+
             var command = new LoginCommand
             {
                 Password = "pass",
@@ -116,7 +132,7 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var res = await new LoginHandler(authServiceMock.Object, userRepositoryMock.Object,
-                responseFactoryMock.Object, userFactoryMock.Object)
+                responseFactoryMock.Object, userFactoryMock.Object, userClaimRepositoryMock.Object, userClaimFactoryMock.Object)
                 .Handle(command, default);
 
             Assert.False(res.Success);
@@ -141,6 +157,10 @@ namespace Messenger.Tests.Unit.Command
             userRepositoryMock.Setup(x => x.GetByLoginAsync(It.IsAny<string>()))
                 .ReturnsAsync(() => null);
 
+            var userClaimRepositoryMock = new Mock<IUserClaimRepository>();
+
+            var userClaimFactoryMock = new Mock<IUserClaimFactory>();
+
             var command = new LoginCommand
             {
                 Password = "pass",
@@ -148,7 +168,7 @@ namespace Messenger.Tests.Unit.Command
             };
 
             var res = await new LoginHandler(authServiceMock.Object, userRepositoryMock.Object,
-                responseFactoryMock.Object, userFactoryMock.Object)
+                responseFactoryMock.Object, userFactoryMock.Object, userClaimRepositoryMock.Object, userClaimFactoryMock.Object)
                 .Handle(command, default);
 
             Assert.False(res.Success);
