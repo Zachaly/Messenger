@@ -18,9 +18,9 @@ namespace Messenger.Application.Command
             _userClaimRepository = userClaimRepository;
         }
 
-        public Task<IEnumerable<UserClaimModel>> Handle(GetUserClaimQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserClaimModel>> Handle(GetUserClaimQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _userClaimRepository.GetAsync(request);
         }
     }
 }

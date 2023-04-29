@@ -22,9 +22,18 @@ namespace Messenger.Application.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _userClaimRepository.DeleteAsync(request.UserId, request.Claim);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

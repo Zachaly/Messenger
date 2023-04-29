@@ -26,9 +26,22 @@ namespace Messenger.Application.Command
             _notificationService = notificationService;
         }
 
-        public Task<ResponseModel> Handle(AddUserClaimCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddUserClaimCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var claim = _userClaimFactory.Create(request);
+
+                await _userClaimRepository.InsertAsync(claim);
+
+                await _notificationService.ClaimAdded(request.UserId, claim.Value);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

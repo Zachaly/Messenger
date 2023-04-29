@@ -9,13 +9,13 @@ namespace Messenger.Application
     public class UserClaimFactory : IUserClaimFactory
     {
         public UserClaim Create(AddUserClaimRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new UserClaim
+            {
+                UserId = request.UserId,
+                Value = request.Value,
+            };
 
         public Claim CreateSystemClaimFromModel(UserClaimModel model)
-        {
-            throw new NotImplementedException();
-        }
+            => new Claim("Role", model.Value);
     }
 }
