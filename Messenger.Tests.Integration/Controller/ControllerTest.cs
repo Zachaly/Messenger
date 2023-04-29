@@ -35,6 +35,7 @@ namespace Messenger.Tests.Integration.Controller
             };
         protected string _adminLogin = "";
         protected string _adminPassword = "";
+        protected string _adminName = "";
 
         public ControllerTest()
         {
@@ -49,6 +50,7 @@ namespace Messenger.Tests.Integration.Controller
                     });
                     _adminLogin = context.Configuration["DefaultAdminLogin"]!;
                     _adminPassword = context.Configuration["DefaultAdminPassword"]!;
+                    _adminName = context.Configuration["DefaultAdminName"]!;
                 });
             });
 
@@ -74,6 +76,16 @@ namespace Messenger.Tests.Integration.Controller
             _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
 
             var loginRequest = new LoginRequest { Login = _authUsername, Password = registerRequest.Password };
+
+            var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", content.AuthToken);
+        }
+
+        protected async Task AuthorizeAdmin()
+        {
+            var loginRequest = new LoginRequest { Login = _adminLogin, Password = _adminPassword };
 
             var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
             var content = await response.Content.ReadFromJsonAsync<LoginResponse>();

@@ -2,7 +2,6 @@ using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
 using Messenger.Application.Command;
-using Messenger.Database.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 [assembly: ApiController]
@@ -39,7 +38,7 @@ try
             var res = await mediator.Send(new RegisterCommand 
             { 
                 Login = config["DefaultAdminLogin"],
-                Name = "admin",
+                Name = config["DefaultAdminName"],
                 Password = config["DefaultAdminPassword"]
             });
             if(res.Success)

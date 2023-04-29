@@ -43,11 +43,10 @@ namespace Messenger.Application.Command
                 return _responseFactory.CreateFailure<LoginResponse>("Username or password is invalid!");
             }
 
-            var claims = (await _userClaimRepository.GetAsync(new GetUserClaimRequest { UserId = user.Id }))
-                .Select(claim => _userClaimFactory.CreateSystemClaimFromModel(claim));
+            var userClaims = await _userClaimRepository.GetAsync(new GetUserClaimRequest { UserId = user.Id });
+            var claims = userClaims.Select(claim => _userClaimFactory.CreateSystemClaimFromModel(claim));
 
-            var response = _userFactory.CreateLoginResponse(user, await _authService.GenerateTokenAsync(user, claims));
-
+            var response = _userFactory.CreateLoginResponse(user, await _authService.GenerateTokenAsync(user, claims), userClaims);
             return _responseFactory.CreateSuccess(response);
         }
     }

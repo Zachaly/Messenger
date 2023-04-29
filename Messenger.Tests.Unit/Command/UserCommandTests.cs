@@ -66,8 +66,8 @@ namespace Messenger.Tests.Unit.Command
                 .Returns((LoginResponse data) => new DataResponseModel<LoginResponse> { Data = data, Success = true });
 
             var userFactoryMock = new Mock<IUserFactory>();
-            userFactoryMock.Setup(x => x.CreateLoginResponse(It.IsAny<User>(), It.IsAny<string>()))
-                .Returns((User user, string token) => new LoginResponse { AuthToken = token, UserId = user.Id });
+            userFactoryMock.Setup(x => x.CreateLoginResponse(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<IEnumerable<UserClaimModel>>()))
+                .Returns((User user, string token, IEnumerable<UserClaimModel> _) => new LoginResponse { AuthToken = token, UserId = user.Id });
 
             var userRepositoryMock = new Mock<IUserRepository>();
 

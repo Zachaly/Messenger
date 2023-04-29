@@ -2,6 +2,7 @@
 using Messenger.Application.Abstraction;
 using Messenger.Database.Repository;
 using Messenger.Models.User;
+using Messenger.Models.UserClaim;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
@@ -30,9 +31,11 @@ namespace Messenger.Application.Command
             var userId = long.Parse(_httpContextAccessor.HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
             var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
+            var claims = _httpContextAccessor.HttpContext.User.Claims.Where(claim => claim.Type == "Role").Select(claim => claim.Value);
+
             var user = await _userRepository.GetByIdAsync(userId);
 
-            return _userFactory.CreateLoginResponse(user, token);
+            return _userFactory.CreateLoginResponse(user, token, claims);
         }
     }
 }

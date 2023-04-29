@@ -12,7 +12,7 @@ namespace Messenger.Tests.Integration.Controller
         const string ApiUrl = "/api/user";
 
         [Fact]
-        public async Task AdminCreated_OnStartup()
+        public void Startup_AdminCreated()
         {
             var users = GetFromDatabase<User>("SELECT * FROM [User]");
             var claims = GetFromDatabase<UserClaim>("SELECT * FROM [UserClaim]");
@@ -111,6 +111,19 @@ namespace Messenger.Tests.Integration.Controller
         }
 
         [Fact]
+        public async Task Login_ClaimsIncluded()
+        {
+            var loginRequest = new LoginCommand { Login = _adminLogin, Password = _adminPassword };
+
+            var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/login", loginRequest);
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotEmpty(content.AuthToken);
+            Assert.Contains(content.Claims, x => x == "Admin");
+        }
+
+        [Fact]
         public async Task GetByIdAsync()
         {
             await Authorize();
@@ -134,6 +147,23 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(_authUsername, content.UserName);
             Assert.Equal(_authorizedUserId, content.UserId);
             Assert.Equal(_httpClient.DefaultRequestHeaders.Authorization.Parameter, content.AuthToken);
+        }
+
+        [Fact]
+        public async Task GetCurrentUserAsync_ClaimsIncluded_Success()
+        {
+            await AuthorizeAdmin();
+
+            var adminId = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Login]=@Login", new { Login = _adminLogin }).First().Id;
+
+            var response = await _httpClient.GetAsync($"{ApiUrl}/current");
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(_adminName, content.UserName);
+            Assert.Equal(adminId, content.UserId);
+            Assert.Equal(_httpClient.DefaultRequestHeaders.Authorization.Parameter, content.AuthToken);
+            Assert.Contains(content.Claims, x => x == "Admin");
         }
 
         [Fact]
