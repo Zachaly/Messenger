@@ -11,9 +11,16 @@ namespace Messenger.Tests.Integration.Controller
     {
         const string ApiUrl = "/api/user";
 
-        public UserControllerTest() : base()
+        [Fact]
+        public async Task AdminCreated_OnStartup()
         {
+            var users = GetFromDatabase<User>("SELECT * FROM [User]");
+            var claims = GetFromDatabase<UserClaim>("SELECT * FROM [UserClaim]");
 
+            Assert.Contains(users, user => user.Login == "_admin");
+            Assert.Single(users);
+            Assert.Contains(claims, claim => claim.Value == "Admin");
+            Assert.Single(claims);
         }
 
         [Fact]
@@ -28,7 +35,7 @@ namespace Messenger.Tests.Integration.Controller
 
             var response = await _httpClient.PostAsJsonAsync(ApiUrl, request);
             
-            var userCount = GetFromDatabase<User>("SELECT * FROM [User]").Count();
+            var userCount = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Login]!=@Login", new { Login = _adminLogin }).Count();
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.Equal(1, userCount);
@@ -55,7 +62,7 @@ namespace Messenger.Tests.Integration.Controller
 
             var response = await _httpClient.PostAsJsonAsync(ApiUrl, request);
 
-            var userCount = GetFromDatabase<User>("SELECT * FROM [User]").Count();
+            var userCount = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Login]!=@Login", new { Login = _adminLogin }).Count();
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal(1, userCount);
@@ -72,6 +79,7 @@ namespace Messenger.Tests.Integration.Controller
                 new User { Login = "login2", Name = "name2", PasswordHash = "hash2" },
                 new User { Login = "login3", Name = "name3", PasswordHash = "hash3" },
                 new User { Login = "login4", Name = "name4", PasswordHash = "hash4" },
+                new User { Login = "login5", Name = "name4", PasswordHash = "hash4" },
             };
 
             foreach(var user in users)
@@ -79,7 +87,7 @@ namespace Messenger.Tests.Integration.Controller
                 InsertUser(user);
             }
 
-            var response = await _httpClient.GetAsync($"{ApiUrl}?PageIndex=2&PageSize=2");
+            var response = await _httpClient.GetAsync($"{ApiUrl}?PageIndex=3&PageSize=2");
             var content = await response.Content.ReadFromJsonAsync<IEnumerable<UserModel>>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -136,7 +144,7 @@ namespace Messenger.Tests.Integration.Controller
             var command = new UpdateUsernameCommand { Id = _authorizedUserId, Name = "new name" };
             var response = await _httpClient.PatchAsJsonAsync(ApiUrl, command);
             
-            var user = GetFromDatabase<User>("SELECT * FROM [User]").First();
+            var user = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Id]=@Id", new { Id = command.Id }).First();
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(command.Name, user.Name);

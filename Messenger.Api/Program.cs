@@ -1,5 +1,8 @@
+using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
+using Messenger.Application.Command;
+using Messenger.Database.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 [assembly: ApiController]
@@ -21,6 +24,35 @@ builder.ConfigureAuthorization();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+try
+{
+    using(var scope = app.Services.CreateScope())
+    {
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var admins = await mediator.Send(new GetUserClaimQuery { Value = "Admin" });
+
+        if (!admins.Any())
+        {
+            var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+            var res = await mediator.Send(new RegisterCommand 
+            { 
+                Login = config["DefaultAdminLogin"],
+                Name = "admin",
+                Password = config["DefaultAdminPassword"]
+            });
+            if(res.Success)
+            {
+                await mediator.Send(new AddUserClaimCommand { UserId = res.NewEntityId.GetValueOrDefault(), Value = "Admin" });
+            }
+        }
+    }
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

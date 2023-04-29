@@ -30,8 +30,11 @@ namespace Messenger.Tests.Integration.Controller
                 "TRUNCATE TABLE [ChatMessage]",
                 "TRUNCATE TABLE [ChatMessageRead]",
                 "TRUNCATE TABLE [ChatUser]",
-                "TRUNCATE TABLE [ChatMessageReaction]"
+                "TRUNCATE TABLE [ChatMessageReaction]",
+                "TRUNCATE TABLE [UserClaim]"
             };
+        protected string _adminLogin = "";
+        protected string _adminPassword = "";
 
         public ControllerTest()
         {
@@ -40,10 +43,12 @@ namespace Messenger.Tests.Integration.Controller
             {
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddInMemoryCollection(new Dictionary<string, string>
+                    config.AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         ["ConnectionString"] = _connectionString
                     });
+                    _adminLogin = context.Configuration["DefaultAdminLogin"]!;
+                    _adminPassword = context.Configuration["DefaultAdminPassword"]!;
                 });
             });
 

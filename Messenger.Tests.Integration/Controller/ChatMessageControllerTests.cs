@@ -49,7 +49,8 @@ namespace Messenger.Tests.Integration.Controller
                 InsertUser(user);
             }
 
-            var userIds = GetFromDatabase<long>("SELECT [Id] FROM [User]").Where(x => x != _authorizedUserId);
+            var userIds = GetFromDatabase<long>("SELECT [Id] FROM [User] WHERE [Id]!=@Id AND [Login]!=@Login",
+                new { Id = _authorizedUserId, Login = _adminLogin });
 
             const long ChatId = 2;
 
