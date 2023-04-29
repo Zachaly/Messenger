@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Messenger.Application.Abstraction;
 using Messenger.Database.Repository;
 using Messenger.Models.Response;
 
@@ -13,10 +14,12 @@ namespace Messenger.Application.Command
     public class DeleteUserClamHandler : IRequestHandler<DeleteUserClaimCommand, ResponseModel>
     {
         private readonly IUserClaimRepository _userClaimRepository;
+        private readonly IResponseFactory _responseFactory;
 
-        public DeleteUserClamHandler(IUserClaimRepository userClaimRepository)
+        public DeleteUserClamHandler(IUserClaimRepository userClaimRepository, IResponseFactory responseFactory)
         {
             _userClaimRepository = userClaimRepository;
+            _responseFactory = responseFactory;
         }
 
         public Task<ResponseModel> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)

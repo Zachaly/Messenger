@@ -61,7 +61,7 @@ namespace Messenger.Api.Infrastructure
             return _chatHub.Clients.Group(chatId.ToString()).ChatUserUpdated(user);
         }
 
-        public Task ClaimAdded(long userId, UserClaimModel claim)
+        public Task ClaimAdded(long userId, string claim)
         {
             throw new NotImplementedException();
         }

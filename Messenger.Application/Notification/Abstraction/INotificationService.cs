@@ -23,6 +23,6 @@ namespace Messenger.Application.Abstraction
         Task ChatUpdated(ChatModel chat);
         Task ChatMessageReactionChanged(long chatId, long messageId, long userId, string? reaction);
 
-        Task ClaimAdded(long userId, UserClaimModel claim);
+        Task ClaimAdded(long userId, string claim);
     }
 }

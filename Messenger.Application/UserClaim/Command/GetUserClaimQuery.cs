@@ -9,11 +9,11 @@ namespace Messenger.Application.Command
     {
     }
 
-    public class UserUserClaimHandler : IRequestHandler<GetUserClaimQuery, IEnumerable<UserClaimModel>>
+    public class GetUserClaimHandler : IRequestHandler<GetUserClaimQuery, IEnumerable<UserClaimModel>>
     {
         private readonly IUserClaimRepository _userClaimRepository;
 
-        public UserUserClaimHandler(IUserClaimRepository userClaimRepository)
+        public GetUserClaimHandler(IUserClaimRepository userClaimRepository)
         {
             _userClaimRepository = userClaimRepository;
         }
