@@ -1,8 +1,8 @@
+using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
+using Messenger.Application.Command;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +23,18 @@ builder.ConfigureAuthorization();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+try
+{
+    using(var scope = app.Services.CreateScope())
+    {
+        await scope.CreateAdmin();
+    }
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -50,6 +62,7 @@ app.MapHub<FriendHub>("/ws/friend");
 app.MapHub<DirectMessageHub>("/ws/direct-message");
 app.MapHub<StatusHub>("/ws/online-status");
 app.MapHub<ChatHub>("ws/chat");
+app.MapHub<ClaimHub>("ws/claim");
 
 app.Run();
 

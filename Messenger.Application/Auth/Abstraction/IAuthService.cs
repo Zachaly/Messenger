@@ -1,4 +1,5 @@
 ﻿using Messenger.Domain.Entity;
+using System.Security.Claims;
 
 namespace Messenger.Application.Abstraction
 {
@@ -6,6 +7,6 @@ namespace Messenger.Application.Abstraction
     {
         Task<string> HashPasswordAsync(string password);
         Task<bool> VerifyPasswordAsync(string password, string passwordHash);
-        Task<string> GenerateTokenAsync(User user);
+        Task<string> GenerateTokenAsync(User user, IEnumerable<Claim> userClaims);
     }
 }

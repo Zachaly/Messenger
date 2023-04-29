@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -132,7 +133,9 @@ namespace Messenger.Tests.Unit.Service
         {
             var user = new User { Id = 1, Login = "log", Name = "test" };
 
-            var token = await _service.GenerateTokenAsync(user);
+            var claim = new Claim("Role", "Admin");
+
+            var token = await _service.GenerateTokenAsync(user, new Claim[] { claim });
 
             var tokenValidation = new TokenValidationParameters
             {
@@ -147,6 +150,7 @@ namespace Messenger.Tests.Unit.Service
 
             Assert.Contains(validationResult.Claims, x => x.Value == user.Id.ToString());
             Assert.Contains(validationResult.Claims, x => x.Value == user.Login);
+            Assert.Contains(validationResult.Claims, x => x.Type == claim.Type && x.Value == claim.Value);
         }
     }
 }

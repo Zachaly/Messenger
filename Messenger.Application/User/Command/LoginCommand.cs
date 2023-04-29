@@ -4,6 +4,7 @@ using Messenger.Database.Repository;
 using Messenger.Models.Response;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
+using Messenger.Models.UserClaim.Request;
 
 namespace Messenger.Application.Command
 {
@@ -17,14 +18,19 @@ namespace Messenger.Application.Command
         private readonly IUserRepository _userRepository;
         private readonly IResponseFactory _responseFactory;
         private readonly IUserFactory _userFactory;
+        private readonly IUserClaimRepository _userClaimRepository;
+        private readonly IUserClaimFactory _userClaimFactory;
 
         public LoginHandler(IAuthService authService, IUserRepository userRepository,
-            IResponseFactory responseFactory, IUserFactory userFactory)
+            IResponseFactory responseFactory, IUserFactory userFactory,
+            IUserClaimRepository userClaimRepository, IUserClaimFactory userClaimFactory)
         {
             _authService = authService;
             _userRepository = userRepository;
             _responseFactory = responseFactory;
             _userFactory = userFactory;
+            _userClaimRepository = userClaimRepository;
+            _userClaimFactory = userClaimFactory;
         }
 
         public async Task<DataResponseModel<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -37,8 +43,10 @@ namespace Messenger.Application.Command
                 return _responseFactory.CreateFailure<LoginResponse>("Username or password is invalid!");
             }
 
-            var response = _userFactory.CreateLoginResponse(user, await _authService.GenerateTokenAsync(user));
+            var userClaims = await _userClaimRepository.GetAsync(new GetUserClaimRequest { UserId = user.Id });
+            var claims = userClaims.Select(claim => _userClaimFactory.CreateSystemClaimFromModel(claim));
 
+            var response = _userFactory.CreateLoginResponse(user, await _authService.GenerateTokenAsync(user, claims), userClaims);
             return _responseFactory.CreateSuccess(response);
         }
     }

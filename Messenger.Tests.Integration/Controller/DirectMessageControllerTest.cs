@@ -29,7 +29,7 @@ namespace Messenger.Tests.Integration.Controller
                 InsertUser(user);
             }
 
-            var users = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Id]!=@Id", new { Id = _authorizedUserId });
+            var users = GetFromDatabase<User>("SELECT * FROM [User] WHERE [Id]!=@Id AND [Login]!='_admin'", new { Id = _authorizedUserId });
 
             var sender = users.First();
             var receiver = users.Last();

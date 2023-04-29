@@ -3,6 +3,7 @@ using Messenger.Models.ChatMessage;
 using Messenger.Models.ChatUser;
 using Messenger.Models.DirectMessage;
 using Messenger.Models.Friend;
+using Messenger.Models.UserClaim;
 
 namespace Messenger.Application.Abstraction
 {
@@ -21,5 +22,7 @@ namespace Messenger.Application.Abstraction
         Task ChatMessageRead(long chatId, long userId, long messageId);
         Task ChatUpdated(ChatModel chat);
         Task ChatMessageReactionChanged(long chatId, long messageId, long userId, string? reaction);
+
+        Task ClaimAdded(long userId, string claim);
     }
 }

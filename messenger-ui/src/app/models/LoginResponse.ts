@@ -1,5 +1,6 @@
 export default interface LoginResponse {
     authToken: string,
     userName: string,
-    userId: number
+    userId: number,
+    claims: string[]
 }

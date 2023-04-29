@@ -19,7 +19,7 @@ namespace Messenger.Tests.Unit.Command
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext.User.Claims)
-                .Returns(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) });
+                .Returns(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), new Claim("Role", "Admin") });
 
             httpContextAccessor.Setup(x => x.HttpContext.Request.Headers["Authorization"])
                 .Returns($"Bearer {Token}");
@@ -29,8 +29,8 @@ namespace Messenger.Tests.Unit.Command
                 .ReturnsAsync(user);
 
             var userFactory = new Mock<IUserFactory>();
-            userFactory.Setup(x => x.CreateLoginResponse(It.IsAny<UserModel>(), It.IsAny<string>()))
-                .Returns((UserModel user, string token) => new LoginResponse
+            userFactory.Setup(x => x.CreateLoginResponse(It.IsAny<UserModel>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>()))
+                .Returns((UserModel user, string token, IEnumerable<string> _) => new LoginResponse
                 {
                     AuthToken = token,
                     UserId = user.Id,

@@ -24,7 +24,7 @@ namespace Messenger.Application
             _encryptionKey = config["EncryptionKey"];
         }
 
-        public Task<string> GenerateTokenAsync(User user)
+        public Task<string> GenerateTokenAsync(User user, IEnumerable<Claim> userClaims)
         {
             var claims = new List<Claim>
             {
@@ -32,6 +32,7 @@ namespace Messenger.Application
                 new Claim(JwtRegisteredClaimNames.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
+            claims.AddRange(userClaims);
 
             var token = new JwtSecurityToken(
                 _authIssuer,

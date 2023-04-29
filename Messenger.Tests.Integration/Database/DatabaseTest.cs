@@ -145,5 +145,16 @@ namespace Messenger.Tests.Integration.Database
                     reaction);
             }
         }
+
+        protected async Task InsertUserClaimsToDatabase(IEnumerable<UserClaim> claims)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var claim in claims)
+                {
+                    await connection.QueryAsync("INSERT INTO [UserClaim]([UserId], [Value]) VALUES(@UserId, @Value)", claim);
+                }
+            }
+        }
     }
 }

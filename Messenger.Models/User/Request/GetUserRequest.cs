@@ -7,5 +7,8 @@ namespace Messenger.Models.User.Request
         public long? Id { get; set; }
         [Where(Column = "[User].[Name] LIKE ", ContentWrapper = "%")]
         public string? SearchName { get; set; }
+        [Join(Statement = "INNER JOIN [UserClaim] ON [UserClaim].[UserId]=[User].[Id]")]
+        [Where(Column = "[UserClaim].[Value]=")]
+        public string? ClaimValue { get; set; }
     }
 }

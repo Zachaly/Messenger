@@ -90,5 +90,8 @@ namespace Messenger.Tests.Integration
 
             return images;
         }
+
+        public static IEnumerable<UserClaim> CreateUserClaims(long userId, IEnumerable<string> claims)
+            => claims.Select(claim => new UserClaim { UserId = userId, Value = claim });
     }
 }

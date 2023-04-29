@@ -2,6 +2,7 @@
 using Messenger.Domain.Entity;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
+using Messenger.Models.UserClaim;
 
 namespace Messenger.Tests.Unit.Factory
 {
@@ -42,13 +43,16 @@ namespace Messenger.Tests.Unit.Factory
                 Name = "user",
             };
 
+            var claims = new List<UserClaimModel> { new UserClaimModel { Value = "val" } };
+
             const string Token = "token";
 
-            var response = _factory.CreateLoginResponse(user, Token);
+            var response = _factory.CreateLoginResponse(user, Token, claims);
 
             Assert.Equal(Token, response.AuthToken);
             Assert.Equal(user.Name, response.UserName);
             Assert.Equal(user.Id, response.UserId);
+            Assert.Equivalent(claims.Select(x => x.Value), response.Claims);
         }
 
         [Fact]
@@ -60,13 +64,16 @@ namespace Messenger.Tests.Unit.Factory
                 Name = "user",
             };
 
+            var claims = new string[] { "val", "val2" };
+
             const string Token = "token";
 
-            var response = _factory.CreateLoginResponse(user, Token);
+            var response = _factory.CreateLoginResponse(user, Token, claims);
 
             Assert.Equal(Token, response.AuthToken);
             Assert.Equal(user.Name, response.UserName);
             Assert.Equal(user.Id, response.UserId);
+            Assert.Equivalent(claims, response.Claims);
         }
 
         [Fact]

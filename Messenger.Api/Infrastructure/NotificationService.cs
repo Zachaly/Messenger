@@ -5,6 +5,7 @@ using Messenger.Models.ChatMessage;
 using Messenger.Models.ChatUser;
 using Messenger.Models.DirectMessage;
 using Messenger.Models.Friend;
+using Messenger.Models.UserClaim;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Messenger.Api.Infrastructure
@@ -14,13 +15,16 @@ namespace Messenger.Api.Infrastructure
         private readonly IHubContext<DirectMessageHub, IDirectMessageClient> _directMessageHub;
         private readonly IHubContext<FriendHub, IFriendClient> _friendHub;
         private readonly IHubContext<ChatHub, IChatClient> _chatHub;
+        private readonly IHubContext<ClaimHub, IClaimClient> _claimHub;
 
         public NotificationService(IHubContext<DirectMessageHub, IDirectMessageClient> directMessageHub,
-            IHubContext<FriendHub, IFriendClient> friendHub, IHubContext<ChatHub, IChatClient> chatHub)
+            IHubContext<FriendHub, IFriendClient> friendHub, IHubContext<ChatHub, IChatClient> chatHub,
+            IHubContext<ClaimHub, IClaimClient> claimHub)
         {
             _directMessageHub = directMessageHub;
             _friendHub = friendHub;
             _chatHub = chatHub;
+            _claimHub = claimHub;
         }
 
         public async Task AddedToChat(ChatUserModel user, long chatId)
@@ -58,6 +62,11 @@ namespace Messenger.Api.Infrastructure
         public Task ChatUserUpdated(ChatUserModel user, long chatId)
         {
             return _chatHub.Clients.Group(chatId.ToString()).ChatUserUpdated(user);
+        }
+
+        public Task ClaimAdded(long userId, string claim)
+        {
+            return _claimHub.Clients.User(userId.ToString()).ClaimAdded(claim);
         }
 
         public Task DirectMessageReactionChanged(long messageId, string? reaction, long receiverId)
