@@ -76,6 +76,12 @@ export class NotificationListComponent {
         this.notificationService.addNotification(`${msg.senderName} wrote new message in chat!`)
       }
     })
+
+    const claimConnectionId = await this.signalR.openConnection('claim')
+
+    this.signalR.setConnectionListener(claimConnectionId, 'ClaimAdded', (claim: string) => {
+      this.notificationService.addNotification(`You are given ${claim} rights`)
+    })
   }
 
   remove(index: number) {

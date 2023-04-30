@@ -1,1 +1,20 @@
-<p>admin-page works!</p>
+<div class="columns">
+    <div class="column is-half">
+        <p class="title is-4">Moderators</p>
+        <div class="card p-1" *ngFor="let user of moderators">
+            <span>{{user.name}}</span>
+            <button class="button is-warning m-1" (click)="removeModerator(user.id)">Delete moderator</button>
+        </div>
+    </div>
+    <div class="column is-half">
+        <p class="title is-4">Users</p>
+        <div class="control">
+            <input type="text" name="searchName" [(ngModel)]="searchName" class="input">
+            <button (click)="searchUsers()" class="button is-info">Search</button>
+        </div>
+        <div class="card p-1" *ngFor="let user of users">
+            <span>{{user.name}}</span>
+            <button class="button is-info m-1" (click)="addModerator(user.id)">Make moderator</button>
+        </div>
+    </div>
+</div>
