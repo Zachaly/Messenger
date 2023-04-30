@@ -13,5 +13,9 @@ export default (request: GetUsersRequest) : HttpParams => {
         params = params.append('SearchName', request.searchName)
     }
 
+    if(request.claimValue){
+        params = params.append('ClaimValue', request.claimValue)
+    }
+
     return params
 }
