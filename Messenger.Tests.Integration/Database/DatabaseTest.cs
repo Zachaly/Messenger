@@ -156,5 +156,19 @@ namespace Messenger.Tests.Integration.Database
                 }
             }
         }
+
+        protected async Task InsertMessageReportsToDatabase(IEnumerable<MessageReport> reports)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                foreach(var report in reports)
+                {
+                    await connection.QueryAsync(@"INSERT INTO [MessageReport]([ReportingUserId], [ReportedUserId],
+                            [AttachedMessageId], [Resolved], [Reason], [ReportDate], [MessageType])
+                            VALUES(@ReportingUserId, @ReportedUserId,
+                            @AttachedMessageId, @Resolved, @Reason, @ReportDate, @MessageType)", report);
+                }
+            }
+        }
     }
 }
