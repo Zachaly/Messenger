@@ -24,5 +24,6 @@ namespace Messenger.Application.Abstraction
         Task ChatMessageReactionChanged(long chatId, long messageId, long userId, string? reaction);
 
         Task ClaimAdded(long userId, string claim);
+        Task Banned(long userId, DateTime endDate);
     }
 }
