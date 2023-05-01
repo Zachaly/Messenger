@@ -4,7 +4,7 @@ using Messenger.Database.Repository;
 using Messenger.Models.MessageReport.Request;
 using Messenger.Models.Response;
 
-namespace Messenger.Application.MessageReport.Command
+namespace Messenger.Application.Command
 {
     public class UpdateMessageReportCommand : UpdateMessageReportRequest, IRequest<ResponseModel>
     {
