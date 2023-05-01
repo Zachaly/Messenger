@@ -20,7 +20,7 @@ namespace Messenger.Application.Command
 
         public Task<IEnumerable<UserBanModel>> Handle(GetUserBanQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _userBanRepository.GetAsync(request);
         }
     }
 }

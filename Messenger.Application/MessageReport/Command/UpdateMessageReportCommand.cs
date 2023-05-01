@@ -21,9 +21,18 @@ namespace Messenger.Application.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(UpdateMessageReportCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(UpdateMessageReportCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _messageReportRepository.UpdateAsync(request);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch (Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

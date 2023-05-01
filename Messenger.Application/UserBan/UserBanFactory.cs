@@ -7,8 +7,11 @@ namespace Messenger.Application
     public class UserBanFactory : IUserBanFactory
     {
         public UserBan Create(AddUserBanRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new UserBan
+            {
+                End = request.End,
+                Start = request.Start,
+                UserId = request.UserId,
+            };
     }
 }

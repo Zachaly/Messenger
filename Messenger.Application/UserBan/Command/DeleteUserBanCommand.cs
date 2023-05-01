@@ -21,9 +21,18 @@ namespace Messenger.Application.Command
             _responseFactory = responseFactory;
         }
 
-        public Task<ResponseModel> Handle(DeleteUserBanCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(DeleteUserBanCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _userBanRepository.DeleteByIdAsync(request.Id);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

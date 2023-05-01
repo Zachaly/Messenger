@@ -26,9 +26,20 @@ namespace Messenger.Application.Command
             _notificationService = notificationService;
         }
 
-        public Task<ResponseModel> Handle(AddUserBanCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(AddUserBanCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var ban = _userBanFactory.Create(request);
+
+                await _userBanRepository.InsertAsync(ban);
+
+                return _responseFactory.CreateSuccess();
+            }
+            catch(Exception ex)
+            {
+                return _responseFactory.CreateFailure(ex.Message);
+            }
         }
     }
 }

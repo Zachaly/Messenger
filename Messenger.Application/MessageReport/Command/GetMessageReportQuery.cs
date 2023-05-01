@@ -20,7 +20,7 @@ namespace Messenger.Application.Command
 
         public Task<IEnumerable<MessageReportModel>> Handle(GetMessageReportQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return _messageReportRepository.GetAsync(request);
         }
     }
 }

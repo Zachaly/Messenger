@@ -7,8 +7,15 @@ namespace Messenger.Application
     public class MessageReportFactory : IMessageReportFactory
     {
         public MessageReport Create(AddMessageReportRequest request)
-        {
-            throw new NotImplementedException();
-        }
+            => new MessageReport
+            {
+                AttachedMessageId = request.MessageId,
+                MessageType = request.MessageType,
+                Reason = request.Reason,
+                ReportDate = DateTime.Now,
+                ReportedUserId = request.ReportedUserId,
+                ReportingUserId = request.UserId,
+                Resolved = false
+            };
     }
 }
