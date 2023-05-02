@@ -31,6 +31,8 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IChatMessageImageRepository, ChatMessageImageRepository>();
             collection.AddScoped<IChatMessageReactionRepository, ChatMessageReactionRepository>();
             collection.AddScoped<IUserClaimRepository, UserClaimRepository>();
+            collection.AddScoped<IUserBanRepository, UserBanRepository>();
+            collection.AddScoped<IMessageReportRepository, MessageReportRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -49,6 +51,8 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IChatMessageReadFactory, ChatMessageReadFactory>();
             collection.AddScoped<IChatUserFactory, ChatUserFactory>();
             collection.AddScoped<IUserClaimFactory, UserClaimFactory>();
+            collection.AddScoped<IMessageReportFactory, MessageReportFactory>();
+            collection.AddScoped<IUserBanFactory, UserBanFactory>();
             collection.AddHttpContextAccessor();
 
             collection.AddMediatR(opt =>

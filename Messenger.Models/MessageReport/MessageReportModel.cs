@@ -3,7 +3,7 @@ using Messenger.Domain.SqlAttributes;
 
 namespace Messenger.Models.MessageReport
 {
-    [Join(Statement = "LEFT OUTER JOIN [User] ON [MessageReportModel].[ReportingUserId]=[User].[Id]")]
+    [Join(Statement = "LEFT OUTER JOIN [User] ON [MessageReport].[ReportingUserId]=[User].[Id]")]
     public class MessageReportModel
     {
         public long Id { get; set; }
