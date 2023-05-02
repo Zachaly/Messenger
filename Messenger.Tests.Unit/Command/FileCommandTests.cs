@@ -2,7 +2,6 @@
 using Messenger.Application.Command;
 using Messenger.Database.Repository;
 using Messenger.Domain.Entity;
-using Messenger.Models.ChatMessageImage.Request;
 using Messenger.Models.Response;
 using Messenger.Models.User.Request;
 using Microsoft.AspNetCore.Http;

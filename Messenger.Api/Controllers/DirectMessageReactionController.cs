@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Messenger.Api.Controllers
 {
-    [Authorize]
+    [Unbanned]
     [Route("/api/direct-message-reaction")]
     public class DirectMessageReactionController : ControllerBase
     {

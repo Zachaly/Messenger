@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Messenger.Api.Controllers
 {
     [Route("/api/message-report")]
-    [Authorize]
+    [Unbanned]
     public class MessageReportController : ControllerBase
     {
         private readonly IMediator _mediator;

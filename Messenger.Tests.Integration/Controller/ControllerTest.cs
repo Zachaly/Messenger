@@ -114,6 +114,24 @@ namespace Messenger.Tests.Integration.Controller
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", content.AuthToken);
         }
 
+        protected async Task AuthorizeBanned()
+        {
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+
+            var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
+            _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
+
+            ExecuteQuery("INSERT INTO [UserClaim]([UserId], [Value]) VALUES (@UserId, @Value)",
+                new UserClaim { UserId = _authorizedUserId, Value = "Ban" });
+
+            var loginRequest = new LoginRequest { Login = _authUsername, Password = registerRequest.Password };
+
+            var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", content.AuthToken);
+        }
+
         protected void ExecuteQuery(string query, object? param = null)
         {
             using(var connection = new SqlConnection(_connectionString))

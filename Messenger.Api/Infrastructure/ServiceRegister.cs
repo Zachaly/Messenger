@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Messenger.Api.Infrastructure
 {
@@ -118,7 +119,10 @@ namespace Messenger.Api.Infrastructure
             {
                 options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"));
                 options.AddPolicy("Moderator", policy => policy.RequireClaim("Role", "Admin", "Moderator"));
+                options.AddPolicy("Unbanned", policy => policy.Requirements.Add(new BanRequirement()));
             });
+
+            builder.Services.AddSingleton<IAuthorizationHandler, BanAuthorizationHandler>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection collection)

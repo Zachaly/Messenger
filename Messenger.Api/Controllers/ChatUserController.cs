@@ -53,6 +53,7 @@ namespace Messenger.Api.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Unbanned]
         public async Task<ActionResult<ResponseModel>> PostAsync(AddChatUserCommand command)
         {
             var res = await _mediator.Send(command);
