@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Messenger.Api.Infrastructure
 {
@@ -31,6 +32,8 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IChatMessageImageRepository, ChatMessageImageRepository>();
             collection.AddScoped<IChatMessageReactionRepository, ChatMessageReactionRepository>();
             collection.AddScoped<IUserClaimRepository, UserClaimRepository>();
+            collection.AddScoped<IUserBanRepository, UserBanRepository>();
+            collection.AddScoped<IMessageReportRepository, MessageReportRepository>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -49,6 +52,8 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IChatMessageReadFactory, ChatMessageReadFactory>();
             collection.AddScoped<IChatUserFactory, ChatUserFactory>();
             collection.AddScoped<IUserClaimFactory, UserClaimFactory>();
+            collection.AddScoped<IMessageReportFactory, MessageReportFactory>();
+            collection.AddScoped<IUserBanFactory, UserBanFactory>();
             collection.AddHttpContextAccessor();
 
             collection.AddMediatR(opt =>
@@ -114,7 +119,10 @@ namespace Messenger.Api.Infrastructure
             {
                 options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"));
                 options.AddPolicy("Moderator", policy => policy.RequireClaim("Role", "Admin", "Moderator"));
+                options.AddPolicy("Unbanned", policy => policy.Requirements.Add(new BanRequirement()));
             });
+
+            builder.Services.AddSingleton<IAuthorizationHandler, BanAuthorizationHandler>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection collection)

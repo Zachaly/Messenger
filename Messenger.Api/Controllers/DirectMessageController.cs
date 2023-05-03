@@ -30,6 +30,7 @@ namespace Messenger.Api.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Unbanned]
         public async Task<ActionResult> PostAsync(AddDirectMessageCommand command)
         {
             var res = await _mediator.Send(command);
@@ -58,6 +59,7 @@ namespace Messenger.Api.Controllers
         [HttpPut]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Unbanned]
         public async Task<ActionResult> PutAsync(UpdateDirectMessageCommand command)
         {
             var res = await _mediator.Send(command);

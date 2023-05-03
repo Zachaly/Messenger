@@ -1,7 +1,5 @@
-using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
-using Messenger.Application.Command;
 using Microsoft.AspNetCore.Mvc;
 
 [assembly: ApiController]
@@ -21,6 +19,7 @@ builder.Services.ConfigureSwagger();
 builder.ConfigureAuthorization();
 
 builder.Services.AddSignalR();
+builder.Services.AddHostedService<BanCancellationService>();
 
 var app = builder.Build();
 

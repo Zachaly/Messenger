@@ -1,0 +1,19 @@
+<div>
+    <div>
+        <p class="is-title"> User: {{report.reportingUserName}}</p>
+        <p class="is-subtitle"> Reason: {{report.reason}}</p>
+    </div>
+    <app-attached-message *ngIf="message" [message]="message"/>
+    <div>
+        <div class="control">
+            <input type="date" name="start" [(ngModel)]="banStart">
+        </div>
+        <div class="control">
+            <input type="date" name="end" [(ngModel)]="banEnd">
+        </div>
+        <div class="buttons">
+            <button class="button" (click)="deny()">Deny</button>
+            <button class="button is-info" (click)="accept()">Accept</button>
+        </div>
+    </div>
+</div>

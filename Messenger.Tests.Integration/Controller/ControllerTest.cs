@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Messenger.Domain.Entity;
 using Messenger.Models.Response;
 using Messenger.Models.User;
 using Messenger.Models.User.Request;
@@ -31,7 +32,9 @@ namespace Messenger.Tests.Integration.Controller
                 "TRUNCATE TABLE [ChatMessageRead]",
                 "TRUNCATE TABLE [ChatUser]",
                 "TRUNCATE TABLE [ChatMessageReaction]",
-                "TRUNCATE TABLE [UserClaim]"
+                "TRUNCATE TABLE [UserClaim]",
+                "TRUNCATE TABLE [MessageReport]",
+                "TRUNCATE TABLE [UserBan]"
             };
         protected string _adminLogin = "";
         protected string _adminPassword = "";
@@ -86,6 +89,42 @@ namespace Messenger.Tests.Integration.Controller
         protected async Task AuthorizeAdmin()
         {
             var loginRequest = new LoginRequest { Login = _adminLogin, Password = _adminPassword };
+
+            var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", content.AuthToken);
+        }
+
+        protected async Task AuthorizeModerator()
+        {
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+
+            var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
+            _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
+
+            ExecuteQuery("INSERT INTO [UserClaim]([UserId], [Value]) VALUES (@UserId, @Value)",
+                new UserClaim { UserId = _authorizedUserId, Value = "Moderator" });
+
+            var loginRequest = new LoginRequest { Login = _authUsername, Password = registerRequest.Password };
+
+            var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", content.AuthToken);
+        }
+
+        protected async Task AuthorizeBanned()
+        {
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+
+            var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
+            _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
+
+            ExecuteQuery("INSERT INTO [UserClaim]([UserId], [Value]) VALUES (@UserId, @Value)",
+                new UserClaim { UserId = _authorizedUserId, Value = "Ban" });
+
+            var loginRequest = new LoginRequest { Login = _authUsername, Password = registerRequest.Password };
 
             var response = await _httpClient.PostAsJsonAsync("/api/user/login", loginRequest);
             var content = await response.Content.ReadFromJsonAsync<LoginResponse>();

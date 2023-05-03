@@ -1,1 +1,8 @@
-<p>moderation-page works!</p>
+<app-tab [names]="tabs" (select)="changeTab($event)" />
+<div *ngIf="tabIndex == 0">
+    <app-message-report *ngFor="let report of reports" [report]="report"/>
+</div>
+
+<div *ngIf="tabIndex == 1">
+    <app-banned-user *ngFor="let ban of bans" [user]="ban" (liftBan)="liftBan(ban)"/>
+</div>

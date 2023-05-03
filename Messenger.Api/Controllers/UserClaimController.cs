@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Messenger.Api.Controllers
 {
     [Route("/api/user-claim")]
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "Moderator")]
     public class UserClaimController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Messenger.Api.Controllers
 {
     [Route("/api/chat-message-reaction")]
-    [Authorize]
+    [Unbanned]
     public class ChatReactionController : ControllerBase
     {
         private readonly IMediator _mediator;
