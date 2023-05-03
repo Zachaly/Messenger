@@ -1,8 +1,12 @@
 <div class="card has-background-info px-1 m-1 has-text-light" (dblclick)="showEmoji = !showEmoji">
-    <header class="card-header-title ">
+    <header class="card-header-title">
         <p class="title is-4 username">{{ message.senderName }}</p>
     </header>
-    <p class="subtitle is-6"> {{ formatDate() }}</p>
+    <div class="is-flex">
+        <p class="subtitle is-6"> {{ formatDate() }}</p>
+        <button class="button is-warning is-small" (click)="report = true">Report</button>
+    </div>
+
     <div class="card-content">
         {{ message.content }}
     </div>
@@ -18,4 +22,8 @@
     <div *ngIf="message.reaction">
         {{message.reaction}}
     </div>
+</div>
+
+<div *ngIf="report">
+    <app-add-message-report [message]="message" (close)="report = false"/>
 </div>

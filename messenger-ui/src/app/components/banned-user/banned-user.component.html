@@ -1,0 +1,16 @@
+<div class="card">
+    <div class="card-content">
+        <div class="media">
+            <div class="media-right">
+                {{ user.userName }}
+            </div>
+            <div class="media-content ml-5">
+                <p>Start: {{ user.start }}</p>
+                <p>End: {{ user.end }}</p>
+            </div>
+            <div class="media-left">
+                <button class="button is-danger" (click)="liftBan.emit()">Lift</button>
+            </div>
+        </div>
+    </div>
+</div>

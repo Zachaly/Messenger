@@ -40,6 +40,11 @@ import { UpdateChatComponent } from './components/update-chat/update-chat.compon
 import { ChatMessageReactionComponent } from './components/chat-message-reaction/chat-message-reaction.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ModerationPageComponent } from './pages/moderation-page/moderation-page.component';
+import { MessageReportComponent } from './components/message-report/message-report.component';
+import { AttachedMessageComponent } from './components/attached-message/attached-message.component';
+import { BannedUserComponent } from './components/banned-user/banned-user.component';
+import { AddMessageReportComponent } from './components/add-message-report/add-message-report.component';
+import { MessageReportPageComponent } from './pages/message-report-page/message-report-page.component';
 
 const route = (path: string, component: any) => (
   {
@@ -59,7 +64,8 @@ const routes: Routes = [
   route('update-profile', UpdateProfilePageComponent),
   route('group-chats', GroupChatListPageComponent),
   route('moderation', ModerationPageComponent),
-  route('admin', AdminPageComponent)
+  route('admin', AdminPageComponent),
+  route('message-report/:id', MessageReportPageComponent)
 ]
 
 @NgModule({
@@ -99,6 +105,11 @@ const routes: Routes = [
     ChatMessageReactionComponent,
     AdminPageComponent,
     ModerationPageComponent,
+    MessageReportComponent,
+    AttachedMessageComponent,
+    BannedUserComponent,
+    AddMessageReportComponent,
+    MessageReportPageComponent,
   ],
   imports: [
     BrowserModule,

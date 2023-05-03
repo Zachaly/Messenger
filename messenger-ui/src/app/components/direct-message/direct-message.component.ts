@@ -11,7 +11,8 @@ export class DirectMessageComponent {
   @Input() message: DirectMessage = { id: 0, content: '', read: false, created: '', senderName: '', senderId: 0, imageIds: [] }
   @Output() selectEmoji: EventEmitter<string> = new EventEmitter()
   showEmoji = false
-
+  report = false
+  
   constructor(private imageService: ImageService) {
 
   }

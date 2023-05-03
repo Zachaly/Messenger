@@ -2,6 +2,9 @@
     <header class="card-header-title ">
         <p class="title is-4 username">{{ message.senderName }}</p>
     </header>
+    <div>
+        <button class="button is-danger is-small" (click)="report = true">Report</button>
+    </div>
     <div class="card-content">
         {{ message.content }}
     </div>
@@ -19,6 +22,11 @@
         <app-emoji-select (select)="onSelectEmoji($event)" />
     </div>
     <div class="is-flex">
-        <app-chat-message-reaction *ngFor="let reaction of message.reactions" [reaction]="reaction" (click)="onReactionClick($event)"/>
+        <app-chat-message-reaction *ngFor="let reaction of message.reactions" [reaction]="reaction"
+            (click)="onReactionClick($event)" />
     </div>
+</div>
+
+<div *ngIf="report">
+    <app-add-message-report [message]="message" (close)="report = false" />
 </div>

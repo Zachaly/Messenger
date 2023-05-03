@@ -1,0 +1,13 @@
+<div class="card has-background-info px-1 m-1 has-text-light">
+    <header class="card-header-title">
+        <p class="title is-4 username">{{ message.senderName }}</p>
+    </header>
+    <div class="card-content">
+        {{ message.content }}
+    </div>
+    <div class="is-flex">
+        <figure class="image is-64x64 m-1" *ngFor="let id of message.imageIds">
+            <img [src]="getImage(id)" alt="">
+        </figure>
+    </div>
+</div>

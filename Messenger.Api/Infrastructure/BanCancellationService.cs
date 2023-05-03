@@ -6,28 +6,33 @@ namespace Messenger.Api.Infrastructure
     public class BanCancellationService : BackgroundService
     {
         private const int Delay = 24 * 60 * 1000; //24 hours
-        private readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
 
-        public BanCancellationService(IMediator mediator)
+        public BanCancellationService(IServiceProvider serviceProvider)
         {
-            _mediator = mediator;
+            _serviceProvider = serviceProvider;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             return Task.Factory.StartNew(async () =>
             {
-                while(!stoppingToken.IsCancellationRequested)
+                using(var scope = _serviceProvider.CreateScope())
                 {
-                    var bans = await _mediator.Send(new GetUserBanQuery { MaximalEnd = DateTime.Now });
-                    foreach (var ban in bans) 
+                    var mediator = scope.ServiceProvider.GetService<IMediator>();
+                    while (!stoppingToken.IsCancellationRequested)
                     {
-                        await _mediator.Send(new DeleteUserBanCommand { Id = ban.Id });
-                        await _mediator.Send(new DeleteUserClaimCommand { UserId = ban.UserId, Claim = "Ban" });
-                    }
-                    Console.WriteLine($"Unbanned {bans.Count()} users");
+                        var bans = await mediator.Send(new GetUserBanQuery { MaximalEnd = DateTime.Now });
+                        foreach (var ban in bans)
+                        {
+                            Console.WriteLine(ban.Id);
+                            await mediator.Send(new DeleteUserBanCommand { Id = ban.Id });
+                            await mediator.Send(new DeleteUserClaimCommand { UserId = ban.UserId, Claim = "Ban" });
+                        }
+                        Console.WriteLine($"Unbanned {bans.Count()} users");
 
-                    await Task.Delay(Delay);
+                        await Task.Delay(Delay);
+                    }
                 }
             });
         }

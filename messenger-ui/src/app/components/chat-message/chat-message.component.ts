@@ -13,6 +13,7 @@ export class ChatMessageComponent {
   @Output() selectEmoji: EventEmitter<string> = new EventEmitter()
   @Output() clickReaction: EventEmitter<ChatMessageReaction> = new EventEmitter()
   showEmoji = false
+  report = false
 
   constructor(private imageService: ImageService) { }
 

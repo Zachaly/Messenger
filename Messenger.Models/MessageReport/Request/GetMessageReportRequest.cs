@@ -1,7 +1,10 @@
-﻿namespace Messenger.Models.MessageReport.Request
+﻿using Messenger.Domain.SqlAttributes;
+
+namespace Messenger.Models.MessageReport.Request
 {
     public class GetMessageReportRequest : PagedRequest
     {
+        [Where(Column = "[MessageReport].[Id]=")]
         public long? Id { get; set; }
         public long? ReportingUserId { get; set; }
         public bool? Resolved { get; set; }

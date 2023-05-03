@@ -6,9 +6,9 @@ namespace Messenger.Models.UserBan.Request
     {
         public long? Id { get; set; }
         public long? UserId { get; set; }
-        [Where(Column = "[UserBan].[Start]<=")]
+        [Where(Column = "[UserBan].[Start]>=")]
         public DateTime? MinimalStart { get; set; }
-        [Where(Column = "[UserBan].[End]>=")]
+        [Where(Column = "[UserBan].[End]<=")]
         public DateTime? MaximalEnd { get; set; }
     }
 }
