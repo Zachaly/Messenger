@@ -19,6 +19,7 @@ namespace Messenger.Tests.Integration.Controller
         protected readonly WebApplicationFactory<Program> _webFactory;
         protected readonly string _authUsername = "authorized";
         protected long _authorizedUserId = 0;
+        protected readonly string _authorizedPassword = "zaq1@WSX";
         private readonly string _connectionString = "Server=localhost;Database=MessengerTest;Trusted_Connection=True;";
         private readonly string[] _tearDownQueries = 
             { 
@@ -73,7 +74,7 @@ namespace Messenger.Tests.Integration.Controller
 
         protected async Task Authorize()
         {
-            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = _authorizedPassword };
 
             var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
             _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
@@ -98,7 +99,7 @@ namespace Messenger.Tests.Integration.Controller
 
         protected async Task AuthorizeModerator()
         {
-            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = _authorizedPassword };
 
             var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
             _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;
@@ -116,7 +117,7 @@ namespace Messenger.Tests.Integration.Controller
 
         protected async Task AuthorizeBanned()
         {
-            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = "zaq1@WSX" };
+            var registerRequest = new AddUserRequest { Login = _authUsername, Name = _authUsername, Password = _authorizedPassword };
 
             var registerResponse = await _httpClient.PostAsJsonAsync("/api/user", registerRequest);
             _authorizedUserId = (await registerResponse.Content.ReadFromJsonAsync<ResponseModel>()).NewEntityId ?? 0;

@@ -304,5 +304,111 @@ namespace Messenger.Tests.Unit.Command
             Assert.Equal(Error, res.Error);
             Assert.NotEqual(user.Name, command.Name);
         }
+
+        [Fact]
+        public async Task ChangeUserPasswordCommand_Success()
+        {
+            var user = new User { Id = 1, PasswordHash = "hash" };
+
+            var repository = new Mock<IUserRepository>();
+            repository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(user);
+
+            repository.Setup(x => x.UpdateAsync(It.IsAny<UpdateUserRequest>()))
+                .Callback((UpdateUserRequest request) =>
+                {
+                    user.PasswordHash = request.PasswordHash;
+                });
+
+            var responseFactory = new Mock<IResponseFactory>();
+
+            responseFactory.Setup(x => x.CreateSuccess())
+                .Returns(new ResponseModel { Success = true });
+
+            const string NewHash = "newhash";
+            var authService = new Mock<IAuthService>();
+            authService.Setup(x => x.HashPasswordAsync(It.IsAny<string>()))
+                .ReturnsAsync(NewHash);
+
+            authService.Setup(x => x.VerifyPasswordAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            var command = new ChangeUserPasswordCommand { CurrentPassword = "pass", NewPassword = "new pass" };
+            var res = await new ChangeUserPasswordHandler(repository.Object, authService.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.True(res.Success);
+            Assert.Equal(NewHash, user.PasswordHash);
+        }
+
+        [Fact]
+        public async Task ChangeUserPasswordCommand_InvalidPassword_Fail()
+        {
+            var user = new User { Id = 1, PasswordHash = "hash" };
+
+            var repository = new Mock<IUserRepository>();
+            repository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(user);
+
+            var responseFactory = new Mock<IResponseFactory>();
+
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
+
+            var authService = new Mock<IAuthService>();
+
+            authService.Setup(x => x.VerifyPasswordAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            var command = new ChangeUserPasswordCommand { CurrentPassword = "pass", NewPassword = "new pass" };
+            var res = await new ChangeUserPasswordHandler(repository.Object, authService.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.False(res.Success);
+        }
+
+        [Fact]
+        public async Task ChangeUserPasswordCommand_UserNotFound_Fail()
+        {
+            var repository = new Mock<IUserRepository>();
+            repository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(() => null);
+
+            var responseFactory = new Mock<IResponseFactory>();
+
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
+
+            var authService = new Mock<IAuthService>();
+
+            var command = new ChangeUserPasswordCommand { CurrentPassword = "pass", NewPassword = "new pass" };
+            var res = await new ChangeUserPasswordHandler(repository.Object, authService.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.False(res.Success);
+        }
+
+        [Fact]
+        public async Task ChangeUserPasswordCommand_ExceptionThrown_Fail()
+        {
+            const string Error = "err";
+            var repository = new Mock<IUserRepository>();
+            repository.Setup(x => x.GetEntityByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(() => throw new Exception(Error));
+
+            var responseFactory = new Mock<IResponseFactory>();
+
+            responseFactory.Setup(x => x.CreateFailure(It.IsAny<string>()))
+                .Returns((string msg) => new ResponseModel { Success = false, Error = msg });
+
+            var authService = new Mock<IAuthService>();
+
+            var command = new ChangeUserPasswordCommand { CurrentPassword = "pass", NewPassword = "new pass" };
+            var res = await new ChangeUserPasswordHandler(repository.Object, authService.Object, responseFactory.Object)
+                .Handle(command, default);
+
+            Assert.False(res.Success);
+            Assert.Equal(Error, res.Error);
+        }
     }
 }

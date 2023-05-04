@@ -105,5 +105,21 @@ namespace Messenger.Api.Controllers
 
             return Ok(res);
         }
+
+        /// <summary>
+        /// Updates user password
+        /// </summary>
+        /// <response code="204">Password changed successfully</response>
+        /// <response code="400">Invalid request</response>
+        [HttpPatch("change-password")]
+        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ResponseModel>> ChangePasswordAsync(ChangeUserPasswordCommand command)
+        {
+            var res = await _mediator.Send(command);
+
+            return res.ReturnNoContentOrBadRequest();
+        }
     }
 }
