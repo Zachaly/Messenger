@@ -19,3 +19,18 @@
         <button class="button is-success">Confirm</button>
     </div>
 </form>
+
+<form (submit)="changePassword()">
+    <h1 class="title has-text-centered">Change password</h1>
+    <div class="control">
+        <label class="label">Current password</label>
+        <input class="input" type="password" name="current-password" [(ngModel)]="passwordRequest.currentPassword">
+    </div>
+    <div class="control">
+        <label class="label">New password</label>
+        <input class="input" type="password" name="new-password" [(ngModel)]="passwordRequest.newPassword">
+    </div>
+    <div class="control">
+        <button class="button is-info">Submit</button>
+    </div>
+</form>
