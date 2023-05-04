@@ -179,5 +179,55 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(command.Name, user.Name);
         }
+
+        [Fact]
+        public async Task ChangePasswordAsync_Success()
+        {
+            await Authorize();
+
+            var request = new ChangeUserPasswordCommand
+            {
+                UserId = _authorizedUserId,
+                CurrentPassword = _authorizedPassword,
+                NewPassword = "XSW@1qaz"
+            };
+
+            var response = await _httpClient.PatchAsJsonAsync($"{ApiUrl}/change-password", request);
+
+            var loginWithOldPasswordResponse = await _httpClient.PostAsJsonAsync($"{ApiUrl}/login",
+                new LoginRequest { Login = _authUsername, Password = _authorizedPassword });
+
+            var loginWithNewPasswordResponse = await _httpClient.PostAsJsonAsync($"{ApiUrl}/login", 
+                new LoginRequest { Login = _authUsername, Password = request.NewPassword });
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, loginWithOldPasswordResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, loginWithNewPasswordResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangePasswordAsync_InvalidOldPassword_Fail()
+        {
+            await Authorize();
+
+            var request = new ChangeUserPasswordCommand
+            {
+                UserId = _authorizedUserId,
+                CurrentPassword = "not valid password",
+                NewPassword = "XSW@1qaz"
+            };
+
+            var response = await _httpClient.PatchAsJsonAsync($"{ApiUrl}/change-password", request);
+
+            var loginWithOldPasswordResponse = await _httpClient.PostAsJsonAsync($"{ApiUrl}/login",
+                new LoginRequest { Login = _authUsername, Password = _authorizedPassword });
+
+            var loginWithNewPasswordResponse = await _httpClient.PostAsJsonAsync($"{ApiUrl}/login",
+                new LoginRequest { Login = _authUsername, Password = request.NewPassword });
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, loginWithOldPasswordResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, loginWithNewPasswordResponse.StatusCode);
+        }
     }
 }
