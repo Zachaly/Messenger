@@ -14,6 +14,7 @@
     <div class="columns">
         <div class="column is-10">
             <textarea class="textarea" name="content" [(ngModel)]="newMessageContent"></textarea>
+            <app-error-list *ngIf="errors.Content" [errors]="errors.Content" />
         </div>
         <div class="column">
             <button class="button" (click)="showEmoji = !showEmoji">Emoji</button>

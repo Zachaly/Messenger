@@ -15,9 +15,22 @@ export class RegisterPageComponent {
     password: ''
   }
 
+  errors: { Password?: string[], Name?: string[], Login?: string[] } = {}
+
   constructor(private authService: AuthService, private router: Router) { }
 
   submit() {
-    this.authService.register(this.registerRequest).subscribe(res => this.router.navigateByUrl('/login'))
+    this.authService.register(this.registerRequest).subscribe({
+      next: res => this.router.navigateByUrl('/login'),
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
+
+        if (err.error.error) {
+          alert(err.error.error)
+        }
+      }
+    })
   }
 }

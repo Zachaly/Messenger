@@ -3,6 +3,7 @@
     <div class="control">
         <label for="name" class="label">Name</label>
         <input name="name" class="input" [(ngModel)]="user.name">
+        <app-error-list *ngIf="nameErrors.Name" [errors]="nameErrors.Name" />
     </div>
     <div class="control">
         <button class="button is-success">Confirm</button>
@@ -25,10 +26,12 @@
     <div class="control">
         <label class="label">Current password</label>
         <input class="input" type="password" name="current-password" [(ngModel)]="passwordRequest.currentPassword">
+
     </div>
     <div class="control">
         <label class="label">New password</label>
         <input class="input" type="password" name="new-password" [(ngModel)]="passwordRequest.newPassword">
+        <app-error-list *ngIf="passwordErrors.NewPassword" [errors]="passwordErrors.NewPassword" />
     </div>
     <div class="control">
         <button class="button is-info">Submit</button>

@@ -45,6 +45,7 @@ import { AttachedMessageComponent } from './components/attached-message/attached
 import { BannedUserComponent } from './components/banned-user/banned-user.component';
 import { AddMessageReportComponent } from './components/add-message-report/add-message-report.component';
 import { MessageReportPageComponent } from './pages/message-report-page/message-report-page.component';
+import { ErrorListComponent } from './components/error-list/error-list.component';
 
 const route = (path: string, component: any) => (
   {
@@ -110,6 +111,7 @@ const routes: Routes = [
     BannedUserComponent,
     AddMessageReportComponent,
     MessageReportPageComponent,
+    ErrorListComponent,
   ],
   imports: [
     BrowserModule,

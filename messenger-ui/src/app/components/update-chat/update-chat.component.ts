@@ -17,6 +17,8 @@ export class UpdateChatComponent implements OnInit {
   @Output() submit: EventEmitter<any> = new EventEmitter()
   @Output() cancel: EventEmitter<any> = new EventEmitter()
 
+  errors: { Name?: string[] } = {}
+
   constructor(private chatService: ChatService) {
 
   }
@@ -26,9 +28,16 @@ export class UpdateChatComponent implements OnInit {
   }
 
   onSubmit() {
-    this.chatService.updateChat(this.request).subscribe(res => {
-      alert('Chat updated!')
-      this.submit.emit()
+    this.chatService.updateChat(this.request).subscribe({
+      next: res => {
+        alert('Chat updated!')
+        this.submit.emit()
+      },
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
+      }
     })
   }
 
