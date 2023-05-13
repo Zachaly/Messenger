@@ -40,6 +40,8 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
   newMessageContent = ''
 
+  errors: { Content?: string[] } = {}
+
   constructor(private authService: AuthService, private chatMessageService: ChatMessageService,
     private chatMessageReadService: ChatMessageReadService, private signalR: SignalrService,
     private imageService: ImageService, private reactionService: ChatMessageReactionService) {
@@ -78,7 +80,7 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
       if (message) {
         const userReaction = message.reactions.find(x => x.userId == userId)
         if (userReaction) {
-          if(reaction){
+          if (reaction) {
             userReaction.reaction = reaction
           } else {
             message.reactions = message.reactions.filter(x => x !== userReaction)
@@ -111,21 +113,28 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
   sendMessage() {
     const request: AddChatMessageRequest = { chatId: this.chatId, senderId: this.userId, content: this.newMessageContent }
 
-    this.chatMessageService.addChatMessage(request).subscribe(res => {
+    this.chatMessageService.addChatMessage(request).subscribe({
+      next: res => {
 
-      if (this.selectedFiles) {
-        const messageId: number = res.newEntityId!
-        this.imageService.uploadChatMessageImages(this.selectedFiles, messageId).subscribe(() => {
-          this.chatMessageService.getChatMessage({ id: messageId }).subscribe(res => {
-            const message = res[0]!
-            this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
-            this.selectedFiles = null
-            this.fileInput.nativeElement.files = null
+        if (this.selectedFiles) {
+          const messageId: number = res.newEntityId!
+          this.imageService.uploadChatMessageImages(this.selectedFiles, messageId).subscribe(() => {
+            this.chatMessageService.getChatMessage({ id: messageId }).subscribe(res => {
+              const message = res[0]!
+              this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
+              this.selectedFiles = null
+              this.fileInput.nativeElement.files = null
+            })
           })
-        })
+        }
+        this.newMessageContent = ''
+        this.scrollBottom()
+      },
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
       }
-      this.newMessageContent = ''
-      this.scrollBottom()
     })
   }
 

@@ -38,6 +38,8 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
   newMessageContent: string = ''
   newMessageFiles: FileList | null = null
 
+  errors: { Content?: string[] } = {}
+
   constructor(authSevice: AuthService, private messageService: DirectMessageService,
     private signalR: SignalrService, private imageService: ImageService,
     private reactionService: ReactionService) {
@@ -133,21 +135,28 @@ export class DirectChatComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   sendMessage() {
     const request: AddDirectMessageRequest = { senderId: this.currentUserId, receiverId: this.userId, content: this.newMessageContent }
-    this.messageService.postMessage(request).subscribe((res) => {
-      if (this.newMessageFiles) {
-        const messageId: number = res.newEntityId!
-        this.imageService.uploadDirectMessageImages(this.newMessageFiles, messageId).subscribe(() => {
-          this.messageService.getMessages({ id: messageId }).subscribe(res => {
-            const message = res[0]!
-            this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
-            this.newMessageFiles = null
-            this.fileInput.nativeElement.files = null
+    this.messageService.postMessage(request).subscribe({
+      next: (res) => {
+        if (this.newMessageFiles) {
+          const messageId: number = res.newEntityId!
+          this.imageService.uploadDirectMessageImages(this.newMessageFiles, messageId).subscribe(() => {
+            this.messageService.getMessages({ id: messageId }).subscribe(res => {
+              const message = res[0]!
+              this.messages.find(x => x.id == messageId)!.imageIds = message.imageIds
+              this.newMessageFiles = null
+              this.fileInput.nativeElement.files = null
+            })
           })
-        })
+        }
+        this.newMessageContent = ''
+        this.scrollBottom()
+        this.errors = {}
+      },
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
       }
-      this.newMessageContent = ''
-      this.scrollBottom()
-
     })
   }
 

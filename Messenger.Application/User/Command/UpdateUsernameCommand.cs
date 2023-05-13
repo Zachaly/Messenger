@@ -6,7 +6,7 @@ using Messenger.Models.User.Request;
 
 namespace Messenger.Application.Command
 {
-    public class UpdateUsernameCommand : IRequest<ResponseModel>
+    public class UpdateUsernameCommand : IValidatedRequest
     {
         public long Id { get; set; }
         public string Name { get; set; }

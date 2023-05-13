@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Messenger.Application.Command
 {
-    public class SaveChatMessageImageCommand : IRequest<ResponseModel>
+    public class SaveChatMessageImageCommand : IValidatedRequest
     {
         public long MessageId { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }

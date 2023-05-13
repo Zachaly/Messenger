@@ -2,6 +2,7 @@
     <div class="control">
         <label for="name" class="label">Chat name</label>
         <input class="input" type="text" name="name" [(ngModel)]="request.name">
+        <app-error-list *ngIf="errors.Name" [errors]="errors.Name" />
     </div>
     <div>
         <button class="button is-success">Add</button>

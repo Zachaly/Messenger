@@ -32,6 +32,6 @@ export class LoginPageComponent implements OnInit {
   }
 
   submit() {
-    this.authService.login(this.loginRequest)
+    this.authService.login(this.loginRequest, err => alert(err.error.error))
   }
 }

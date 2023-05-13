@@ -2,12 +2,11 @@
 using Messenger.Application.Abstraction;
 using Messenger.Database.Repository;
 using Messenger.Models.Chat.Request;
-using Messenger.Models.ChatUser.Request;
 using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class AddChatCommand : AddChatRequest, IRequest<ResponseModel>
+    public class AddChatCommand : AddChatRequest, IValidatedRequest
     {
     }
 

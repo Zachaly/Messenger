@@ -6,7 +6,7 @@ using Messenger.Models.UserClaim.Request;
 
 namespace Messenger.Application.Command
 {
-    public class AddUserClaimCommand : AddUserClaimRequest, IRequest<ResponseModel>
+    public class AddUserClaimCommand : AddUserClaimRequest, IValidatedRequest
     {
     }
 

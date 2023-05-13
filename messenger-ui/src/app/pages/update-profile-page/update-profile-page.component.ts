@@ -20,6 +20,9 @@ export class UpdateProfilePageComponent {
   user: UserListItem = { id: 0, name: '' }
   passwordRequest: ChangeUserPasswordRequest = { userId: 0, currentPassword: '', newPassword: '' }
 
+  nameErrors: { Name?: string[] } = {}
+  passwordErrors: { NewPassword?: string[] } = {}
+
   constructor(private imageService: ImageService, private authService: AuthService, private userService: UserService) {
     this.passwordRequest.userId = authService.currentUser.userId
     userService.getUsers({ id: authService.currentUser.userId }).subscribe(res => {
@@ -28,7 +31,10 @@ export class UpdateProfilePageComponent {
   }
 
   submitImage() {
-    this.imageService.uploadProfileImage(this.authService.currentUser.userId, this.selectedFile).subscribe(() => alert('Profile image updated!'))
+    this.imageService.uploadProfileImage(this.authService.currentUser.userId, this.selectedFile).subscribe({
+      next: () => alert('Profile image updated!'),
+      error: err => alert('Could not update image!')
+    })
   }
 
   submitName() {
@@ -36,7 +42,18 @@ export class UpdateProfilePageComponent {
       id: this.authService.currentUser.userId,
       name: this.user.name
     }
-    this.userService.updateUser(request).subscribe(() => alert('Name updated'))
+    this.userService.updateUser(request).subscribe({
+      next: () => alert('Name updated'),
+      error: err => {
+        if (err.error.errors) {
+          this.nameErrors = err.error.errors
+        }
+
+        if (err.error.error) {
+          alert(err.error.error)
+        }
+      }
+    })
   }
 
   changeImage() {
@@ -50,8 +67,14 @@ export class UpdateProfilePageComponent {
         alert("Password updated")
       },
       error: (err) => {
-        alert("Failed to update password")
         console.log(err)
+        if (err.error.errors) {
+          this.passwordErrors = err.error.errors
+        }
+
+        if (err.error.error) {
+          alert(err.error.error)
+        }
       }
     })
   }

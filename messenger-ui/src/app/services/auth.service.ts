@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import LoginResponse from '../models/LoginResponse';
@@ -23,10 +23,13 @@ export class AuthService {
     return this.http.post(API_URL, request)
   }
 
-  login(request: LoginRequest) {
-    return this.http.post<LoginResponse>(`${API_URL}/login`, request).subscribe(res => {
-      this.currentUser = res
-      this.userSubject.next(this.currentUser)
+  login(request: LoginRequest, onError: (err: any) => void) {
+    return this.http.post<LoginResponse>(`${API_URL}/login`, request).subscribe({
+      next: res => {
+        this.currentUser = res
+        this.userSubject.next(this.currentUser)
+      },
+      error: err => onError(err)
     })
   }
 

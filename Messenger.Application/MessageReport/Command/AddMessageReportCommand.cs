@@ -6,7 +6,7 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class AddMessageReportCommand : AddMessageReportRequest, IRequest<ResponseModel>
+    public class AddMessageReportCommand : AddMessageReportRequest, IValidatedRequest
     {
     }
 

@@ -21,7 +21,7 @@ namespace Messenger.Tests.Integration.Controller
 
             var command = new AddChatMessageReactionCommand
             {
-                ChatId = 0,
+                ChatId = 3,
                 MessageId = 1,
                 UserId = 2,
                 Reaction = "😊"
@@ -53,7 +53,7 @@ namespace Messenger.Tests.Integration.Controller
 
             var command = new AddChatMessageReactionCommand
             {
-                ChatId = 0,
+                ChatId = 3,
                 MessageId = 1,
                 UserId = 2,
                 Reaction = "😊"

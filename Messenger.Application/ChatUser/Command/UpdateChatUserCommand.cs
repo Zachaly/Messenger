@@ -6,7 +6,7 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class UpdateChatUserCommand : UpdateChatUserRequest, IRequest<ResponseModel>
+    public class UpdateChatUserCommand : UpdateChatUserRequest, IValidatedRequest
     {
     }
 

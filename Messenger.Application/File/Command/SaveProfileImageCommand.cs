@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Messenger.Application.Command
 {
-    public class SaveProfileImageCommand : IRequest<ResponseModel>
+    public class SaveProfileImageCommand : IValidatedRequest
     {
         public long UserId { get; set; }
         public IFormFile? File { get; set; }

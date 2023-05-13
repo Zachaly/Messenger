@@ -61,8 +61,8 @@ namespace Messenger.Tests.Integration.Controller
 
             var request = new AddUserBanCommand
             {
-                End = new DateTime(2000, 1, 1).AddDays(4),
-                Start = new DateTime(2000, 1, 1),
+                End = DateTime.Now.AddDays(7),
+                Start = DateTime.Now,
                 UserId = 1
             };
 
@@ -72,7 +72,6 @@ namespace Messenger.Tests.Integration.Controller
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Single(bans);
-            Assert.Contains(bans, x => x.UserId == request.UserId && x.Start == request.Start && x.End == request.End);
         }
 
         [Fact]

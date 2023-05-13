@@ -6,7 +6,7 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class RespondToFriendRequestCommand : RespondToFriendRequest, IRequest<ResponseModel>
+    public class RespondToFriendRequestCommand : RespondToFriendRequest, IValidatedRequest
     {
     }
 

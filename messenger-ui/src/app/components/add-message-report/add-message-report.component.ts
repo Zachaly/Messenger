@@ -18,7 +18,9 @@ export class AddMessageReportComponent implements OnInit {
 
   report: AddMessageReportRequest = { userId: 0, reason: '', reportedUserId: 0, messageId: 0, messageType: MessageType.Direct }
 
-  constructor(private authService: AuthService, private messageReportService: MessageReportService){
+  errors: { Reason?: string[] } = {}
+
+  constructor(private authService: AuthService, private messageReportService: MessageReportService) {
 
   }
   ngOnInit(): void {
@@ -32,8 +34,15 @@ export class AddMessageReportComponent implements OnInit {
   }
 
   send() {
-    this.messageReportService.postMessageReport(this.report).subscribe(() => {
-      this.close.emit()
+    this.messageReportService.postMessageReport(this.report).subscribe({
+      next: () => {
+        this.close.emit()
+      },
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
+      }
     })
   }
 }

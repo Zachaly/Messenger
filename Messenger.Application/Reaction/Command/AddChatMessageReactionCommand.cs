@@ -6,7 +6,7 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class AddChatMessageReactionCommand : AddChatMessageReactionRequest, IRequest<ResponseModel>
+    public class AddChatMessageReactionCommand : AddChatMessageReactionRequest, IValidatedRequest
     {
         public long ChatId { get; set; }
     }

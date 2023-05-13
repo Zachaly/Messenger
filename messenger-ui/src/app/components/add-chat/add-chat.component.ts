@@ -14,19 +14,27 @@ export class AddChatComponent {
   @Output() submit: EventEmitter<any> = new EventEmitter()
   @Output() cancel: EventEmitter<any> = new EventEmitter()
 
+  errors: { Name?: string[] } = {}
+
   constructor(authService: AuthService, private chatService: ChatService) {
     this.request.userId = authService.currentUser.userId
   }
 
   onSubmit() {
-    console.log(this.request)
-    this.chatService.addChat(this.request).subscribe(res => {
-      alert('Chat added!')
-      this.submit.emit()
+    this.chatService.addChat(this.request).subscribe({
+      next: res => {
+        alert('Chat added!')
+        this.submit.emit()
+      },
+      error: err => {
+        if (err.error.errors) {
+          this.errors = err.error.errors
+        }
+      }
     })
   }
 
-  onCancel(){
+  onCancel() {
     this.cancel.emit()
   }
 }

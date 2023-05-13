@@ -1,8 +1,9 @@
 <div class="card add-report p-2">
     <label for="reason" class="label">Reason</label>
+    <app-error-list *ngIf="errors.Reason" [errors]="errors.Reason" />
     <input class="input" type="text" name="reason" [(ngModel)]="report.reason">
     <div class="buttons">
         <button class="button" (click)="close.emit()">Close</button>
-        <button class="button is-info"(click)="send()">Send</button>
+        <button class="button is-info" (click)="send()">Send</button>
     </div>
 </div>

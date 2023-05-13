@@ -6,7 +6,7 @@ using Messenger.Models.User.Request;
 
 namespace Messenger.Application.Command
 {
-    public class RegisterCommand : AddUserRequest, IRequest<ResponseModel> { }
+    public class RegisterCommand : AddUserRequest, IValidatedRequest { }
 
     public class RegisterHandler : IRequestHandler<RegisterCommand, ResponseModel>
     {
