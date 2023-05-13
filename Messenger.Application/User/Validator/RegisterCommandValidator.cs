@@ -7,7 +7,7 @@ namespace Messenger.Application.Validator
     {
         public RegisterCommandValidator()
         {
-            RuleFor(x => x.Password).NotEmpty().MaximumLength(6).MaximumLength(100);
+            RuleFor(x => x.Password).NotEmpty().MinimumLength(8).MaximumLength(100);
             RuleFor(x => x.Name).NotEmpty().MinimumLength(5).MaximumLength(100);
             RuleFor(x => x.Login).NotEmpty().MinimumLength(5).MaximumLength(100);
         }

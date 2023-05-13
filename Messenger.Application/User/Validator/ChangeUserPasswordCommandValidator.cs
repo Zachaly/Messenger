@@ -7,7 +7,7 @@ namespace Messenger.Application.Validator
     {
         public ChangeUserPasswordCommandValidator()
         {
-            RuleFor(x => x.NewPassword).NotEmpty().MaximumLength(6).MaximumLength(100);
+            RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8).MaximumLength(100);
             RuleFor(x => x.UserId).GreaterThan(0);
         }
     }

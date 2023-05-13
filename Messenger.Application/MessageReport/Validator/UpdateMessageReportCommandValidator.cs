@@ -8,7 +8,7 @@ namespace Messenger.Application.Validator
         public UpdateMessageReportCommandValidator()
         {
             RuleFor(x => x.Id).GreaterThan(0);
-            RuleFor(x => x.Reason).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Reason).MaximumLength(100);
             RuleFor(x => x.AttachedMessageId).GreaterThan(0);
         }
     }

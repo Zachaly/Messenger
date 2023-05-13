@@ -9,7 +9,7 @@ namespace Messenger.Application.Validator
         {
             RuleFor(x => x.End).GreaterThan(DateTime.Now);
             RuleFor(x => x.UserId).GreaterThan(0);
-            RuleFor(x => x.Start).GreaterThan(DateTime.Now.AddDays(-1));
+            RuleFor(x => x.Start).LessThan(DateTime.Now);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Messenger.Application.Command;
 
-namespace Messenger.Application.Friend.Validator
+namespace Messenger.Application.Validator
 {
     public class RespondToFriendRequestCommandValidator : AbstractValidator<RespondToFriendRequestCommand>
     {
