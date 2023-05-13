@@ -6,7 +6,7 @@ using Messenger.Models.User.Request;
 
 namespace Messenger.Application.Command
 {
-    public class ChangeUserPasswordCommand : IRequest<ResponseModel>
+    public class ChangeUserPasswordCommand : IValidatedRequest
     {
         public long UserId { get; set; }
         public string CurrentPassword { get; set; }

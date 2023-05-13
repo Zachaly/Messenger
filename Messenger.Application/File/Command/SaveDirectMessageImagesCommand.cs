@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Messenger.Application.Command
 {
-    public class SaveDirectMessageImagesCommand : IRequest<ResponseModel>
+    public class SaveDirectMessageImagesCommand : IValidatedRequest
     {
         public long MessageId { get; set; }
         public IEnumerable<IFormFile> Files { get; set; }

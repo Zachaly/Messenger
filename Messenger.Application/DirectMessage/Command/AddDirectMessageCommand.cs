@@ -7,7 +7,7 @@ using Messenger.Models.Response;
 
 namespace Messenger.Application.Command
 {
-    public class AddDirectMessageCommand : AddDirectMessageRequest, IRequest<ResponseModel> { }
+    public class AddDirectMessageCommand : AddDirectMessageRequest, IValidatedRequest { }
 
     public class AddDirectMessageHandler : IRequestHandler<AddDirectMessageCommand, ResponseModel>
     {

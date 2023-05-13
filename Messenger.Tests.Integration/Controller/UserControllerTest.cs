@@ -97,7 +97,7 @@ namespace Messenger.Tests.Integration.Controller
         [Fact]
         public async Task LoginAsync_Success()
         {
-            var addUserRequest = new AddUserRequest { Login = "login", Name = "name", Password = "zaq1@WSX" };
+            var addUserRequest = new AddUserRequest { Login = "login", Name = "username", Password = "zaq1@WSX" };
 
             await _httpClient.PostAsJsonAsync(ApiUrl, addUserRequest);
 

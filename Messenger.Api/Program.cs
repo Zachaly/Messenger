@@ -1,5 +1,9 @@
+using FluentValidation;
+using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
+using Messenger.Application.Validator;
+using Messenger.Models.Response;
 using Microsoft.AspNetCore.Mvc;
 
 [assembly: ApiController]
@@ -18,6 +22,8 @@ builder.Services.ConfigureSwagger();
 
 builder.ConfigureAuthorization();
 
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterCommandValidator>();
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<BanCancellationService>();
 

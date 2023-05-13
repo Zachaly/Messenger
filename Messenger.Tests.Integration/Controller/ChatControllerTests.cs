@@ -1,6 +1,7 @@
 ﻿using Messenger.Application.Command;
 using Messenger.Domain.Entity;
 using Messenger.Models.Chat;
+using Messenger.Models.Response;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -61,6 +62,27 @@ namespace Messenger.Tests.Integration.Controller
             Assert.Single(chats);
             Assert.Single(users);
             Assert.Contains(users, x => x.UserId == command.UserId && x.IsAdmin);
+        }
+
+        [Fact]
+        public async Task PostAsync_InvalidRequest_Fail()
+        {
+            await Authorize();
+
+            var command = new AddChatCommand { Name = new string('a', 51), UserId = _authorizedUserId };
+
+            var response = await _httpClient.PostAsJsonAsync(ApiUrl, command);
+            var content = await response.Content.ReadFromJsonAsync<ResponseModel>();
+
+            var chats = GetFromDatabase<Chat>("SELECT * FROM [Chat]");
+            var users = GetFromDatabase<ChatUser>("SELECT * FROM [ChatUser]");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.DoesNotContain(chats, x => x.CreatorId == command.UserId && x.Name == command.Name);
+            Assert.Empty(chats);
+            Assert.Empty(users);
+            Assert.DoesNotContain(users, x => x.UserId == command.UserId && x.IsAdmin);
+            Assert.Contains(content.Errors.Keys, x => x == "Name");
         }
 
         [Fact]

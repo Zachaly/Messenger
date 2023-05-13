@@ -6,7 +6,7 @@ using Messenger.Models.UserBan.Request;
 
 namespace Messenger.Application.Command
 {
-    public class AddUserBanCommand : AddUserBanRequest, IRequest<ResponseModel>
+    public class AddUserBanCommand : AddUserBanRequest, IValidatedRequest
     {
     }
 
