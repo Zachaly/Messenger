@@ -19,6 +19,7 @@ namespace Messenger.Api.Infrastructure
             {
                 using(var scope = _serviceProvider.CreateScope())
                 {
+                    var logger = scope.ServiceProvider.GetService<ILogger<BanCancellationService>>();
                     var mediator = scope.ServiceProvider.GetService<IMediator>();
                     while (!stoppingToken.IsCancellationRequested)
                     {
@@ -29,7 +30,7 @@ namespace Messenger.Api.Infrastructure
                             await mediator.Send(new DeleteUserBanCommand { Id = ban.Id });
                             await mediator.Send(new DeleteUserClaimCommand { UserId = ban.UserId, Claim = "Ban" });
                         }
-                        Console.WriteLine($"Unbanned {bans.Count()} users");
+                        logger.LogWarning("Unbanned {num} users at {date}", bans.Count(), DateTime.Now);
 
                         await Task.Delay(Delay);
                     }
