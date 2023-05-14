@@ -4,10 +4,10 @@ using Messenger.Application;
 using Messenger.Application.Abstraction;
 using Messenger.Models.Response;
 
-namespace Messenger.Api.Infrastructure
+namespace Messenger.Api.Pipeline
 {
-    public class ValidationPipeline<TRequest, TResponse> : IPipelineBehavior<TRequest, ResponseModel> 
-        where TRequest: IValidatedRequest
+    public class ValidationPipeline<TRequest, TResponse> : IPipelineBehavior<TRequest, ResponseModel>
+        where TRequest : IValidatedRequest
     {
         private readonly IValidator<TRequest> _validator;
         private readonly IResponseFactory _responseFactory;
