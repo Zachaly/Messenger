@@ -1,9 +1,11 @@
+using FluentMigrator.Runner;
 using FluentValidation;
 using MediatR;
 using Messenger.Api.Hubs;
 using Messenger.Api.Infrastructure;
 using Messenger.Api.Pipeline;
 using Messenger.Application.Validator;
+using Messenger.Database.Migrations;
 using Microsoft.AspNetCore.Mvc;
 
 [assembly: ApiController]
@@ -19,6 +21,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.RegisterDatabase();
+builder.Services.AddFluentMigratorCore()
+    .ConfigureRunner(c =>
+        {
+            c.AddSqlServer2016();
+            c.WithGlobalConnectionString(builder.Configuration["MasterConnectionString"]);
+            c.ScanIn(typeof(MigrationManager).Assembly).For.Migrations();
+        });
 builder.Services.RegisterApplication();
 builder.Services.ConfigureSwagger();
 
@@ -30,7 +39,7 @@ builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeli
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipeline<,>));
 builder.Services.AddHostedService<BanCancellationService>();
 
-var app = builder.Build();
+var app = builder.Build().MigrateDatabase();
 
 try
 {
