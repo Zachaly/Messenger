@@ -3,7 +3,7 @@
 namespace Messenger.Database.Migrations
 {
     [Migration(27052022)]
-    internal class Migration_27052022 : Migration
+    public class Migration_27052022 : Migration
     {
         public override void Down()
         {
@@ -34,7 +34,7 @@ namespace Messenger.Database.Migrations
             Create.Table("ChatMessage")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
                 .WithColumn("ChatId").AsInt64().NotNullable()
-                .WithColumn("Content").AsAnsiString(500).NotNullable()
+                .WithColumn("Content").AsString(500).NotNullable()
                 .WithColumn("SenderId").AsInt64().NotNullable()
                 .WithColumn("Created").AsDateTime2().NotNullable();
 
@@ -46,24 +46,25 @@ namespace Messenger.Database.Migrations
             Create.Table("ChatMessageReaction")
                 .WithColumn("UserId").AsInt64().NotNullable()
                 .WithColumn("MessageId").AsInt64().NotNullable()
-                .WithColumn("Reaction").AsAnsiString(2);
+                .WithColumn("Reaction").AsString(2);
 
             Create.Table("ChatMessageRead")
-                .WithColumn("UserId").AsInt64().NotNullable()
-                .WithColumn("MessageId").AsInt64().NotNullable();
+                .WithColumn("MessageId").AsInt64().NotNullable()
+                .WithColumn("UserId").AsInt64().NotNullable();
+                
 
             Create.Table("ChatUser")
                 .WithColumn("ChatId").AsInt64().NotNullable()
                 .WithColumn("UserId").AsInt64().NotNullable()
-                .WithColumn("IsAdmin").AsBinary().NotNullable();
+                .WithColumn("IsAdmin").AsBoolean().NotNullable();
 
             Create.Table("DirectMessage")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
-                .WithColumn("Content").AsAnsiString(500).NotNullable()
+                .WithColumn("Content").AsString(500).NotNullable()
                 .WithColumn("SenderId").AsInt64().NotNullable()
                 .WithColumn("ReceiverId").AsInt64().NotNullable()
                 .WithColumn("Created").AsDateTime2().NotNullable()
-                .WithColumn("Read").AsBinary().NotNullable();
+                .WithColumn("Read").AsBoolean().NotNullable();
 
             Create.Table("DirectMessageImage")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
@@ -72,7 +73,7 @@ namespace Messenger.Database.Migrations
 
             Create.Table("DirectMessageReaction")
                 .WithColumn("MessageId").AsInt64().NotNullable()
-                .WithColumn("Reaction").AsAnsiString(2).NotNullable();
+                .WithColumn("Reaction").AsString(2).NotNullable();
 
             Create.Table("Friend")
                 .WithColumn("User1Id").AsInt64().NotNullable()
@@ -88,7 +89,7 @@ namespace Messenger.Database.Migrations
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
                 .WithColumn("ReportingUserId").AsInt64().NotNullable()
                 .WithColumn("ReportedUserId").AsInt64().NotNullable()
-                .WithColumn("Resolved").AsBinary().NotNullable()
+                .WithColumn("Resolved").AsBoolean().NotNullable()
                 .WithColumn("AttachedMessageId").AsInt64().NotNullable()
                 .WithColumn("Reason").AsString(100).NotNullable()
                 .WithColumn("ReportDate").AsDateTime2().NotNullable()

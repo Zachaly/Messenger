@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Messenger.Database.Migrations;
+using FluentMigrator.Runner;
 
 namespace Messenger.Api.Infrastructure
 {
@@ -34,6 +36,7 @@ namespace Messenger.Api.Infrastructure
             collection.AddScoped<IUserClaimRepository, UserClaimRepository>();
             collection.AddScoped<IUserBanRepository, UserBanRepository>();
             collection.AddScoped<IMessageReportRepository, MessageReportRepository>();
+            collection.AddScoped<IMigrationManager, MigrationManager>();
         }
 
         public static void RegisterApplication(this IServiceCollection collection)
@@ -166,6 +169,38 @@ namespace Messenger.Api.Infrastructure
                     }
                 });
             });
+        }
+
+        public static WebApplication MigrateDatabase(this WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var migrationManager = scope.ServiceProvider.GetRequiredService<IMigrationManager>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<MigrationManager>>();
+
+                try
+                {
+                    migrationManager.CreateDatabase();
+                    logger.LogInformation("Database created");
+                }
+                catch
+                {
+                    logger.LogCritical("Failed to create database");
+                    return app;
+                }
+
+                try
+                {
+                    migrationManager.MigrateDatabase();
+                    logger.LogInformation("Database migrated");
+                }
+                catch
+                {
+                    logger.LogCritical("Failed to migrate database");
+                }
+
+                return app;
+            }
         }
     }
 }

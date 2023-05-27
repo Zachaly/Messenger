@@ -43,14 +43,15 @@ namespace Messenger.Tests.Integration.Controller
 
         public ControllerTest()
         {
-            _webFactory = new WebApplicationFactory<Program>()
+            _webFactory = new MessengerApplicationFactory()
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
                     config.AddInMemoryCollection(new Dictionary<string, string?>
                     {
-                        ["ConnectionString"] = _connectionString
+                        ["ConnectionString"] = _connectionString,
+                        ["DatabaseName"] = "MessengerTest"
                     });
                     _adminLogin = context.Configuration["DefaultAdminLogin"]!;
                     _adminPassword = context.Configuration["DefaultAdminPassword"]!;

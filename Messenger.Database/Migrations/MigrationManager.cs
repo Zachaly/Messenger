@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Messenger.Database.Migrations
 {
-    internal class MigrationManager : IMigrationManager
+    public class MigrationManager : IMigrationManager
     {
         private readonly IConfiguration _configuration;
         private readonly IMigrationRunner _migrationRunner;
